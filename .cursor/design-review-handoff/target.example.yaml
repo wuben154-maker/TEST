@@ -1,0 +1,30 @@
+# =============================================================================
+# TEMPLATE ONLY — committed to git. Do not put real secrets here.
+#
+# Setup: copy this file to target.local.yaml (same folder).
+#   target.local.yaml is GITIGNORED — never committed, never deployed, local /design-review only.
+#
+# Not a duplicate of root .env:
+#   - Root .env / .env.local  → Vite (VITE_*) + auth:bootstrap (E2E_EMAIL / E2E_PASSWORD). See docs/Process/LOCAL_AUTOMATION_AUTH.md
+#   - target.local.yaml       → only what /design-review (browse tooling) reads: base_url, paths, mockup list.
+# Do NOT store passwords in target.local.yaml for this repo; use auth:bootstrap or cookies.
+# =============================================================================
+
+base_url: "http://127.0.0.1:8080"
+
+# Optional: focus paths for audit (relative to base_url)
+priority_paths:
+  - "/"
+
+# Keep "none" when using npm run auth:bootstrap (docs/Process/LOCAL_AUTOMATION_AUTH.md) or cookie import.
+auth:
+  type: "none"
+  username: ""
+  password: ""
+  notes: "Secrets: root .env (E2E_*). Login: npm run auth:bootstrap → open printed URL once in automation browser."
+
+# Optional: repo-relative paths to reference images under docs/Process/<slug>/mockups/
+# mockups:
+#   - "docs/Process/my-feature-slug/mockups/01-home-desktop.png"
+
+mockups: []

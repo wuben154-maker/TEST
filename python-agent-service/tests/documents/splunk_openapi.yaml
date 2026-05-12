@@ -1,0 +1,1509 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Search endpoint descriptions | Splunk Enterprise (last updated 2025-07-04T01:55:30.817Z)
+servers:
+- url: https://prd.splunkd.ba.id.au
+externalDocs:
+  url: https://help.splunk.com/en/splunk-enterprise/leverage-rest-apis/rest-api-reference/9.2/search-endpoints/search-endpoint-descriptions
+paths:
+  /services/search/v2/jobs/export:
+    post:
+      summary: Performs a search identical to POST search/jobs. For parameter and
+        returned value descriptions, see the POST parameter descriptions for [search/jobs](/en/splunk-enterprise/leverage-rest-apis/rest-api-
+      operationId: post__services_search_v2_jobs_export
+      is_consequential: false
+      tags:
+      - search
+      description: Performs a search identical to POST search/jobs.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties: {}
+  /services/search/v2/jobs/:
+    get:
+      summary: Preview `{search_id}` search results.
+      operationId: get__services_search_v2_jobs
+      is_consequential: false
+      tags:
+      - search
+      description: Preview `{search_id}` search results.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/search/v2/parser:
+    post:
+      summary: Parses Splunk search language and returns semantic map.
+      operationId: post__services_search_v2_parser
+      is_consequential: false
+      tags:
+      - search
+      description: Parses Splunk search language and returns semantic map.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties: {}
+  /services/search/jobs/export:
+    get:
+      summary: Performs a search identical to POST search/jobs
+      operationId: get__services_search_jobs_export
+      is_consequential: false
+      tags:
+      - search
+      description: Performs a search identical to POST search/jobs
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+    post:
+      summary: Performs a search identical to POST search/jobs. For parameter and
+        returned value descriptions, see the POST parameter descriptions for [search/jobs](/en/splunk-enterprise/leverage-rest-apis/rest-api-
+      operationId: post__services_search_jobs_export
+      is_consequential: false
+      tags:
+      - search
+      description: Performs a search identical to POST search/jobs.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties: {}
+  /services/search/v1/jobs/export:
+    get:
+      summary: https://localhost:8089/services/search/v1/jobs/export
+      operationId: get__services_search_v1_jobs_export
+      is_consequential: false
+      tags:
+      - search
+      description: https://localhost:8089/services/search/v1/jobs/export
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/alerts/alert_actions:
+    get:
+      summary: Access a list of alert actions.
+      operationId: get__services_alerts_alert_actions
+      is_consequential: false
+      tags:
+      - search
+      description: Access a list of alert actions.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/alerts/fired_alerts:
+    get:
+      summary: Access a fired alerts summary.
+      operationId: get__services_alerts_fired_alerts
+      is_consequential: false
+      tags:
+      - search
+      description: Access a fired alerts summary.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/alerts/fired_alerts/:
+    get:
+      summary: List unexpired triggered instances of this alert.
+      operationId: get__services_alerts_fired_alerts
+      is_consequential: false
+      tags:
+      - search
+      description: List unexpired triggered instances of this alert.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+    delete:
+      summary: Delete the record of this triggered alert.
+      operationId: delete__services_alerts_fired_alerts
+      is_consequential: false
+      tags:
+      - search
+      description: Delete the record of this triggered alert.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/alerts/metric_alerts:
+    get:
+      summary: Access streaming metric alert configurations.
+      operationId: get__services_alerts_metric_alerts
+      is_consequential: false
+      tags:
+      - search
+      description: Access streaming metric alert configurations.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/alerts/metric_alerts/_new:
+    get:
+      summary: <link href="/services/alerts/metric_alerts/_new" rel="create"/>
+      operationId: get__services_alerts_metric_alerts_new
+      is_consequential: false
+      tags:
+      - search
+      description: <link href="/services/alerts/metric_alerts/_new" rel="create"/>
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/alerts/metric_alerts/_reload:
+    get:
+      summary: <link href="/services/alerts/metric_alerts/_reload" rel="_reload"/>
+      operationId: get__services_alerts_metric_alerts_reload
+      is_consequential: false
+      tags:
+      - search
+      description: <link href="/services/alerts/metric_alerts/_reload" rel="_reload"/>
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/alerts/metric_alerts/_acl:
+    post:
+      summary: Update the named streaming metric alert.
+      operationId: post__services_alerts_metric_alerts_acl
+      is_consequential: false
+      tags:
+      - search
+      description: Update the named streaming metric alert.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties: {}
+    delete:
+      summary: Deletes the named metric alert.
+      operationId: delete__services_alerts_metric_alerts_acl
+      is_consequential: false
+      tags:
+      - search
+      description: Deletes the named metric alert.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/alerts/metric_alerts/:
+    get:
+      summary: Access the named streaming metric alert.
+      operationId: get__services_alerts_metric_alerts
+      is_consequential: false
+      tags:
+      - search
+      description: Access the named streaming metric alert.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/alerts/metric_alerts/{id}:
+    get:
+      summary: $
+      operationId: get__services_alerts_metric_alerts_id
+      is_consequential: false
+      tags:
+      - search
+      description: $
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/data/commands:
+    get:
+      summary: Access Python search commands.
+      operationId: get__services_data_commands
+      is_consequential: false
+      tags:
+      - search
+      description: Access Python search commands.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/data/commands/:
+    get:
+      summary: Access search command information.
+      operationId: get__services_data_commands
+      is_consequential: false
+      tags:
+      - search
+      description: Access search command information.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/saved/searches:
+    get:
+      summary: Access saved search configurations.
+      operationId: get__services_saved_searches
+      is_consequential: false
+      tags:
+      - search
+      description: Access saved search configurations.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/saved/searches/_new:
+    get:
+      summary: <link href="/services/saved/searches/_new" rel="create"/>
+      operationId: get__services_saved_searches_new
+      is_consequential: false
+      tags:
+      - search
+      description: <link href="/services/saved/searches/_new" rel="create"/>
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/saved/searches/_reload:
+    get:
+      summary: <link href="/services/saved/searches/_reload" rel="_reload"/>
+      operationId: get__services_saved_searches_reload
+      is_consequential: false
+      tags:
+      - search
+      description: <link href="/services/saved/searches/_reload" rel="_reload"/>
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/saved/searches/_acl:
+    post:
+      summary: Update the named saved search.
+      operationId: post__services_saved_searches_acl
+      is_consequential: false
+      tags:
+      - search
+      description: Update the named saved search.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties: {}
+  /services/saved/searches/:
+    delete:
+      summary: Delete the named saved search.
+      operationId: delete__services_saved_searches
+      is_consequential: false
+      tags:
+      - search
+      description: Delete the named saved search.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+    get:
+      summary: Get the `{name}` saved search alert suppression state.
+      operationId: get__services_saved_searches
+      is_consequential: false
+      tags:
+      - search
+      description: Get the `{name}` saved search alert suppression state.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+    post:
+      summary: Define a new start time for a scheduled saved search.
+      operationId: post__services_saved_searches
+      is_consequential: false
+      tags:
+      - search
+      description: Define a new start time for a scheduled saved search.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties: {}
+  /services/saved/searches/test_durable:
+    get:
+      summary: GET /services/saved/searches/test_durable
+      operationId: get__services_saved_searches_test_durable
+      is_consequential: false
+      tags:
+      - search
+      description: GET /services/saved/searches/test_durable endpoint for Splunk search
+        operations.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/saved/searches/summary_durable/history:
+    get:
+      summary: GET /services/saved/searches/summary_durable/history
+      operationId: get__services_saved_searches_summary_durable_history
+      is_consequential: false
+      tags:
+      - search
+      description: XML Response
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/saved/searches/Purchased:
+    get:
+      summary: GET /services/saved/searches/Purchased
+      operationId: get__services_saved_searches_Purchased
+      is_consequential: false
+      tags:
+      - search
+      description: XML Response
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/saved/searches/_ScheduledView__dashboard_live/scheduled_times:
+    get:
+      summary: GET /services/saved/searches/_ScheduledView__dashboard_live/scheduled_times
+      operationId: get__services_saved_searches_ScheduledView_dashboard_live_scheduled_times
+      is_consequential: false
+      tags:
+      - search
+      description: XML Response
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/scheduled/views:
+    get:
+      summary: List all scheduled view objects.
+      operationId: get__services_scheduled_views
+      is_consequential: false
+      tags:
+      - search
+      description: List all scheduled view objects.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/scheduled/views/:
+    delete:
+      summary: Delete a scheduled view.
+      operationId: delete__services_scheduled_views
+      is_consequential: false
+      tags:
+      - search
+      description: Delete a scheduled view.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+    get:
+      summary: Get scheduled view times.
+      operationId: get__services_scheduled_views
+      is_consequential: false
+      tags:
+      - search
+      description: Get scheduled view times.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+    post:
+      summary: Schedule the {name} view PDF delivery.
+      operationId: post__services_scheduled_views
+      is_consequential: false
+      tags:
+      - search
+      description: Schedule the {name} view PDF delivery.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties: {}
+  /services/scheduled/views/{id}/reschedule:
+    get:
+      summary: GET /services/scheduled/views/{id}/reschedule
+      operationId: get__services_scheduled_views_id_reschedule
+      is_consequential: false
+      tags:
+      - search
+      description: XML Response
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/scheduled/views/_reload:
+    get:
+      summary: <link href="/services/scheduled/views/_reload" rel="_reload"/>
+      operationId: get__services_scheduled_views_reload
+      is_consequential: false
+      tags:
+      - search
+      description: <link href="/services/scheduled/views/_reload" rel="_reload"/>
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/scheduled/views/_ScheduledView__dashboard_live/scheduled_times:
+    get:
+      summary: GET /services/scheduled/views/_ScheduledView__dashboard_live/scheduled_times
+      operationId: get__services_scheduled_views_ScheduledView_dashboard_live_scheduled_times
+      is_consequential: false
+      tags:
+      - search
+      description: XML Response JSONCopy
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/search/concurrency-settings:
+    get:
+      summary: List search concurrency settings.
+      operationId: get__services_search_concurrency_settings
+      is_consequential: false
+      tags:
+      - search
+      description: List search concurrency settings.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/search/concurrency-settings/scheduler:
+    post:
+      summary: Edit settings that determine concurrent scheduled search limits.
+      operationId: post__services_search_concurrency_settings_scheduler
+      is_consequential: false
+      tags:
+      - search
+      description: Edit settings that determine concurrent scheduled search limits.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties: {}
+  /services/search/concurrency-settings/search:
+    post:
+      summary: Edit settings that determine the maximum number of concurrent scheduled
+        searches.
+      operationId: post__services_search_concurrency_settings_search
+      is_consequential: false
+      tags:
+      - search
+      description: Edit settings that determine the maximum number of concurrent scheduled
+        searches.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties: {}
+  /services/search/jobs:
+    get:
+      summary: Get details of all current searches.
+      operationId: get__services_search_jobs
+      is_consequential: false
+      tags:
+      - search
+      description: Get details of all current searches.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/search/jobs/{sid}:
+    get:
+      summary: Get information about the `{search_id}` search job.
+      operationId: get__services_search_jobs_sid
+      is_consequential: false
+      tags:
+      - search
+      description: Get information about the `{search_id}` search job.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/search/jobs/{sid}/search.log:
+    get:
+      summary: <link href="/services/search/jobs/mysearch_02151949/search.log" rel="search.log"/>
+      operationId: get__services_search_jobs_sid_search_log
+      is_consequential: false
+      tags:
+      - search
+      description: <link href="/services/search/jobs/mysearch_02151949/search.log"
+        rel="search.log"/>
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/search/jobs/{sid}/events:
+    get:
+      summary: GET /services/search/jobs/{sid}/events
+      operationId: get__services_search_jobs_sid_events
+      is_consequential: false
+      tags:
+      - search
+      description: XML Response <results preview='0'> <meta> <fieldOrder> <field>arch</field>
+        <field>build</field> <field>connectionType</field> <field>date_hour</field>
+        </fieldOrder> </meta> <result offset='0'> <field k='arch'> <value><text>i686</text></value>
+        </field> <field k='build'> <value><text>98164</text></value> </field> <field
+        k='connectionType'> <value><text>cooked</text></value> </field> <field k='date_hour'>
+        <value><text>19</text></value> </field> </result> <result offset='1'> <field
+        k='arch'> <value><text>i686</text></value> </field> <field k='build'> <value><text>98164</text></value>
+        </field> <field k='connectionType'> <value><text>cooked</text></value> </field>
+        <field k='date_hour'> <value><text>19</text></value> </field> </result> <result
+        offset='2'> <field k='arch'> <value><text>i686</text></value> </field> <field
+        k='build'> <value><text>98164</text></value> </field> <field k='connectionType'>
+        <value><text>cooked</text></value> </field> <field k='date_hour'> <value><text>19</text></value>
+        </field> </result> </results> <results preview='0'> <meta> <fieldOrder> <field>arch</field>
+        <field>build</field> <field>connectionType</field> <field>date_hour</field>
+        </fieldOrder> </meta> <result offset='0'> <field k='arch'> <value><text>i686</text></value>
+        </field> <field k='build'> <value><text>98164</text></value> </field> <field
+        k='connectionType'> <value><text>cooked</text></value> </field> <field k='date_hour'>
+        <value><text>19</text></value> </field> </result> <result offset='1'> <field
+        k='arch'> <value><text>i686</text></value> </field> <field k='build'> <value><text>98164</text></value>
+        </field> <field k='connectionType'> <value><text>cooked</text></value> </field>
+        <field k='date_hour'> <value><text>19</text></value> </field> </result> <result
+        offset='2'> <field k='arch'> <value><text>i686</text></value> </field> <field
+        k='build'> <value><text>98164</text></value> </field> <field k='connectionType'>
+        <value><text>cooked</text></value> </field> <field k='date_hour'> <value><text>19</text></value>
+        </field> </result> </results>
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/search/jobs/{sid}/results:
+    get:
+      summary: <link href="/services/search/jobs/mysearch_02151949/results" rel="results"/>
+      operationId: get__services_search_jobs_sid_results
+      is_consequential: false
+      tags:
+      - search
+      description: <link href="/services/search/jobs/mysearch_02151949/results" rel="results"/>
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/search/jobs/{sid}/results_preview:
+    get:
+      summary: <link href="/services/search/jobs/mysearch_02151949/results_preview"
+        rel="results_preview"/>
+      operationId: get__services_search_jobs_sid_results_preview
+      is_consequential: false
+      tags:
+      - search
+      description: <link href="/services/search/jobs/mysearch_02151949/results_preview"
+        rel="results_preview"/>
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/search/jobs/{sid}/timeline:
+    get:
+      summary: <link href="/services/search/jobs/mysearch_02151949/timeline" rel="timeline"/>
+      operationId: get__services_search_jobs_sid_timeline
+      is_consequential: false
+      tags:
+      - search
+      description: <link href="/services/search/jobs/mysearch_02151949/timeline" rel="timeline"/>
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/search/jobs/{sid}/summary:
+    get:
+      summary: <link href="/services/search/jobs/mysearch_02151949/summary" rel="summary"/>
+      operationId: get__services_search_jobs_sid_summary
+      is_consequential: false
+      tags:
+      - search
+      description: <link href="/services/search/jobs/mysearch_02151949/summary" rel="summary"/>
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/search/jobs/{sid}/control:
+    post:
+      summary: Update the `{search_id}` search job.
+      operationId: post__services_search_jobs_sid_control
+      is_consequential: false
+      tags:
+      - search
+      description: Update the `{search_id}` search job.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties: {}
+  /services/apps/local:
+    get:
+      summary: _namespace_ | String | | The application namespace in which to restrict
+        searches. The namespace corresponds to the identifier recognized in the `/services/apps/local`
+        endpoint.
+      operationId: get__services_apps_local
+      is_consequential: false
+      tags:
+      - search
+      description: _namespace_ | String | | The application namespace in which to
+        restrict searches.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/search/jobs/:
+    delete:
+      summary: Delete the `{search_id}` search job.
+      operationId: delete__services_search_jobs
+      is_consequential: false
+      tags:
+      - search
+      description: Delete the `{search_id}` search job.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+    post:
+      summary: Run a job control command for the `{search_id}` search.
+      operationId: post__services_search_jobs
+      is_consequential: false
+      tags:
+      - search
+      description: Run a job control command for the `{search_id}` search.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties: {}
+    get:
+      summary: Get event distribution over time of the untransformed events read to-date,
+        for the `search_id` search.
+      operationId: get__services_search_jobs
+      is_consequential: false
+      tags:
+      - search
+      description: Get event distribution over time of the untransformed events read
+        to-date, for the `search_id` search.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/search/v2/jobs/{sid}/events:
+    post:
+      summary: Access `{search_id}` search events.
+      operationId: post__services_search_v2_jobs_sid_events
+      is_consequential: false
+      tags:
+      - search
+      description: Access `{search_id}` search events.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties: {}
+  /services/search/v2/jobs/{sid}/results:
+    post:
+      summary: Access `{search_id}` search results.
+      operationId: post__services_search_v2_jobs_sid_results
+      is_consequential: false
+      tags:
+      - search
+      description: Access `{search_id}` search results.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties: {}
+  /services/search/v2/jobs/{sid}/results_preview:
+    post:
+      summary: Access a preview of `{search_id}` search results.
+      operationId: post__services_search_v2_jobs_sid_results_preview
+      is_consequential: false
+      tags:
+      - search
+      description: Access a preview of `{search_id}` search results.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties: {}
+  /services/search/jobs/mytestsid/summary:
+    get:
+      summary: GET /services/search/jobs/mytestsid/summary
+      operationId: get__services_search_jobs_mytestsid_summary
+      is_consequential: false
+      tags:
+      - search
+      description: 'XML Response XMLCopy <?xml version=''1.0'' encoding=''UTF-8''?>
+        <summary earliest_time=''1969-12-31T16:00:00.000-08:00'' latest_time=''1969-12-31T16:00:00.464-08:00''
+        duration=''0'' c=''150375''> <field k=''host'' c=''150375'' nc=''0'' dc=''1''
+        exact=''1''> <modes> <value c=''150375'' exact=''1''><text>tiny</text></value>
+        </modes> </field> <field k=''source'' c=''150375'' nc=''0'' dc=''13'' exact=''1''>
+        <modes> <value c=''136107'' exact=''1''><text>/mnt/scsi/steveyz/splunksi/var/log/splunk/metrics.log</text></value>
+        <value c=''6682'' exact=''1''><text>/mnt/scsi/steveyz/splunksi/var/log/splunk/splunkd_access.log</text></value>
+        <value c=''4656'' exact=''1''><text>/mnt/scsi/steveyz/splunksi/var/log/splunk/scheduler.log</text></value>
+        <value c=''1714'' exact=''1''><text>/mnt/scsi/steveyz/splunksi/var/log/splunk/web_access.log</text></value>
+        <value c=''937'' exact=''1''><text>/mnt/scsi/steveyz/splunksi/var/log/splunk/splunkd.log</text></value>
+        </modes> </field> <field k=''sourcetype'' c=''150375'' nc=''0'' dc=''10''
+        exact=''1''> <modes> <value c=''137053'' exact=''1''><text>splunkd</text></value>
+        <value c=''6682'' exact=''1''><text>splunkd_access</text></value> <value c=''4656''
+        exact=''1''><text>scheduler</text></value> <value c=''1714'' exact=''1''><text>splunk_web_access</text></value>
+        <value c=''193'' exact=''1''><text>splunk_web_service</text></value> </modes>
+        </field> </summary> <?xml version=''1.0'' encoding=''UTF-8''?> <summary earliest_time=''1969-12-31T16:00:00.000-08:00''
+        latest_time=''1969-12-31T16:00:00.464-08:00'' duration=''0'' c=''150375''>
+        <field k=''host'' c=''150375'' nc=''0'' dc=''1'' exact=''1''> <modes> <value
+        c=''150375'' exact=''1''><text>tiny</text></value> </modes> </field> <field
+        k=''source'' c=''150375'' nc=''0'' dc=''13'' exact=''1''> <modes> <value c=''136107''
+        exact=''1''><text>/mnt/scsi/steveyz/splunksi/var/log/splunk/metrics.log</text></value>
+        <value c=''6682'' exact=''1''><text>/mnt/scsi/steveyz/splunksi/var/log/splunk/splunkd_access.log</text></value>
+        <value c=''4656'' exact=''1''><text>/mnt/scsi/steveyz/splunksi/var/log/splunk/scheduler.log</text></value>
+        <value c=''1714'' exact=''1''><text>/mnt/scsi/steveyz/splunksi/var/log/splunk/web_access.log</text></value>
+        <value c=''937'' exact=''1''><text>/mnt/scsi/steveyz/splunksi/var/log/splunk/splunkd.log</text></value>
+        </modes> </field> <field k=''sourcetype'' c=''150375'' nc=''0'' dc=''10''
+        exact=''1''> <modes> <value c=''137053'' exact=''1''><text>splunkd</text></value>
+        <value c=''6682'' exact=''1''><text>splunkd_access</text></value> <value c=''4656''
+        exact=''1''><text>scheduler</text></value> <value c=''1714'' exact=''1''><text>splunk_web_access</text></value>
+        <value c=''193'' exact=''1''><text>splunk_web_service</text></value> </modes>
+        </field> </summary> ## search/jobs/{search_id}/timeline JSONCopy'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/search/jobs/mytestsid/timeline:
+    get:
+      summary: GET /services/search/jobs/mytestsid/timeline
+      operationId: get__services_search_jobs_mytestsid_timeline
+      is_consequential: false
+      tags:
+      - search
+      description: XML Response <timeline c='150397' cursor='1312308000'> <bucket
+        c='7741' a='7741' t='1312308000.000' d='3600' f='1' etz='-25200' ltz='-25200'>Tue
+        Aug 2 11:00:00 2011</bucket> <bucket c='7894' a='7894' t='1312311600.000'
+        d='3600' f='1' etz='-25200' ltz='-25200'>Tue Aug 2 12:00:00 2011</bucket>
+        <bucket c='7406' a='7406' t='1312315200.000' d='3600' f='1' etz='-25200' ltz='-25200'>Tue
+        Aug 2 13:00:00 2011</bucket> <bucket c='6097' a='6097' t='1312318800.000'
+        d='3600' f='1' etz='-25200' ltz='-25200'>Tue Aug 2 14:00:00 2011</bucket>
+        <bucket c='6072' a='6072' t='1312322400.000' d='3600' f='1' etz='-25200' ltz='-25200'>Tue
+        Aug 2 15:00:00 2011</bucket> <bucket c='6002' a='6002' t='1312326000.000'
+        d='3600' f='1' etz='-25200' ltz='-25200'>Tue Aug 2 16:00:00 2011</bucket>
+        <bucket c='6004' a='6004' t='1312329600.000' d='3600' f='1' etz='-25200' ltz='-25200'>Tue
+        Aug 2 17:00:00 2011</bucket> <bucket c='5994' a='5994' t='1312333200.000'
+        d='3600' f='1' etz='-25200' ltz='-25200'>Tue Aug 2 18:00:00 2011</bucket>
+        <bucket c='6037' a='6037' t='1312336800.000' d='3600' f='1' etz='-25200' ltz='-25200'>Tue
+        Aug 2 19:00:00 2011</bucket> <bucket c='6021' a='6021' t='1312340400.000'
+        d='3600' f='1' etz='-25200' ltz='-25200'>Tue Aug 2 20:00:00 2011</bucket>
+        <bucket c='6051' a='6051' t='1312344000.000' d='3600' f='1' etz='-25200' ltz='-25200'>Tue
+        Aug 2 21:00:00 2011</bucket> <bucket c='6006' a='6006' t='1312347600.000'
+        d='3600' f='1' etz='-25200' ltz='-25200'>Tue Aug 2 22:00:00 2011</bucket>
+        <bucket c='6041' a='6041' t='1312351200.000' d='3600' f='1' etz='-25200' ltz='-25200'>Tue
+        Aug 2 23:00:00 2011</bucket> <bucket c='5993' a='5993' t='1312354800.000'
+        d='3600' f='1' etz='-25200' ltz='-25200'>Wed Aug 3 00:00:00 2011</bucket>
+        <bucket c='6040' a='6040' t='1312358400.000' d='3600' f='1' etz='-25200' ltz='-25200'>Wed
+        Aug 3 01:00:00 2011</bucket> <bucket c='5993' a='5993' t='1312362000.000'
+        d='3600' f='1' etz='-25200' ltz='-25200'>Wed Aug 3 02:00:00 2011</bucket>
+        <bucket c='6061' a='6061' t='1312365600.000' d='3600' f='1' etz='-25200' ltz='-25200'>Wed
+        Aug 3 03:00:00 2011</bucket> <bucket c='5995' a='5995' t='1312369200.000'
+        d='3600' f='1' etz='-25200' ltz='-25200'>Wed Aug 3 04:00:00 2011</bucket>
+        <bucket c='5988' a='5988' t='1312372800.000' d='3600' f='1' etz='-25200' ltz='-25200'>Wed
+        Aug 3 05:00:00 2011</bucket> <bucket c='6042' a='6042' t='1312376400.000'
+        d='3600' f='1' etz='-25200' ltz='-25200'>Wed Aug 3 06:00:00 2011</bucket>
+        <bucket c='5998' a='5998' t='1312380000.000' d='3600' f='1' etz='-25200' ltz='-25200'>Wed
+        Aug 3 07:00:00 2011</bucket> <bucket c='6055' a='6055' t='1312383600.000'
+        d='3600' f='1' etz='-25200' ltz='-25200'>Wed Aug 3 08:00:00 2011</bucket>
+        <bucket c='5997' a='5997' t='1312387200.000' d='3600' f='1' etz='-25200' ltz='-25200'>Wed
+        Aug 3 09:00:00 2011</bucket> <bucket c='5994' a='5994' t='1312390800.000'
+        d='3600' f='1' etz='-25200' ltz='-25200'>Wed Aug 3 10:00:00 2011</bucket>
+        <bucket c='875' a='875' t='1312394400.000' d='3600' f='1' etz='-25200' ltz='-25200'>Wed
+        Aug 3 11:00:00 2011</bucket> </timeline> <timeline c='150397' cursor='1312308000'>
+        <bucket c='7741' a='7741' t='1312308000.000' d='3600' f='1' etz='-25200' ltz='-25200'>Tue
+        Aug 2 11:00:00 2011</bucket> <bucket c='7894' a='7894' t='1312311600.000'
+        d='3600' f='1' etz='-25200' ltz='-25200'>Tue Aug 2 12:00:00 2011</bucket>
+        <bucket c='7406' a='7406' t='1312315200.000' d='3600' f='1' etz='-25200' ltz='-25200'>Tue
+        Aug 2 13:00:00 2011</bucket> <bucket c='6097' a='6097' t='1312318800.000'
+        d='3600' f='1' etz='-25200' ltz='-25200'>Tue Aug 2 14:00:00 2011</bucket>
+        <bucket c='6072' a='6072' t='1312322400.000' d='3600' f='1' etz='-25200' ltz='-25200'>Tue
+        Aug 2 15:00:00 2011</bucket> <bucket c='6002' a='6002' t='1312326000.000'
+        d='3600' f='1' etz='-25200' ltz='-25200'>Tue Aug 2 16:00:00 2011</bucket>
+        <bucket c='6004' a='6004' t='1312329600.000' d='3600' f='1' etz='-25200' ltz='-25200'>Tue
+        Aug 2 17:00:00 2011</bucket> <bucket c='5994' a='5994' t='1312333200.000'
+        d='3600' f='1' etz='-25200' ltz='-25200'>Tue Aug 2 18:00:00 2011</bucket>
+        <bucket c='6037' a='6037' t='1312336800.000' d='3600' f='1' etz='-25200' ltz='-25200'>Tue
+        Aug 2 19:00:00 2011</bucket> <bucket c='6021' a='6021' t='1312340400.000'
+        d='3600' f='1' etz='-25200' ltz='-25200'>Tue Aug 2 20:00:00 2011</bucket>
+        <bucket c='6051' a='6051' t='1312344000.000' d='3600' f='1' etz='-25200' ltz='-25200'>Tue
+        Aug 2 21:00:00 2011</bucket> <bucket c='6006' a='6006' t='1312347600.000'
+        d='3600' f='1' etz='-25200' ltz='-25200'>Tue Aug 2 22:00:00 2011</bucket>
+        <bucket c='6041' a='6041' t='1312351200.000' d='3600' f='1' etz='-25200' ltz='-25200'>Tue
+        Aug 2 23:00:00 2011</bucket> <bucket c='5993' a='5993' t='1312354800.000'
+        d='3600' f='1' etz='-25200' ltz='-25200'>Wed Aug 3 00:00:00 2011</bucket>
+        <bucket c='6040' a='6040' t='1312358400.000' d='3600' f='1' etz='-25200' ltz='-25200'>Wed
+        Aug 3 01:00:00 2011</bucket> <bucket c='5993' a='5993' t='1312362000.000'
+        d='3600' f='1' etz='-25200' ltz='-25200'>Wed Aug 3 02:00:00 2011</bucket>
+        <bucket c='6061' a='6061' t='1312365600.000' d='3600' f='1' etz='-25200' ltz='-25200'>Wed
+        Aug 3 03:00:00 2011</bucket> <bucket c='5995' a='5995' t='1312369200.000'
+        d='3600' f='1' etz='-25200' ltz='-25200'>Wed Aug 3 04:00:00 2011</bucket>
+        <bucket c='5988' a='5988' t='1312372800.000' d='3600' f='1' etz='-25200' ltz='-25200'>Wed
+        Aug 3 05:00:00 2011</bucket> <bucket c='6042' a='6042' t='1312376400.000'
+        d='3600' f='1' etz='-25200' ltz='-25200'>Wed Aug 3 06:00:00 2011</bucket>
+        <bucket c='5998' a='5998' t='1312380000.000' d='3600' f='1' etz='-25200' ltz='-25200'>Wed
+        Aug 3 07:00:00 2011</bucket> <bucket c='6055' a='6055' t='1312383600.000'
+        d='3600' f='1' etz='-25200' ltz='-25200'>Wed Aug 3 08:00:00 2011</bucket>
+        <bucket c='5997' a='5997' t='1312387200.000' d='3600' f='1' etz='-25200' ltz='-25200'>Wed
+        Aug 3 09:00:00 2011</bucket> <bucket c='5994' a='5994' t='1312390800.000'
+        d='3600' f='1' etz='-25200' ltz='-25200'>Wed Aug 3 10:00:00 2011</bucket>
+        <bucket c='875' a='875' t='1312394400.000' d='3600' f='1' etz='-25200' ltz='-25200'>Wed
+        Aug 3 11:00:00 2011</bucket> </timeline>
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/search/parser:
+    get:
+      summary: Parses Splunk search language and returns semantic map.
+      operationId: get__services_search_parser
+      is_consequential: false
+      tags:
+      - search
+      description: Parses Splunk search language and returns semantic map.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/search/scheduler:
+    get:
+      summary: Get current search scheduler enablement status.
+      operationId: get__services_search_scheduler
+      is_consequential: false
+      tags:
+      - search
+      description: Get current search scheduler enablement status.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/search/scheduler/_acl:
+    get:
+      summary: <link href="/services/search/scheduler/_acl" rel="_acl"/>
+      operationId: get__services_search_scheduler_acl
+      is_consequential: false
+      tags:
+      - search
+      description: <link href="/services/search/scheduler/_acl" rel="_acl"/>
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/search/scheduler/scheduler:
+    get:
+      summary: <id>https://localhost:8089/services/search/scheduler/scheduler</id>
+      operationId: get__services_search_scheduler_scheduler
+      is_consequential: false
+      tags:
+      - search
+      description: <id>https://localhost:8089/services/search/scheduler/scheduler</id>
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/search/scheduler/status:
+    post:
+      summary: Enable or disable the search scheduler.
+      operationId: post__services_search_scheduler_status
+      is_consequential: false
+      tags:
+      - search
+      description: Enable or disable the search scheduler.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties: {}
+  /services/search/timeparser:
+    get:
+      summary: Get a lookup table of time arguments to absolute timestamps.
+      operationId: get__services_search_timeparser
+      is_consequential: false
+      tags:
+      - search
+      description: Get a lookup table of time arguments to absolute timestamps.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/search/typeahead:
+    get:
+      summary: Get a list of words or descriptions for possible auto-complete terms.
+      operationId: get__services_search_typeahead
+      is_consequential: false
+      tags:
+      - search
+      description: Get a list of words or descriptions for possible auto-complete
+        terms.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/search/{id}:
+    post:
+      summary: Start a new search or searches and return a search ID (SID) for each
+        named search statement.
+      operationId: post__services_search_id
+      is_consequential: false
+      tags:
+      - search
+      description: Start a new search or searches and return a search ID (SID) for
+        each named search statement.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties: {}
+  /services/{id}/modules:
+    post:
+      summary: Create a module within the app context.
+      operationId: post__services_id_modules
+      is_consequential: false
+      tags:
+      - search
+      description: Create a module within the app context.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties: {}
+  /services/{id}/modules/:
+    get:
+      summary: Retrieves information about a specific module.
+      operationId: get__services_id_modules
+      is_consequential: false
+      tags:
+      - search
+      description: Retrieves information about a specific module.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/{id}/modules/foo.bar:
+    put:
+      summary: Create or update a specific module within the app context.
+      operationId: put__services_id_modules_foo_bar
+      is_consequential: false
+      tags:
+      - search
+      description: Create or update a specific module within the app context.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties: {}
+    delete:
+      summary: Delete a specific module within the app context.
+      operationId: delete__services_id_modules_foo_bar
+      is_consequential: false
+      tags:
+      - search
+      description: Delete a specific module within the app context.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/{id}/modules/search.module.testmodule:
+    get:
+      summary: GET /services/{id}/modules/search.module.testmodule
+      operationId: get__services_id_modules_search_module_testmodule
+      is_consequential: false
+      tags:
+      - search
+      description: 'Example response JSONCopy { "code": "not_found", "message": "Module
+        does not exist/already deleted" } { "code": "not_found", "message": "Module
+        does not exist/already deleted" } See [HTTP Status Codes](/?resourceId=Splunk_RESTUM_RESTusing)
+        for a list of possible responses.'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/{id}/permissions:
+    post:
+      summary: Update permissions for a module.
+      operationId: post__services_id_permissions
+      is_consequential: false
+      tags:
+      - search
+      description: Update permissions for a module.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties: {}
+  /services/{id}/permissions/role/:
+    get:
+      summary: Get all permissions for a given role.
+      operationId: get__services_id_permissions_role
+      is_consequential: false
+      tags:
+      - search
+      description: Get all permissions for a given role.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/{id}/permissions/role/editor:
+    get:
+      summary: GET /services/{id}/permissions/role/editor
+      operationId: get__services_id_permissions_role_editor
+      is_consequential: false
+      tags:
+      - search
+      description: 'Example response JSONCopy [{ "resourceType": "", "resourceName":
+        "", "permissions": [ { "operation": "read", "roles": [ "admin", "user", "editor"
+        ] }, { "operation": "write", "roles": [ "editor" ] } ] }] [{ "resourceType":
+        "", "resourceName": "", "permissions": [ { "operation": "read", "roles": [
+        "admin", "user", "editor" ] }, { "operation": "write", "roles": [ "editor"
+        ] } ] }] ## services/spl2/permissions/user/{username} JSONCopy'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/{id}/permissions/user/:
+    get:
+      summary: Get all permissions for a given user.
+      operationId: get__services_id_permissions_user
+      is_consequential: false
+      tags:
+      - search
+      description: Get all permissions for a given user.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /services/{id}/permissions/user/{id}:
+    get:
+      summary: GET /services/{id}/permissions/user/{id}
+      operationId: get__services_id_permissions_user_id
+      is_consequential: false
+      tags:
+      - search
+      description: 'Example response JSONCopy { "resourceType": "", "resourceName":
+        "", "permissions": [ { "operation": "read", "roles": [ "admin", "user", "editor"
+        ] }, { "operation": "write", "roles": [ "editor" ] } ] } { "resourceType":
+        "", "resourceName": "", "permissions": [ { "operation": "read", "roles": [
+        "admin", "user", "editor" ] }, { "operation": "write", "roles": [ "editor"
+        ] } ] }'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+components:
+  parameters: {}

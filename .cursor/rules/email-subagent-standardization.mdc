@@ -1,0 +1,21 @@
+---
+description: Email subagent standardization execution constraints
+globs: python-agent-service/app/agents/*.py, python-agent-service/config/subagents.registry.yaml, python-agent-service/tests/*.py
+alwaysApply: false
+---
+
+Migrate `email-security` from compiled semantics to standard subagent semantics.
+Specs are in `specs/email-subagent-standardization/`.
+
+Hard constraints:
+- Keep `deep-research` runtime behavior unchanged in this scope.
+- `email-security` must be standard spec (no `runnable` field in final spec path).
+- Preserve email tool coverage parity with previous behavior.
+- Backend-dependent email tools must be bound at registration time.
+- Do not add new product features while migrating orchestration semantics.
+- Keep request/response compatibility for existing analyze flows.
+
+Verification:
+- `cd python-agent-service && python -m pytest tests/test_subagent_registry.py tests/test_official_subagents.py tests/test_subagent_execution_enforcement.py tests/test_email_security_subagent.py -q`
+- `cd python-agent-service && python -m pytest tests/test_e2e_upload_to_llm_first_message.py -q`
+- `cd python-agent-service && python -m ruff check app tests`

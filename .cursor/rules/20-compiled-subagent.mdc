@@ -1,0 +1,64 @@
+---
+description: Rules for adding compiled subagents to the subagent registry. Covers factory-table pattern vs build-time injection pattern, _COMPILED_INJECTION_ONLY_IDS, and deep_agent.py injection point.
+globs: app/agents/subagent_registry.py, app/agents/deep_agent.py, app/agents/*_compiled.py, config/subagents.registry.yaml
+alwaysApply: false
+---
+
+# Compiled Subagent Pattern
+
+当在 `config/subagents.registry.yaml` 中将某条目标记为 `runtime: compiled` 时，
+必须在代码层面提供对应的 runnable。有两种模式，**根据依赖选择，不得混用**。
+
+## 模式 A：工厂表（factory table）
+
+适用条件：子 Agent 图**自包含**，可在工厂函数内部解析模型与 backend（例如从环境变量）。
+
+```python
+# subagent_registry.py
+COMPILED_SUBAGENT_BUILDERS["my-agent"] = build_my_agent_compiled_subagent
+
+# my_agent_compiled.py
+def build_my_agent_compiled_subagent(description: str) -> dict[str, Any]:
+    return {"name": "my-agent", "description": description, "runnable": ...}
+```
+
+## 模式 B：构建期注入（build-time injection）
+
+适用条件：子 Agent 图需要从主 Agent 继承 `model` 和 `backend_factory`（FR-03）。
+
+```python
+# subagent_registry.py — 1. 加入白名单，跳过工厂表校验
+_COMPILED_INJECTION_ONLY_IDS: frozenset[str] = frozenset({"email-security", ...})
+
+def validate_compiled_builders_for_entries(...):
+    ...
+    if e.id in _COMPILED_INJECTION_ONLY_IDS:
+        continue  # injected at build time
+
+def build_subagent_specs_from_registry(...):
+    ...
+    if row.id in _COMPILED_INJECTION_ONLY_IDS:
+        specs.append({"name": row.id, "description": catalog_desc,
+                       "_compiled_injection_placeholder": True})
+        continue
+
+# deep_agent.py — 2. 在 _build_official_agent 内替换占位符
+from app.agents.my_compiled import build_my_compiled_spec
+
+raw = build_subagent_specs()
+resolved = [
+    build_my_compiled_spec(s["description"], self.model, self.backend_factory)
+    if s.get("_compiled_injection_placeholder") and s["name"] == "my-agent"
+    else s
+    for s in raw
+]
+create_deep_agent(..., subagents=resolved)
+```
+
+## 硬性约束
+
+- **禁止**在 YAML 声明 `runtime: compiled` 而不提供 runnable（会在启动时 RuntimeError）。
+- **禁止**将主会话完整 `messages` 复制为子图唯一上下文（框架已排除；不得绕开）。
+- 所有 compiled 构建器文件命名为 `app/agents/<name>_compiled.py`，
+  对应 `open_deep_research_compiled.py` 的命名惯例。
+- `_COMPILED_INJECTION_ONLY_IDS` 是唯一豁免校验的机制，不得直接修改 `validate_compiled_builders_for_entries` 的主逻辑。

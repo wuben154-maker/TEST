@@ -1,0 +1,119 @@
+# 1. 已知良性杀毒/EDR行为
+- name: filter_known_av_scan_activity
+  condition: "alert.get('process_name') in ['MsMpEng.exe', 'avp.exe', '360tray.exe'] and alert.get('behavior') == 'file_scan'"
+  action: "discard"
+  description: "过滤杀毒软件自身扫描行为"
+
+# 2. 系统账户正常行为
+- name: filter_system_account_activity
+  condition: "alert.get('user') in ['SYSTEM', 'LOCAL SERVICE', 'NETWORK SERVICE'] and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤系统内置账户低风险行为"
+
+# 3. 已知白名单进程启动
+- name: filter_whitelisted_process_execution
+  condition: "alert.get('process_path', '').startswith('C:\\Program Files') and alert.get('signed') == True and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤已签名且在标准路径下的低风险程序执行"
+
+# 4. 常见软件自动更新
+- name: filter_software_updater
+  condition: "alert.get('process_name') in ['chrome.exe', 'msedge.exe', 'WeChat.exe'] and 'update' in alert.get('command_line', '').lower()"
+  action: "discard"
+  description: "过滤常见软件自动更新行为"
+
+# 5. 临时目录正常执行（低危）
+- name: filter_temp_execution_low
+  condition: "'\\temp\\' in alert.get('process_path', '').lower() and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤低风险临时目录执行（需结合白名单环境）"
+
+# 6. IT运维工具行为
+- name: filter_it_admin_tools
+  condition: "alert.get('process_name') in ['psexec.exe', 'wmic.exe'] and alert.get('user') in alert.get('admin_users', []) and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤管理员使用运维工具的正常行为"
+
+# 7. 计划任务触发
+- name: filter_scheduled_task_execution
+  condition: "alert.get('parent_process') == 'taskeng.exe' and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤计划任务触发的低风险执行"
+
+# 8. 常见浏览器子进程行为
+- name: filter_browser_child_process
+  condition: "alert.get('parent_process') in ['chrome.exe', 'msedge.exe'] and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤浏览器正常子进程行为"
+
+# 9. DLL加载低风险告警
+- name: filter_low_risk_dll_load
+  condition: "alert.get('event_type') == 'dll_load' and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤低风险DLL加载告警"
+
+# 10. 已签名驱动加载
+- name: filter_signed_driver_load
+  condition: "alert.get('event_type') == 'driver_load' and alert.get('signed') == True"
+  action: "discard"
+  description: "过滤已签名驱动加载"
+
+# 11. 内网资产管理工具
+- name: filter_asset_management_agent
+  condition: "alert.get('process_name') in ['agent.exe', 'zabbix_agentd.exe', 'salt-minion.exe']"
+  action: "discard"
+  description: "过滤资产管理/监控Agent行为"
+
+# 12. 日志采集工具
+- name: filter_log_collector
+  condition: "alert.get('process_name') in ['filebeat.exe', 'fluentd.exe']"
+  action: "discard"
+  description: "过滤日志采集工具行为"
+
+# 13. 本机回环连接
+- name: filter_localhost_connection
+  condition: "alert.get('src_ip') == '127.0.0.1' and alert.get('dst_ip') == '127.0.0.1'"
+  action: "discard"
+  description: "过滤本地回环通信"
+
+# 14. 已知白名单路径PowerShell
+- name: filter_safe_powershell_usage
+  condition: "alert.get('process_name') == 'powershell.exe' and alert.get('command_line', '').startswith('powershell -File C:\\ITScripts\\')"
+  action: "discard"
+  description: "过滤IT规范脚本执行"
+
+# 15. 低危注册表修改
+- name: filter_low_risk_registry_change
+  condition: "alert.get('event_type') == 'registry_modify' and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤低风险注册表修改"
+
+# 16. 时间同步行为
+- name: filter_time_sync
+  condition: "alert.get('process_name') == 'w32tm.exe'"
+  action: "discard"
+  description: "过滤系统时间同步行为"
+
+# 17. 打印服务行为
+- name: filter_print_spooler
+  condition: "alert.get('process_name') == 'spoolsv.exe' and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤打印服务正常行为"
+
+# 18. 常见压缩软件操作
+- name: filter_archive_tools
+  condition: "alert.get('process_name') in ['winrar.exe', '7z.exe'] and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤压缩解压行为"
+
+# 19. USB设备正常接入（低危）
+- name: filter_usb_insert_low
+  condition: "alert.get('event_type') == 'usb_insert' and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤低风险USB接入"
+
+# 20. 进程自启动（白名单路径）
+- name: filter_known_autorun
+  condition: "alert.get('autorun_path', '').startswith('C:\\Program Files') and alert.get('signed') == True"
+  action: "discard"
+  description: "过滤合法自启动项"

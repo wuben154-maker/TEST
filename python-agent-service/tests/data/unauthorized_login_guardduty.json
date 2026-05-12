@@ -1,0 +1,74 @@
+{
+  "AccountId": "524095063240",
+  "Arn": "arn:aws:guardduty:us-east-1:524095063240:detector/02b0935d0ec54eb194ba84470e122aa0/finding/4ecaae473a5b0a5d40c7712a3abb4179",
+  "CreatedAt": "2025-03-03T15:09:54.742Z",
+  "Description": "The API ListBuckets, commonly used in reconnaissance attacks, was invoked from an IP address 3.95.202.60 on the custom threat list MyThreatIntelSet. Unauthorized actors perform such activity to gather information and discover resources like databases, S3 buckets etc., in order to further tailor the attack.",
+  "Id": "4ecaae473a5b0a5d40c7712a3abb4179",
+  "Partition": "aws",
+  "Region": "us-east-1",
+  "Resource": {
+    "AccessKeyDetails": {
+      "AccessKeyId": "ASIAXUBUAATEJO7VHPJX",
+      "PrincipalId": "AROAXUBUAATEKYTJME23X:4dfd0b4d9a3d4ba98df5084c0d05e9bb",
+      "UserName": "demOS-dzone-project-1qxo5q2k-stack-d-RoleEcsTaskApp-BPLKJFmfRc2Y",
+      "UserType": "AssumedRole"
+    },
+    "ResourceType": "AccessKey"
+  },
+  "SchemaVersion": "2.0",
+  "Service": {
+    "Action": {
+      "ActionType": "AWS_API_CALL",
+      "AwsApiCallAction": {
+        "Api": "ListBuckets",
+        "CallerType": "Remote IP",
+        "RemoteIpDetails": {
+          "City": {
+            "CityName": "Ashburn"
+          },
+          "Country": {
+            "CountryName": "United States"
+          },
+          "GeoLocation": {
+            "Lat": 39.0469,
+            "Lon": -77.4903
+          },
+          "IpAddressV4": "3.95.202.60",
+          "Organization": {
+            "Asn": "14618",
+            "AsnOrg": "AMAZON-AES",
+            "Isp": "Amazon.com",
+            "Org": "Amazon.com"
+          }
+        },
+        "ServiceName": "s3.amazonaws.com",
+        "AffectedResources": {}
+      }
+    },
+    "Evidence": {
+      "ThreatIntelligenceDetails": [
+        {
+          "ThreatListName": "MyThreatIntelSet",
+          "ThreatNames": [
+            "Customer Threat Intel"
+          ]
+        }
+      ]
+    },
+    "Archived": false,
+    "Count": 5,
+    "DetectorId": "02b0935d0ec54eb194ba84470e122aa0",
+    "EventFirstSeen": "2025-03-03T14:57:09.000Z",
+    "EventLastSeen": "2025-03-03T14:57:14.000Z",
+    "ResourceRole": "TARGET",
+    "ServiceName": "guardduty",
+    "AdditionalInfo": {
+      "Value": "{\"threatListName\":\"MyThreatIntelSet\",\"threatName\":\"Customer Threat Intel\",\"apiCalls\":[{\"name\":\"DescribeParameters\",\"count\":8,\"firstSeen\":1741013833,\"lastSeen\":1741013834},{\"name\":\"ListBuckets\",\"count\":1,\"firstSeen\":1741013829,\"lastSeen\":1741013829}]}",
+      "Type": "default"
+    }
+  },
+  "Severity": 5,
+  "Title": "The reconnaissance API ListBuckets was invoked from an IP address on a custom threat list.",
+  "Type": "Recon:IAMUser/MaliciousIPCaller.Custom",
+  "UpdatedAt": "2025-03-03T15:09:54.742Z"
+}

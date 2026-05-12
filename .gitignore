@@ -1,0 +1,53 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+
+python-agent-service/.env
+python-agent-service/.artifacts/
+python-agent-service/uploads/
+.vscode/chrome-debug-profile
+
+
+# Editor directories and files
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Python bytecode / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Python virtualenv
+venv/
+.venv/
+.claude/
+
+# Playwright E2E
+e2e/.auth/
+e2e/.env
+# e2e/.env.local is covered by *.local above
+e2e/test-results/
+e2e/html-report/
+
+# Local design-review handoff (URLs + credentials)
+.cursor/design-review-handoff/target.local.yaml
+.cursor/design-review-handoff/*.local.yaml
+
+# Spec documents (local / not tracked)
+specs/

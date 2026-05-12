@@ -1,0 +1,159 @@
+{
+  "AccountId": "524095063240",
+  "Arn": "arn:aws:guardduty:us-east-1:524095063240:detector/d94a78fafb40451cb4f665ce21ad4b42/finding/90caeea09312efe1ee339fa69e805515",
+  "CreatedAt": "2025-03-28T14:56:29.221Z",
+  "Description": "The EC2 instance i-0cb81bc7f587ab893 is querying a domain name that is associated with Bitcoin-related activity.",
+  "Id": "90caeea09312efe1ee339fa69e805515",
+  "Partition": "aws",
+  "Region": "us-east-1",
+  "Resource": {
+    "InstanceDetails": {
+      "AvailabilityZone": "us-east-1a",
+      "IamInstanceProfile": {
+        "Arn": "arn:aws:iam::524095063240:instance-profile/demOS-dzone-project-p7g9rdcy-stack-fdqpyd0k-ProfileInstancesWorkersPublic-NuKQDPPfgzck",
+        "Id": "AIPAXUBUAATED5M3O2QKA"
+      },
+      "ImageDescription": "Amazon Linux AMI 2023.0.20250321 arm64 ECS HVM EBS",
+      "ImageId": "ami-0619c785c7351ec5d",
+      "InstanceId": "i-0cb81bc7f587ab893",
+      "InstanceState": "running",
+      "InstanceType": "t4g.micro",
+      "LaunchTime": "2025-03-27T17:20:47.000Z",
+      "NetworkInterfaces": [
+        {
+          "Ipv6Addresses": [
+            "2600:1f10:472d:350a:c3f3:6938:283d:3f7d"
+          ],
+          "NetworkInterfaceId": "eni-0c5719af871558301",
+          "PrivateDnsName": "i-0cb81bc7f587ab893.ec2.internal",
+          "PrivateIpAddress": "10.4.1.213",
+          "PrivateIpAddresses": [
+            {
+              "PrivateDnsName": "i-0cb81bc7f587ab893.ec2.internal",
+              "PrivateIpAddress": "10.4.1.213"
+            }
+          ],
+          "PublicDnsName": "ec2-52-90-115-168.compute-1.amazonaws.com",
+          "PublicIp": "52.90.115.168",
+          "SecurityGroups": [
+            {
+              "GroupId": "sg-037a7f85379f218a7",
+              "GroupName": "dzone-p7g9rdcy-fdqpyd0k.App10"
+            }
+          ],
+          "SubnetId": "subnet-0f14f339f5bac2c09",
+          "VpcId": "vpc-076a6b1f93addd1c6"
+        }
+      ],
+      "ProductCodes": [],
+      "Tags": [
+        {
+          "Key": "demOS:domain",
+          "Value": "dzone.live"
+        },
+        {
+          "Key": "StateOff",
+          "Value": "stopped"
+        },
+        {
+          "Key": "demOS:stack:id",
+          "Value": "fdqpyd0k"
+        },
+        {
+          "Key": "demOS:stack:name",
+          "Value": "demOS-dzone-project-p7g9rdcy"
+        },
+        {
+          "Key": "aws:cloudformation:stack-name",
+          "Value": "demOS-dzone-project-p7g9rdcy-stack-fdqpyd0k"
+        },
+        {
+          "Key": "Name",
+          "Value": "app1"
+        },
+        {
+          "Key": "demOS:project:id",
+          "Value": "p7g9rdcy"
+        },
+        {
+          "Key": "demOS:bundle",
+          "Value": "dropzone-cloud-demo/2.0"
+        },
+        {
+          "Key": "aws:cloudformation:logical-id",
+          "Value": "InstanceApp1"
+        },
+        {
+          "Key": "aws:cloudformation:stack-id",
+          "Value": "arn:aws:cloudformation:us-east-1:524095063240:stack/demOS-dzone-project-p7g9rdcy-stack-fdqpyd0k/14208790-0b2f-11f0-984e-12435e8aeb05"
+        },
+        {
+          "Key": "Group",
+          "Value": "workerspublic"
+        },
+        {
+          "Key": "demOS:namespace",
+          "Value": "dzone"
+        },
+        {
+          "Key": "demOS:project:stack:height",
+          "Value": "one"
+        },
+        {
+          "Key": "demOS:host:label",
+          "Value": "App1"
+        },
+        {
+          "Key": "demOS:host:type",
+          "Value": "EcsWorker"
+        },
+        {
+          "Key": "StateOn",
+          "Value": "running"
+        },
+        {
+          "Key": "demOS:project:scope",
+          "Value": "admin"
+        }
+      ]
+    },
+    "ResourceType": "Instance"
+  },
+  "SchemaVersion": "2.0",
+  "Service": {
+    "Action": {
+      "ActionType": "DNS_REQUEST",
+      "DnsRequestAction": {
+        "Domain": "stratum.slushpool.com",
+        "Protocol": "UDP",
+        "Blocked": false,
+        "DomainWithSuffix": "slushpool.com"
+      }
+    },
+    "Evidence": {
+      "ThreatIntelligenceDetails": [
+        {
+          "ThreatListName": "Amazon",
+          "ThreatNames": [
+            "Bitcoin Related"
+          ]
+        }
+      ]
+    },
+    "Archived": false,
+    "Count": 2,
+    "DetectorId": "d94a78fafb40451cb4f665ce21ad4b42",
+    "EventFirstSeen": "2025-03-28T14:53:17.000Z",
+    "EventLastSeen": "2025-03-28T14:53:17.000Z",
+    "ResourceRole": "TARGET",
+    "ServiceName": "guardduty",
+    "AdditionalInfo": {
+      "Value": "{\"threatListName\":\"Amazon\",\"threatName\":\"Bitcoin Related\"}",
+      "Type": "default"
+    }
+  },
+  "Severity": 8,
+  "Title": "The EC2 instance i-0cb81bc7f587ab893 queried a Bitcoin-related domain name.",
+  "Type": "CryptoCurrency:EC2/BitcoinTool.B!DNS",
+  "UpdatedAt": "2025-03-28T14:56:34.530Z"
+}

@@ -1,0 +1,227 @@
+# LLM Gateway Configuration
+# API keys are loaded from environment variables (never in this file)
+#
+# context_window: max input tokens the provider accepts (used by the UI's
+#   realtime context-usage indicator as the divisor).
+# max_output_tokens: typical/enforced upper bound for one completion.
+# Values are additive and read by app/llm_gateway and surfaced via GET /models.
+
+providers:
+  anthropic:
+    env_key: ANTHROPIC_API_KEY
+    base_url: null
+    models:
+      - id: anthropic/claude-sonnet-4
+        name: Claude Sonnet 4
+        sdk_model: claude-sonnet-4-20250514
+        context_window: 200000
+        max_output_tokens: 8192
+      - id: anthropic/claude-opus-4
+        name: Claude Opus 4
+        sdk_model: claude-opus-4-20250514
+        context_window: 200000
+        max_output_tokens: 8192
+      - id: anthropic/claude-haiku-4
+        name: Claude Haiku 4
+        sdk_model: claude-4-haiku-20250514
+        context_window: 200000
+        max_output_tokens: 8192
+
+  google:
+    env_key: GOOGLE_API_KEY
+    base_url: null
+    models:
+      - id: google/gemini-3.1-pro-preview
+        name: gemini-3.1-pro-preview
+        sdk_model: gemini-3.1-pro-preview
+        context_window: 1048576
+        max_output_tokens: 8192
+      - id: google/gemini-3.1-flash-lite-preview
+        name: gemini-3.1-flash-lite-preview
+        # sdk_model: gemini-2.5-flash-preview-05-20
+        sdk_model: gemini-3.1-flash-lite-preview
+        context_window: 1048576
+        max_output_tokens: 8192
+
+  doubao:
+    env_key: DOUBAO_API_KEY
+    base_url: https://ark.cn-beijing.volces.com/api/v3
+    # sdk_model: use Model ID from Volcano Console (e.g. doubao-pro-32k-241215)
+    # or Endpoint ID (ep-xxx) from https://console.volcengine.com/ark/region:ark+cn-beijing/endpoint
+    models:
+      - id: doubao/doubao-seed-2-pro
+        name: Doubao Seed 2 Pro
+        sdk_model: doubao-seed-2-0-pro-260215
+        context_window: 262144
+        max_output_tokens: 4096
+      - id: doubao/doubao-seed-1.6-lite
+        name: Doubao Seed 1.6 lite
+        sdk_model: doubao-seed-1-6-lite-251015
+        context_window: 131072
+        max_output_tokens: 4096
+
+  # OpenCode Zen: model ids and endpoints per https://opencode.ai/docs/en/zen
+  # Deprecated Zen models (removed from this list): gemini-3-pro, glm-4.6/4.7, minimax-m2.1,
+  # kimi-k2, kimi-k2-thinking, qwen3-coder 480B (see Zen docs "Deprecated models").
+  opencode:
+    env_key: OPENCODE_ZEN_API_KEY
+    base_url: https://opencode.ai/zen/v1
+    models:
+      # GPT — zen/v1/responses (OpenAI-compatible)
+      - id: opencode/gpt-5.5
+        name: GPT 5.5 (Zen)
+        sdk_model: gpt-5.5
+        endpoint_suffix: responses
+        context_window: 1100000
+        max_output_tokens: 16384
+      # Claude — zen/v1/messages (Anthropic)
+      - id: opencode/claude-opus-4-6
+        name: Claude Opus 4.6 (Zen)
+        sdk_model: claude-opus-4-6
+        endpoint_suffix: messages
+        context_window: 200000
+        max_output_tokens: 8192
+      - id: opencode/claude-opus-4-7
+        name: Claude Opus 4.7 (Zen)
+        sdk_model: claude-opus-4-7
+        endpoint_suffix: messages
+        context_window: 200000
+        max_output_tokens: 8192
+      - id: opencode/claude-sonnet-4-6
+        name: Claude Sonnet 4.6 (Zen)
+        sdk_model: claude-sonnet-4-6
+        endpoint_suffix: messages
+        context_window: 200000
+        max_output_tokens: 8192
+      # Gemini — zen/v1/models/{id}
+      - id: opencode/gemini-3.1-pro
+        name: Gemini 3.1 Pro (Zen)
+        sdk_model: gemini-3.1-pro
+        endpoint_suffix: models/gemini-3.1-pro
+        context_window: 1048576
+        max_output_tokens: 8192
+      - id: opencode/gemini-3-flash
+        name: Gemini 3 Flash (Zen)
+        sdk_model: gemini-3-flash
+        endpoint_suffix: models/gemini-3-flash
+        context_window: 1048576
+        max_output_tokens: 8192
+      # OpenAI-compatible chat/completions
+      - id: opencode/minimax-m2.5
+        name: MiniMax M2.5 (Zen)
+        sdk_model: minimax-m2.5
+        endpoint_suffix: chat/completions
+        context_window: 131072
+        max_output_tokens: 4096
+      - id: opencode/glm-5.1
+        name: GLM 5.1 (Zen)
+        sdk_model: glm-5.1
+        endpoint_suffix: chat/completions
+        context_window: 128000
+        max_output_tokens: 4096
+      - id: opencode/kimi-k2.6
+        name: Kimi K2.6 (Zen)
+        sdk_model: kimi-k2.6
+        endpoint_suffix: chat/completions
+        context_window: 262144
+        max_output_tokens: 4096
+      - id: opencode/qwen3.6-plus
+        name: Qwen 3.6 Plus (Zen)
+        sdk_model: qwen3.6-plus
+        endpoint_suffix: chat/completions
+        context_window: 131072
+        max_output_tokens: 8192
+
+
+  # OpenRouter: OpenAI-compatible multi-provider gateway.
+  # Gateway ids use openrouter/<provider>/<model> so billing and UI can distinguish
+  # routed usage from direct provider usage. sdk_model is the provider-native
+  # OpenRouter model id sent to https://openrouter.ai/api/v1/chat/completions.
+  openrouter:
+    env_key: OPENROUTER_API_KEY
+    base_url: https://openrouter.ai/api/v1
+    models:
+      - id: openrouter/anthropic/claude-opus-4.7
+        name: Claude Opus 4.7 (OpenRouter)
+        sdk_model: anthropic/claude-opus-4.7
+        context_window: 1000000
+        max_output_tokens: 65536
+      - id: openrouter/anthropic/claude-sonnet-4.6
+        name: Claude Sonnet 4.6 (OpenRouter)
+        sdk_model: anthropic/claude-sonnet-4.6
+        context_window: 1000000
+        max_output_tokens: 16384
+      - id: openrouter/moonshotai/kimi-k2.6
+        name: Kimi K2.6 (OpenRouter)
+        sdk_model: moonshotai/kimi-k2.6
+        context_window: 256000
+        max_output_tokens: 65536
+      # Google via OpenRouter — sdk_model is the OpenRouter route id (see openrouter.ai/google/...).
+      - id: openrouter/google/gemini-3.1-pro-preview
+        name: Gemini 3.1 Pro (OpenRouter)
+        sdk_model: google/gemini-3.1-pro-preview
+        context_window: 1048576
+        max_output_tokens: 8192
+      # Flash-tier peer to 3.1 Pro; OpenRouter registers this as "Gemini 3 Flash Preview" (no chat id gemini-3.1-flash-preview).
+      - id: openrouter/google/gemini-3-flash-preview
+        name: Gemini 3 Flash (OpenRouter)
+        sdk_model: google/gemini-3-flash-preview
+        context_window: 1048576
+        max_output_tokens: 8192
+
+  openai:
+    env_key: OPENAI_API_KEY
+    base_url: null
+    models:
+      - id: openai/gpt-4o
+        name: GPT-4o
+        sdk_model: gpt-4o
+        context_window: 128000
+        max_output_tokens: 16384
+      - id: openai/gpt-4o-mini
+        name: GPT-4o Mini
+        sdk_model: gpt-4o-mini
+        context_window: 128000
+        max_output_tokens: 16384
+
+  kimi:
+    env_key: KIMI_API_KEY
+    base_url: https://api.moonshot.cn/v1
+    models:
+      - id: kimi/k2.5
+        name: Kimi K2.5
+        sdk_model: moonshot-v1-128k
+        context_window: 131072
+        max_output_tokens: 4096
+      - id: kimi/k2
+        name: Kimi K2
+        sdk_model: moonshot-v1-32k
+        context_window: 32768
+        max_output_tokens: 4096
+
+  minimax:
+    env_key: MINIMAX_API_KEY
+    base_url: https://api.minimax.chat/v1
+    models:
+      - id: minimax/m2.5
+        name: MiniMax M2.5
+        sdk_model: abab6.5s-chat
+        context_window: 245760
+        max_output_tokens: 8192
+
+  glm:
+    env_key: GLM_API_KEY
+    base_url: https://open.bigmodel.cn/api/paas/v4
+    models:
+      - id: glm/glm-4-plus
+        name: GLM-4 Plus
+        sdk_model: glm-4-plus
+        context_window: 131072
+        max_output_tokens: 4096
+      - id: glm/glm-4-flash
+        name: GLM-4 Flash
+        sdk_model: glm-4-flash
+        context_window: 131072
+        max_output_tokens: 4096
+
+default_model: openrouter/moonshotai/kimi-k2.6

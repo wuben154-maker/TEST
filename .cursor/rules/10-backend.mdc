@@ -1,0 +1,23 @@
+---
+globs: **/*.py, **/*.java, **/*.go, **/*.sql, src/server/**, src/api/**
+alwaysApply: false
+---
+# Backend Development Rules
+
+## 1. API 设计规范
+- **风格**: 遵循 RESTful 标准 (或 GraphQL，视项目而定)。
+- **路径**: URL 必须使用名词复数，例如 `/api/users`。
+- **响应**: 所有 API 必须返回统一的数据结构 `{ success: boolean, data: any, error?: string }`。
+
+## 2. 数据库与性能
+- **ORM**: (根据 `project_context.md`) 使用指定的 ORM，禁止手写拼接 SQL 以防止注入。
+- **N+1 问题**: 在查询关联数据时，必须注意预加载 (Eager Loading)。
+- **事务**: 涉及多表更新的操作必须包裹在 Transaction 中。
+
+## 3. 错误处理与日志
+- 不要吞掉异常。捕获异常后必须记录日志，并向上传递或返回标准错误码。
+- 严禁在日志中打印敏感信息（密码、Token）。
+
+## 4. 测试策略 (Backend TDD)
+- **Integration Test**: 优先编写 API 级的集成测试。
+- **Mock**: 外部服务（如支付网关、邮件服务）必须使用 Mock。

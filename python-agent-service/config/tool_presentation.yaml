@@ -1,0 +1,404 @@
+# Tool registry: SSE presentation + optional YAML-driven fields for assembled tools.
+#
+# Use one of two top-level shapes:
+#   (A) Tiered (recommended): ``system_tools``, ``common_tools``, ``subagent_tools``
+#   (B) Legacy: single mapping ``tools:``
+#
+# Per-tool fields (same in every section):
+#   presentation: task | action | state | parameter   (required)
+#   emit_output: bool         (default true) — include tool output in SSE
+#   enabled: bool             (default true) — see category notes below
+#   description: string      (optional) — LLM StructuredTool.description when a factory reads it
+#   sse_tool_name: string    (optional) — rewrite ``toolName`` on outbound SSE (canonical name unchanged server-side)
+#
+# Category semantics:
+#   system_tools   DeepAgents / runtime built-ins (not mounted by ``create_common_tools``).
+#   common_tools   **Authoritative list for ``create_common_tools``** (tiered YAML): declare
+#                  tools in the order you want them on main + registry subagents. Each entry
+#                  with ``enabled: true`` is mounted if a code implementation exists (security,
+#                  research ``web_search`` / ``scrape_url`` / ``summarize_content``,
+#                  ``search_history``, HITL
+#                  ``request_user_input`` gated also by runtime ``include_hitl``).
+#   subagent_tools SSE / UI labels for skill-driven tool names; not mounted via
+#                  ``create_common_tools``.
+
+system_tools:
+  write_todos:
+    presentation: task
+    emit_output: true
+  task:
+    presentation: task
+    emit_output: true
+  read_file:
+    presentation: action
+    emit_output: false
+  grep:
+    presentation: action
+    emit_output: true
+  glob:
+    presentation: action
+    emit_output: true
+  ls:
+    presentation: action
+    emit_output: true
+  analyze_file_structure:
+    presentation: action
+    emit_output: true
+  edit_file:
+    presentation: action
+    emit_output: true
+  write_file:
+    presentation: action
+    emit_output: true
+  execute:
+    presentation: action
+    emit_output: true
+
+common_tools:
+  # --- Research (mounted by create_common_tools when enabled, same as security/HITL) ---
+  web_search:
+    enabled: true
+    description: >-
+      Use for keyword / topic discovery when you do not yet know which pages to read: returns result titles,
+      URLs, and short snippets (SERP-style). Do not use when the user already gave a specific HTTP(S) URL to
+      analyze—use scrape_url for that. After you pick URLs from results, call scrape_url for full article text.
+      Optional max_results (default 10): how many SERP hits to return. Backend: Tavily if TAVILY_API_KEY; else Serper
+      if SERPER_API_KEY; else Crawl4AI (WEB_SEARCH_ENGINE google|bing); else HTTP+BeautifulSoup.
+    presentation: action
+    emit_output: true
+  scrape_url:
+    enabled: true
+    description: >-
+      Fetch and extract readable content (markdown-oriented) from one HTTP(S) URL. Prefer this when the user
+      pasted a link or asked to summarize/analyze a specific page—no need to web_search first. Also use to
+      open full text for URLs you found via web_search. Primary: Crawl4AI; fallback HTTP+BeautifulSoup.
+    presentation: action
+    emit_output: true
+  summarize_content:
+    enabled: true
+    description: >-
+      Generate a concise AI-powered summary of long content. Useful for processing scraped articles.
+    presentation: action
+    emit_output: true
+  search_history:
+    enabled: true
+    description: >-
+      Read-only search over persisted chat messages for the current project (same scope as the UI timeline).
+      Use when the user needs exact prior wording, quotes, or to compare two past answers—do not rely on
+      [Project memory] / hydration alone for verbatim text. Optional substring filter (`query`) and
+      `request_id` filter; omit `query` to list the newest messages (`limit`, max 50). Returns truncated
+      content previews; if insufficient, ask the user to paste or open the message in the UI. Requires
+      authenticated analyze context (server sets project/user scope per request).
+    presentation: action
+    emit_output: true
+  SReadFile:
+    enabled: true
+    description: >-
+      **Use this instead of `read_file` when reading user-provided security artifacts** under virtual
+      paths such as `/workspace/...` or `/uploads/...` that you need to **analyze** (malware, webshell
+      suspects, phishing sources, `.eml`, mixed encodings, or unknown binary). It loads raw bytes from
+      storage, detects binary vs text, applies UTF-8 / charset-normalizer / CJK fallbacks for source
+      code, returns **base64 + optional hex prefix** for binaries, and parses **`.eml`** into
+      headers / body preview / attachment metadata (large attachments are not inlined). For **normal
+      repo, skill, or configuration exploration** (readable UTF-8 text, line-numbered views, grep
+      follow-ups, or tool-offloaded `large_tool_results/` chunks), keep using the default **`read_file`**
+      tool. Parameters: `file_path` (required); `view_mode` — `window` (default) uses 0-based `offset`/`limit`
+      for a contiguous slice; **`head_tail`** returns the first `limit` and last `limit` lines in one response
+      (omits the middle with a marker when needed — good for long webshells / appended payloads); optional
+      `max_bytes` cap, `hex_preview_bytes` for binary head (default 64, set 0 to disable).
+    presentation: action
+    emit_output: true
+
+  # --- Shared security tools (create_common_tools) ---
+  extract_iocs:
+    enabled: true
+    description: "Extract IOCs (IPs, domains, URLs, hashes, emails) from text"
+    presentation: action
+    emit_output: true
+    workspace_tab:
+      type: ioc_table
+      label: "IOCs"
+      icon: shield
+      merge_strategy: always
+  decode_base64:
+    enabled: true
+    description: "Decode Base64 encoded string"
+    presentation: action
+    emit_output: true
+  decode_url:
+    enabled: true
+    description: "URL decode a string"
+    presentation: action
+    emit_output: true
+  lookup_threat_intel:
+    enabled: false
+    description: "Query threat intelligence for an indicator (IP, domain, hash)"
+    presentation: action
+    emit_output: true
+   # --- require user input tools (create_common_tools) ---
+  request_user_input:
+    enabled: true
+    description: >-
+      Ask the human operator a question and wait for an answer. Use for missing parameters,
+      clarifications, or explicit choices. Do not use for dangerous-tool approval; that is handled by policy.
+    presentation: parameter
+    emit_output: true
+
+  # --- E2B on-demand sandbox tools (mounted only when E2B_API_KEY is configured) ---
+  sandbox_create:
+    enabled: true
+    description: >-
+      Create an isolated E2B cloud sandbox for dynamic malware analysis, binary execution,
+      or URL simulation. Returns a sandbox_id for session-level reuse. Use a template from
+      config/sandbox.yaml: 'base', 'binary-analysis', 'web-simulation', 'script-exec', 'desktop'.
+      The VM does not see SecManus host paths (/uploads/...). Workspace staging writes inputs to
+      /workspace/<project_id>/<basename>; manual upload_files may use /tmp/secmanus/work/in/.
+      Download artifacts via download_paths from /tmp/secmanus/work/out/ or other VM paths.
+    presentation: action
+    emit_output: true
+  sandbox_destroy:
+    enabled: true
+    description: >-
+      Destroy an E2B sandbox that was created by sandbox_create. Always call this when a
+      session-level sandbox is no longer needed to avoid resource leaks.
+    presentation: action
+    emit_output: true
+  sandbox_run:
+    enabled: true
+    description: >-
+      Execute a shell command inside an isolated E2B sandbox. Omit sandbox_id for
+      one-shot per-call mode (sandbox created, command runs, sandbox destroyed — safest).
+      Provide sandbox_id for session reuse. Set stream_to_sse=true to stream stdout/stderr
+      line-by-line into the analysis timeline in real time.
+      File IO: staged workspace files appear under /workspace/<project_id>/<basename>; manual
+      upload_files may use /tmp/secmanus/work/in/<name>. Write outputs to /tmp/secmanus/work/out/
+      and list those paths in download_paths. Never use raw host paths like /uploads/u_...
+      inside command unless staged — they do not exist in the VM.
+    presentation: action
+    emit_output: true
+    workspace_tab:
+      type: shell
+      label: "Shell"
+      icon: terminal
+      merge_strategy: by_arg
+      merge_key: sandbox_id
+  sandbox_pty_run:
+    enabled: true
+    description: >-
+      Run an interactive PTY session inside a sandbox, sending a list of commands
+      sequentially and collecting all terminal output. Streams output to the analysis
+      timeline by default (stream_to_sse=true). Use for interactive programs, REPLs,
+      or any program that requires a real tty. Materialize files first with sandbox_run (staging to
+      /workspace/<project_id>/… or manual upload_files under /tmp/secmanus/work/in/, same sandbox_id)
+      — PTY has no upload_files.
+    presentation: action
+    emit_output: true
+    workspace_tab:
+      type: shell
+      label: "Shell"
+      icon: terminal
+      merge_strategy: by_arg
+      merge_key: sandbox_id
+
+subagent_tools:
+  file_identify:
+    enabled: true
+    description: "Identify uploaded binary/document format and seed file metadata evidence."
+    presentation: action
+    emit_output: true
+  evidence_chain:
+    enabled: true
+    description: "Append/query/snapshot binary-analysis evidence-chain indicators."
+    presentation: action
+    emit_output: true
+  scoring:
+    enabled: true
+    description: "Score binary-analysis evidence and write deterministic verdict indicators."
+    presentation: action
+    emit_output: true
+  decision_gate:
+    enabled: true
+    description: "Select binary-analysis escalation and completion decision from scoring evidence."
+    presentation: action
+    emit_output: true
+  report_gen:
+    enabled: true
+    description: "Generate the final binary-analysis report from the evidence-chain snapshot."
+    presentation: action
+    emit_output: true
+  document_extract:
+    enabled: true
+    description: "Extract document structure, macros, scripts, and embedded payload metadata."
+    presentation: action
+    emit_output: true
+  # binary-analysis sandbox/filesystem tools (not mounted via common_tools; shown in subagent timeline)
+  bash:
+    presentation: action
+    emit_output: false
+  python_exec:
+    presentation: action
+    emit_output: false
+  file_read:
+    presentation: action
+    emit_output: false
+  sandbox_session:
+    presentation: state
+    emit_output: false
+  query_alerts:
+    enabled: true
+    description: "Generic action: query Elastic Security alerts via adaptor."
+    presentation: action
+    emit_output: true
+  query_rule_detail:
+    enabled: true
+    description: "Generic action: query one Elastic Security rule detail."
+    presentation: action
+    emit_output: true
+  query_rules:
+    enabled: true
+    description: "Generic action: query Elastic Security rule list."
+    presentation: action
+    emit_output: true
+  query_rule_tags:
+    enabled: true
+    description: "Generic action: query Elastic Security rule tags."
+    presentation: action
+    emit_output: true
+  query_cases:
+    enabled: true
+    description: "Generic action: query Elastic Security case list."
+    presentation: action
+    emit_output: true
+  query_case_detail:
+    enabled: true
+    description: "Generic action: query Elastic Security case detail."
+    presentation: action
+    emit_output: true
+  query_case_alerts:
+    enabled: true
+    description: "Generic action: query alerts linked to one Elastic Security case."
+    presentation: action
+    emit_output: true
+  query_case_comments:
+    enabled: true
+    description: "Generic action: query comments linked to one Elastic Security case."
+    presentation: action
+    emit_output: true
+  query_case_activity:
+    enabled: true
+    description: "Generic action: query activity feed of one Elastic Security case."
+    presentation: action
+    emit_output: true
+  query_exception_lists:
+    enabled: true
+    description: "Generic action: query Elastic Security exception lists."
+    presentation: action
+    emit_output: true
+  query_exception_items:
+    enabled: true
+    description: "Generic action: query Elastic Security exception list items."
+    presentation: action
+    emit_output: true
+  query_exception_summary:
+    enabled: true
+    description: "Generic action: query Elastic Security exception summary."
+    presentation: action
+    emit_output: true
+  query_value_list:
+    enabled: true
+    description: "Generic action: query Elastic Security value list metadata."
+    presentation: action
+    emit_output: true
+  query_value_list_items:
+    enabled: true
+    description: "Generic action: query Elastic Security value list items."
+    presentation: action
+    emit_output: true
+  query_value_list_privileges:
+    enabled: true
+    description: "Generic action: query Elastic Security value list privileges."
+    presentation: action
+    emit_output: true
+  analyze_email_headers:
+    enabled: true
+    description: "Analyze email headers for authentication and spoofing indicators"
+    presentation: action
+    emit_output: true
+  detect_phishing_indicators:
+    enabled: true
+    description: "Detect phishing indicators in email content"
+    presentation: action
+    emit_output: true
+  detect_web_attack:
+    enabled: true
+    description: "Structured web threat analysis. Pass either request_data (raw HTTP, URL, log, WAF event, or code snippet) or file_path (/workspace/... uploaded file); the tool reads workspace files internally and returns schema v2 findings, decoded PHP artifacts, webshell capabilities, IOCs, MITRE mappings, forensic_supplement (file header + capability matrix + credential snippets), and legacy fields."
+    presentation: action
+    emit_output: true
+  soc_vt_file_query:
+    enabled: true
+    description: "Query VirusTotal file-hash reputation for SOC triage."
+    presentation: action
+    emit_output: true
+  soc_vt_ip_query:
+    enabled: true
+    description: "Query VirusTotal IP reputation for SOC triage."
+    presentation: action
+    emit_output: true
+  soc_vt_domain_query:
+    enabled: true
+    description: "Query VirusTotal domain reputation for SOC triage."
+    presentation: action
+    emit_output: true
+  soc_vt_url_query:
+    enabled: true
+    description: "Query VirusTotal URL reputation for SOC triage."
+    presentation: action
+    emit_output: true
+  soc_edr_endpoint_alerts:
+    enabled: true
+    description: "Query EDR endpoint alert logs for SOC triage evidence."
+    presentation: action
+    emit_output: true
+  soc_edr_incidents:
+    enabled: true
+    description: "Query EDR incident list (read-only)."
+    presentation: action
+    emit_output: true
+  soc_edr_threat_files:
+    enabled: true
+    description: "Query EDR threat files list (read-only)."
+    presentation: action
+    emit_output: true
+  soc_ndr_log_search:
+    enabled: true
+    description: "Query TDP log search / terms aggregation for SOC triage."
+    presentation: action
+    emit_output: true
+  soc_ndr_mdr_alert_list:
+    enabled: true
+    description: "Query TDP MDR alert list (read-only)."
+    presentation: action
+    emit_output: true
+  think_tool:
+    presentation: state
+    emit_output: false
+  web_search_deep_research:
+    presentation: action
+    emit_output: true
+    sse_tool_name: web_searchs
+  ConductResearch:
+    presentation: research_task
+    emit_output: false
+  ResearchComplete:
+    presentation: state
+    emit_output: false
+  # Structured-output schema for write_research_brief (not a user-facing tool).
+  ResearchQuestion:
+    presentation: state
+    emit_output: false
+  # Structured-output schema used by clarify_with_user (Deep Research).
+  # The actual user interaction is handled via interrupt() → parameter_request SSE;
+  # suppress the redundant tool_call event from appearing in the UI timeline.
+  ClarifyWithUser:
+    presentation: state
+    emit_output: false

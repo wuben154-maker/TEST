@@ -1,0 +1,10 @@
+-- Clear workspace application history (dev / disposable DB only).
+-- Does NOT delete auth.users, public.profiles, or schema migrations.
+--
+-- Intended tables (the Python runner truncates only those that exist):
+--   project_analysis_progress, messages, projects,
+--   shared_reports, session_parameters, parameter_callbacks, agent_store
+--
+-- Execute:
+--   python python-agent-service/scripts/db/run_clear_dev_app_history.py
+--   (from repo root), or: python scripts/db/run_clear_dev_app_history.py from python-agent-service/

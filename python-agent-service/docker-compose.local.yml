@@ -1,0 +1,157 @@
+# Docker Compose for Local Development
+# Includes all services for fully self-hosted deployment
+# 
+# Usage:
+#   docker compose -f docker-compose.local.yml up -d
+#
+# This configuration runs:
+#   - Deep Agent (Python backend)
+#   - Firecrawl Simple (web scraping)
+#   - Redis (for job queue)
+#   - PostgreSQL (local database)
+
+version: '3.8'
+
+services:
+  # ============================================================================
+  # Deep Agent - Main AI Agent Service
+  # ============================================================================
+  deep-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      # Database
+      - DATABASE_MODE=local
+      - LOCAL_DB_HOST=postgres
+      - LOCAL_DB_PORT=5432
+      - LOCAL_DB_NAME=secmanus
+      - LOCAL_DB_USER=postgres
+      - LOCAL_DB_PASSWORD=postgres
+      # AI Models (choose one)
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY:-}
+      # Local Firecrawl
+      - FIRECRAWL_API_URL=http://firecrawl:3002/v1
+      - FIRECRAWL_API_KEY=fc-local
+      # Other services
+      - VIRUSTOTAL_API_KEY=${VIRUSTOTAL_API_KEY:-}
+      # Agent config
+      - DEFAULT_MODEL=${DEFAULT_MODEL:-google/gemini-2.5-flash}
+      - MAX_ITERATIONS=${MAX_ITERATIONS:-20}
+      - TIMEOUT_SECONDS=${TIMEOUT_SECONDS:-300}
+      # LangSmith (optional)
+      - LANGSMITH_API_KEY=${LANGSMITH_API_KEY:-}
+      - LANGSMITH_PROJECT=${LANGSMITH_PROJECT:-security-deep-agent}
+      - LANGSMITH_TRACING=${LANGSMITH_TRACING:-false}
+    volumes:
+      - ./app:/app/app:ro
+      - ./skills:/app/skills:ro
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      firecrawl:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - agent-network
+
+  # ============================================================================
+  # Firecrawl Simple - Local Web Scraping Service (No API Key Required)
+  # https://github.com/devflowinc/firecrawl-simple
+  # ============================================================================
+  firecrawl:
+    image: ghcr.io/devflowinc/firecrawl-simple:latest
+    ports:
+      - "3002:3002"
+    environment:
+      - PORT=3002
+      - HOST=0.0.0.0
+      # Local API key (can be any string for local use)
+      - FIRECRAWL_API_KEY=fc-local
+      # Playwright browser
+      - PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium
+      # Performance settings
+      - RATE_LIMIT_RPM=100
+      - MAX_CONCURRENCY=10
+      - SCRAPE_TIMEOUT=30000
+    volumes:
+      - firecrawl-cache:/app/.cache
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 45s
+    networks:
+      - agent-network
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
+
+  # ============================================================================
+  # PostgreSQL - Local Database
+  # ============================================================================
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=secmanus
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/db/init_local_db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - agent-network
+
+  # ============================================================================
+  # Redis - Job Queue for Firecrawl crawl operations
+  # ============================================================================
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - agent-network
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+
+networks:
+  agent-network:
+    driver: bridge
+
+volumes:
+  firecrawl-cache:
+    driver: local
+  postgres-data:
+    driver: local
+  redis-data:
+    driver: local

@@ -1,0 +1,445 @@
+name: deploy-aws
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "dev | staging | prod"
+        required: true
+        type: choice
+        options: [dev, staging, prod]
+      service_scope:
+        description: "frontend-only | backend-only | worker-only | all"
+        required: true
+        default: all
+      deployment_target:
+        description: "ecs | ec2-ssh"
+        required: true
+        default: ecs
+      deployment_mode:
+        description: "single-node | distributed"
+        required: true
+        default: single-node
+      release_id:
+        description: "Release id produced by release.yml"
+        required: true
+      promotion_run_id:
+        description: "GitHub Actions run id from release.yml that uploaded promotion-metadata"
+        required: true
+
+permissions:
+  id-token: write
+  contents: read
+  actions: read
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    outputs:
+      aws_region: ${{ steps.parse.outputs.aws_region }}
+      config_path: ${{ steps.parse.outputs.config_path }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Install YAML parser
+        run: python -m pip install --disable-pip-version-check pyyaml
+      - id: parse
+        shell: bash
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          from pathlib import Path
+
+          import yaml
+
+          env_name = "${{ inputs.environment }}"
+          path = Path(f".cicd/env/{env_name}.yaml")
+          if not path.exists():
+              path = Path(f".cicd/env/{env_name}.yaml.example")
+          if not path.exists():
+              raise SystemExit(f"Missing .cicd/env/{env_name}.yaml")
+
+          data = yaml.safe_load(path.read_text(encoding="utf-8"))
+          aws_region = (data.get("aws") or {}).get("region") or "us-east-1"
+          mode = "${{ inputs.deployment_mode }}"
+          target = "${{ inputs.deployment_target }}"
+
+          if mode == "distributed" and target == "ec2-ssh":
+              hosts = ((data.get("ec2") or {}).get("distributed") or {}).get("hosts") or []
+              usable_hosts = [h for h in hosts if h.get("host") and not str(h.get("host")).startswith("TODO")]
+              if len(usable_hosts) < 2:
+                  raise SystemExit("distributed EC2 deploy requires at least two configured hosts")
+
+          print(f"aws_region={aws_region}")
+          print(f"config_path={path}")
+          PY
+
+  deploy-ecs:
+    needs: preflight
+    if: ${{ inputs.deployment_target == 'ecs' }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    concurrency:
+      group: deploy-${{ inputs.environment }}-${{ inputs.service_scope }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Install YAML parser
+        run: python -m pip install --disable-pip-version-check pyyaml
+      - name: Download promotion metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh run download "${{ inputs.promotion_run_id }}" --name promotion-metadata --dir .
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_RELEASE_ROLE_ARN }}
+          aws-region: ${{ needs.preflight.outputs.aws_region }}
+      - name: Deploy ECS services by immutable digest
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+          import time
+          from copy import deepcopy
+          from pathlib import Path
+
+          import yaml
+
+          def run(args, *, text=True):
+              return subprocess.check_output(args, text=text).strip()
+
+          def call(args):
+              subprocess.run(args, check=True)
+
+          def is_todo(value):
+              return value is None or str(value).startswith("TODO")
+
+          def http_check(url, path, timeout, retries):
+              if is_todo(url):
+                  return {"status": "skipped", "reason": "missing url"}
+              endpoint = f"{str(url).rstrip('/')}/{str(path or '/').lstrip('/')}"
+              for attempt in range(1, retries + 1):
+                  result = subprocess.run(["curl", "-fsS", "--max-time", str(timeout), endpoint])
+                  if result.returncode == 0:
+                      return {"status": "success", "url": endpoint, "attempt": attempt}
+                  time.sleep(5)
+              return {"status": "failed", "url": endpoint, "attempts": retries}
+
+          env_name = "${{ inputs.environment }}"
+          mode = "${{ inputs.deployment_mode }}"
+          scope = "${{ inputs.service_scope }}"
+          release_id = "${{ inputs.release_id }}"
+          cfg = yaml.safe_load(Path(os.environ["CONFIG_PATH"]).read_text(encoding="utf-8")) or {}
+          project = yaml.safe_load(Path(".cicd/project.yaml").read_text(encoding="utf-8")) or {}
+          metadata = json.loads(Path("promotion-metadata.json").read_text(encoding="utf-8"))
+
+          if metadata.get("release_id") != release_id:
+              raise SystemExit(f"promotion metadata release_id {metadata.get('release_id')} does not match {release_id}")
+
+          ecs = cfg.get("ecs") or {}
+          cluster = ecs.get("cluster_name")
+          if is_todo(cluster):
+              raise SystemExit("Missing ecs.cluster_name")
+
+          desired_count = (ecs.get("desired_count") or {}).get("single_node" if mode == "single-node" else "distributed")
+          if mode == "distributed" and int(desired_count or 0) < 2:
+              raise SystemExit("distributed ECS deploy requires desired_count >= 2")
+
+          selected = []
+          for name, image in (metadata.get("images") or {}).items():
+              if scope != "all" and scope != f"{name}-only":
+                  continue
+              selected.append((name, image))
+          if not selected:
+              raise SystemExit(f"No images selected by scope {scope}")
+
+          evidence = {
+              "schema_version": 1,
+              "environment": env_name,
+              "deployment_target": "ecs",
+              "deployment_mode": mode,
+              "release_id": release_id,
+              "run_url": f"{os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}",
+              "services": {},
+              "verification": {},
+          }
+          rollback = {"schema_version": 1, "environment": env_name, "deployment_target": "ecs", "services": {}}
+
+          registered_services = []
+          try:
+              for name, image in selected:
+                  service_cfg = (ecs.get("services") or {}).get(name) or {}
+                  service_name = service_cfg.get("service_name")
+                  container_name = service_cfg.get("container_name")
+                  if is_todo(service_name) or is_todo(container_name):
+                      raise SystemExit(f"Missing ECS service_name or container_name for {name}")
+
+                  current_td = run([
+                      "aws", "ecs", "describe-services", "--cluster", cluster, "--services", service_name,
+                      "--query", "services[0].taskDefinition", "--output", "text",
+                  ])
+                  task_def_doc = json.loads(run(["aws", "ecs", "describe-task-definition", "--task-definition", current_td, "--output", "json"]))
+                  task_def = deepcopy(task_def_doc["taskDefinition"])
+                  rollback["services"][name] = {"service_name": service_name, "previous_task_definition": current_td}
+
+                  for key in ["taskDefinitionArn", "revision", "status", "requiresAttributes", "compatibilities", "registeredAt", "registeredBy"]:
+                      task_def.pop(key, None)
+                  for container in task_def.get("containerDefinitions", []):
+                      if container.get("name") == container_name:
+                          container["image"] = image["image_uri"]
+
+                  if not any(c.get("name") == container_name and c.get("image") == image["image_uri"] for c in task_def.get("containerDefinitions", [])):
+                      raise SystemExit(f"Container {container_name} not found in task definition for {name}")
+
+                  task_path = Path(f"task-definition-{name}.json")
+                  task_path.write_text(json.dumps(task_def, indent=2), encoding="utf-8")
+                  new_td = run([
+                      "aws", "ecs", "register-task-definition", "--cli-input-json", f"file://{task_path}",
+                      "--query", "taskDefinition.taskDefinitionArn", "--output", "text",
+                  ])
+                  call([
+                      "aws", "ecs", "update-service", "--cluster", cluster, "--service", service_name,
+                      "--task-definition", new_td, "--desired-count", str(desired_count),
+                  ])
+                  registered_services.append((name, service_name, current_td))
+                  call(["aws", "ecs", "wait", "services-stable", "--cluster", cluster, "--services", service_name])
+
+                  target_group = service_cfg.get("target_group_arn")
+                  target_health = {"status": "skipped", "reason": "missing target_group_arn"}
+                  if not is_todo(target_group):
+                      states = run([
+                          "aws", "elbv2", "describe-target-health", "--target-group-arn", target_group,
+                          "--query", "TargetHealthDescriptions[].TargetHealth.State", "--output", "text",
+                      ]).split()
+                      target_health = {"states": states, "status": "success" if states and all(s == "healthy" for s in states) else "failed"}
+                      if target_health["status"] == "failed":
+                          raise RuntimeError(f"Target health failed for {name}: {states}")
+
+                  evidence["services"][name] = {
+                      "service_name": service_name,
+                      "previous_task_definition": current_td,
+                      "new_task_definition": new_td,
+                      "image_uri": image["image_uri"],
+                      "desired_count": desired_count,
+                      "target_health": target_health,
+                  }
+
+              health = cfg.get("health") or {}
+              for name, _image in selected:
+                  svc = (project.get("services") or {}).get(name) or {}
+                  if name not in ("frontend", "backend"):
+                      continue
+                  result = http_check(
+                      health.get(f"{name}_url"),
+                      health.get(f"{name}_path") or svc.get("health_path") or "/",
+                      health.get("timeout_seconds", 10),
+                      health.get("retries", 12),
+                  )
+                  evidence["verification"][name] = result
+                  if result["status"] == "failed":
+                      raise RuntimeError(f"HTTP health check failed for {name}")
+
+              evidence["verification_result"] = "success"
+              Path("deployment-evidence.json").write_text(json.dumps(evidence, indent=2), encoding="utf-8")
+          except Exception as exc:
+              evidence["verification_result"] = "failed"
+              evidence["failure"] = str(exc)
+              for name, service_name, previous_td in reversed(registered_services):
+                  call(["aws", "ecs", "update-service", "--cluster", cluster, "--service", service_name, "--task-definition", previous_td])
+                  call(["aws", "ecs", "wait", "services-stable", "--cluster", cluster, "--services", service_name])
+                  rollback["services"][name]["rollback_status"] = "restored_previous_task_definition"
+              Path("deployment-evidence.json").write_text(json.dumps(evidence, indent=2), encoding="utf-8")
+              Path("rollback-evidence.json").write_text(json.dumps(rollback, indent=2), encoding="utf-8")
+              raise
+          PY
+        env:
+          CONFIG_PATH: ${{ needs.preflight.outputs.config_path }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ecs-deployment-evidence
+          path: |
+            deployment-evidence.json
+            rollback-evidence.json
+
+  deploy-ec2:
+    needs: preflight
+    if: ${{ inputs.deployment_target == 'ec2-ssh' }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Install YAML parser
+        run: python -m pip install --disable-pip-version-check pyyaml
+      - name: Download promotion metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh run download "${{ inputs.promotion_run_id }}" --name promotion-metadata --dir .
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_RELEASE_ROLE_ARN }}
+          aws-region: ${{ needs.preflight.outputs.aws_region }}
+      - name: Prepare SSH key
+        shell: bash
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.AWS_EC2_SSH_PRIVATE_KEY }}
+        run: |
+          test -n "$SSH_PRIVATE_KEY"
+          install -m 700 -d ~/.ssh
+          printf "%s\n" "$SSH_PRIVATE_KEY" > ~/.ssh/aws-cicd
+          chmod 600 ~/.ssh/aws-cicd
+      - name: Deploy EC2 hosts by immutable digest
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+          import time
+          from pathlib import Path
+
+          import yaml
+
+          def call(args):
+              subprocess.run(args, check=True)
+
+          def ssh(host, command):
+              call(["ssh", "-i", str(Path.home() / ".ssh/aws-cicd"), "-o", "StrictHostKeyChecking=no", host, command])
+
+          def is_todo(value):
+              return value is None or str(value).startswith("TODO")
+
+          def host_health(url, timeout, retries):
+              for attempt in range(1, retries + 1):
+                  result = subprocess.run(["curl", "-fsS", "--max-time", str(timeout), url])
+                  if result.returncode == 0:
+                      return {"status": "success", "url": url, "attempt": attempt}
+                  time.sleep(5)
+              return {"status": "failed", "url": url, "attempts": retries}
+
+          env_name = "${{ inputs.environment }}"
+          mode = "${{ inputs.deployment_mode }}"
+          scope = "${{ inputs.service_scope }}"
+          release_id = "${{ inputs.release_id }}"
+          region = "${{ needs.preflight.outputs.aws_region }}"
+          cfg = yaml.safe_load(Path(os.environ["CONFIG_PATH"]).read_text(encoding="utf-8")) or {}
+          project = yaml.safe_load(Path(".cicd/project.yaml").read_text(encoding="utf-8")) or {}
+          metadata = json.loads(Path("promotion-metadata.json").read_text(encoding="utf-8"))
+
+          if metadata.get("release_id") != release_id:
+              raise SystemExit(f"promotion metadata release_id {metadata.get('release_id')} does not match {release_id}")
+
+          ec2 = cfg.get("ec2") or {}
+          user = ec2.get("ssh_user") or "ec2-user"
+          if mode == "single-node":
+              raw_hosts = [ec2.get("single_node") or {}]
+          else:
+              raw_hosts = ((ec2.get("distributed") or {}).get("hosts") or [])
+          hosts = [f"{user}@{h['host']}" for h in raw_hosts if h.get("host") and not str(h.get("host")).startswith("TODO")]
+          if not hosts:
+              raise SystemExit("No EC2 hosts configured")
+          if mode == "distributed" and len(hosts) < 2:
+              raise SystemExit("distributed EC2 deploy requires at least two hosts")
+
+          selected = []
+          for name, image in (metadata.get("images") or {}).items():
+              if scope != "all" and scope != f"{name}-only":
+                  continue
+              selected.append((name, image))
+          if not selected:
+              raise SystemExit(f"No images selected by scope {scope}")
+
+          health_cfg = cfg.get("health") or {}
+          port_cfg = ec2.get("ports") or {}
+          evidence = {
+              "schema_version": 1,
+              "environment": env_name,
+              "deployment_target": "ec2-ssh",
+              "deployment_mode": mode,
+              "release_id": release_id,
+              "run_url": f"{os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}",
+              "hosts": {},
+              "verification": {},
+          }
+          rollback = {"schema_version": 1, "environment": env_name, "deployment_target": "ec2-ssh", "hosts": {}}
+
+          deployed = []
+          try:
+              for host in hosts:
+                  evidence["hosts"][host] = {}
+                  rollback["hosts"][host] = {}
+                  for name, image in selected:
+                      svc = (project.get("services") or {}).get(name) or {}
+                      container = svc.get("container_name") or name
+                      container_port = svc.get("container_port") or 80
+                      host_port = port_cfg.get(f"{name}_host_port") or container_port
+                      previous_cmd = f"docker inspect -f '{{{{.Config.Image}}}}' {container} 2>/dev/null || true"
+                      previous = subprocess.check_output([
+                          "ssh", "-i", str(Path.home() / ".ssh/aws-cicd"), "-o", "StrictHostKeyChecking=no", host, previous_cmd
+                      ], text=True).strip()
+                      rollback["hosts"][host][name] = {"container": container, "previous_image": previous}
+
+                      script = (
+                          f"set -euo pipefail; "
+                          f"aws ecr get-login-password --region {region} | docker login --username AWS --password-stdin {image['repository'].split('/')[0]}; "
+                          f"docker pull {image['image_uri']}; "
+                          f"docker rm -f {container} >/dev/null 2>&1 || true; "
+                          f"docker run -d --restart unless-stopped --name {container} -p {host_port}:{container_port} {image['image_uri']}"
+                      )
+                      ssh(host, script)
+                      deployed.append((host, name, container, previous, host_port, container_port))
+                      evidence["hosts"][host][name] = {
+                          "container": container,
+                          "image_uri": image["image_uri"],
+                          "host_port": host_port,
+                          "container_port": container_port,
+                      }
+
+              for host in hosts:
+                  hostname = host.split("@", 1)[1]
+                  for name, _image in selected:
+                      if name not in ("frontend", "backend"):
+                          continue
+                      svc = (project.get("services") or {}).get(name) or {}
+                      configured_url = health_cfg.get(f"{name}_url")
+                      path = (health_cfg.get(f"{name}_path") or svc.get("health_path") or "/").lstrip("/")
+                      url = configured_url if not is_todo(configured_url) else f"http://{hostname}:{port_cfg.get(f'{name}_host_port') or svc.get('container_port') or 80}/{path}"
+                      result = host_health(url, health_cfg.get("timeout_seconds", 10), health_cfg.get("retries", 12))
+                      evidence["verification"][f"{host}:{name}"] = result
+                      if result["status"] == "failed":
+                          raise RuntimeError(f"HTTP health check failed for {host}:{name}")
+
+              evidence["verification_result"] = "success"
+              Path("deployment-evidence.json").write_text(json.dumps(evidence, indent=2), encoding="utf-8")
+          except Exception as exc:
+              evidence["verification_result"] = "failed"
+              evidence["failure"] = str(exc)
+              for host, name, container, previous, host_port, container_port in reversed(deployed):
+                  if previous:
+                      ssh(host, f"docker rm -f {container} >/dev/null 2>&1 || true; docker run -d --restart unless-stopped --name {container} -p {host_port}:{container_port} {previous}")
+                      rollback["hosts"][host][name]["rollback_status"] = "restored_previous_image"
+                  else:
+                      ssh(host, f"docker rm -f {container} >/dev/null 2>&1 || true")
+                      rollback["hosts"][host][name]["rollback_status"] = "removed_new_container_no_previous_image"
+              Path("deployment-evidence.json").write_text(json.dumps(evidence, indent=2), encoding="utf-8")
+              Path("rollback-evidence.json").write_text(json.dumps(rollback, indent=2), encoding="utf-8")
+              raise
+          PY
+        env:
+          CONFIG_PATH: ${{ needs.preflight.outputs.config_path }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ec2-deployment-evidence
+          path: |
+            deployment-evidence.json
+            rollback-evidence.json

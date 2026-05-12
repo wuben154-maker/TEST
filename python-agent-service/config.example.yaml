@@ -1,0 +1,21 @@
+# AI Gateway Configuration
+# 
+# API keys are encrypted using the CONFIG_PASSWORD environment variable
+# Run `python ai_gateway.py setup` to interactively configure API keys
+#
+# Example (keys will be encrypted):
+# api_keys:
+#   gemini: "gAAAAABl..."  # encrypted value
+#   doubao: "gAAAAABl..."  # encrypted value
+
+# Server settings
+server:
+  host: "0.0.0.0"
+  port: 8000
+
+# Default provider (gemini or doubao)
+default_provider: gemini
+
+# Logging
+logging:
+  level: INFO

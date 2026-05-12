@@ -1,0 +1,468 @@
+# Scoring rules for the binary-analysis rule engine (FR-13, ADR-04).
+#
+# Schema v1.1.0 — namespaced format
+# ----------------------------------
+# The rule engine is deterministic and auditable: every change MUST bump
+# the top-level `rules_version` field below AND be recorded in
+# IMPL-PROGRESS.md so analyst-side calibration (NFR-13 false-positive rate)
+# can bind reports to an exact rule revision (NFR-06).
+#
+# Top-level structure (v1.1+):
+#
+#   rules_version: SemVer string (required).  Emitted into every scoring
+#       report; used as the audit anchor.
+#
+#   binary:   scoring namespace for PE / ELF / Mach-O binaries (e2e01).
+#   document: scoring namespace for Office / PDF / RTF / OneNote / HTA
+#             document formats (e2e02).
+#
+# Each namespace contains:
+#
+#   thresholds:
+#     malicious: rule_score strictly greater than this -> MALICIOUS
+#     suspicious: rule_score strictly greater than this
+#       (and <= malicious) -> SUSPICIOUS; otherwise BENIGN.
+#     unknown_low_confidence_max: when EVERY contributing Indicator carries
+#       LOW confidence AND rule_score <= this value the verdict is
+#       downgraded to UNKNOWN (FR-13 AC-8).
+#
+#   rules[]:  weighted rules (same schema as v1.0 flat format).
+#     id: stable identifier.  Format: R-UPPER-DASH.
+#     description: short rationale surfaced in audit trail.
+#     bucket: evidence-chain bucket to scan (Bucket enum value).
+#     weight: integer points added when match fires (once per analysis).
+#     match: predicate map combined with AND.  Supported keys:
+#       severity_in: list[str]               - Indicator.severity in set
+#       confidence_in: list[str]             - Indicator.confidence in set
+#       indicator_type: str                  - exact string equality
+#       source_fr: str                       - exact string equality
+#       data_equals: { key: value, ... }     - Indicator.data[key] == value
+#       data_tag_in: list[str]               - Indicator.data['tag'] in set
+#
+#   combos[]:  multi-rule correlation bonus (same schema as v1.0).
+#     id, description, rule_ids, bonus_weight.
+#
+# document namespace only:
+#
+#   document_role_rules[]:  first-match classifier that maps fired rules
+#       to a DocumentRole enum value.  Evaluated after all document rules
+#       have fired.  Each entry must have one of:
+#         - {if_all: [...], if_any: [...], then: <role>}
+#           if_all — every listed rule ID must have fired (AND)
+#           if_any — at least one listed rule ID must have fired (OR)
+#                    omit or leave empty to mean "no additional OR constraint"
+#           then   — DocumentRole value to emit
+#         - {default: <role>}  (fallback; should be last entry)
+#
+# Backward compatibility
+# ----------------------
+# v1.0 files that use the *flat* (non-namespaced) top-level structure
+# (i.e. `version:` + `thresholds:` + `rules:` + `combos:` at root level)
+# are still accepted.  The loader treats the entire document as the
+# `binary:` namespace and emits a deprecation warning.
+
+rules_version: "1.1.1"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# binary: namespace  —  PE / ELF / Mach-O scoring rules (e2e01)
+# YARA is intentionally not scored in v1.1.1. If FR-02 later restores stable
+# `yara_match` facts, add dedicated YARA rules in a future rules_version bump.
+# ─────────────────────────────────────────────────────────────────────────────
+
+binary:
+  thresholds:
+    malicious: 70
+    suspicious: 30
+    unknown_low_confidence_max: 50
+
+  rules:
+    - id: R-ENTROPY-HIGH
+      description: High-entropy section indicates packing / compression
+      bucket: entropy
+      weight: 25
+      match:
+        severity_in: [WARNING, CRITICAL]
+
+    - id: R-IMPORTS-SPARSE
+      description: Sparse import table is a hallmark of packed or stripped binaries
+      bucket: imports
+      weight: 15
+      match:
+        indicator_type: imports_sparse
+
+    - id: R-ANTIDEBUG-STRING
+      description: Anti-debug, anti-VM, or anti-sandbox strings observed
+      bucket: strings_iocs
+      weight: 20
+      match:
+        indicator_type: anti_debug_string
+
+    - id: R-TRIAGE-HIGH-HEURISTIC
+      description: FR-02 heuristic triage marked the binary as high risk
+      bucket: triage
+      weight: 20
+      match:
+        indicator_type: triage_risk_level
+        severity_in: [WARNING, CRITICAL]
+
+    - id: R-TRIAGE-SEVERE-PACKING
+      description: FR-02 heuristic triage detected a severe packing profile
+      bucket: triage
+      weight: 15
+      match:
+        indicator_type: packing_severity_hint
+        severity_in: [CRITICAL]
+
+    - id: R-PE-ENTRYPOINT-WX
+      description: PE entry point lands in a writable and executable section
+      bucket: headers
+      weight: 25
+      match:
+        indicator_type: entry_point_wx_section
+
+    - id: R-PE-ENTRYPOINT-OOB
+      description: PE entry point is outside any mapped section
+      bucket: headers
+      weight: 25
+      match:
+        indicator_type: entry_point_oob
+
+    - id: R-PE-TLS-CALLBACK-OOB
+      description: PE TLS callback points outside mapped sections
+      bucket: headers
+      weight: 20
+      match:
+        indicator_type: tls_callback_oob
+
+    - id: R-PE-TLS-CALLBACK-WX
+      description: PE TLS callback executes from a writable section
+      bucket: headers
+      weight: 20
+      match:
+        indicator_type: tls_callback_wx
+
+    - id: R-PE-OVERLAY-EMBEDDED-PE
+      description: PE overlay contains an embedded executable payload
+      bucket: sections
+      weight: 35
+      match:
+        indicator_type: overlay_embedded_pe
+
+    - id: R-ELF-EXECUTABLE-STACK
+      description: ELF requests an executable stack
+      bucket: headers
+      weight: 25
+      match:
+        indicator_type: elf_executable_stack
+
+    - id: R-ELF-WX-LOAD-SEGMENT
+      description: ELF load segment is both writable and executable
+      bucket: headers
+      weight: 25
+      match:
+        indicator_type: elf_wx_load_segment
+
+    - id: R-MACHO-MOD-INIT-FUNC
+      description: Mach-O pre-main initializer function is present
+      bucket: headers
+      weight: 15
+      match:
+        indicator_type: macho_mod_init_func
+        severity_in: [WARNING, CRITICAL]
+
+    - id: R-MACHO-RPATH-ANOMALY
+      description: Mach-O LC_RPATH references writable or suspicious load paths
+      bucket: headers
+      weight: 25
+      match:
+        indicator_type: macho_rpath_anomaly
+
+    - id: R-PACKER-KNOWN
+      description: Commercial or known packer detected (DIE / heuristics)
+      bucket: packer
+      weight: 30
+      match:
+        severity_in: [WARNING, CRITICAL]
+
+    - id: R-COMMERCIAL-PROTECTOR
+      description: Commercial protector detected by DIE, such as VMProtect or Themida
+      bucket: packer
+      weight: 35
+      match:
+        indicator_type: commercial_packer_match
+        severity_in: [WARNING, CRITICAL]
+        data_equals:
+          die_type: protector
+
+    - id: R-BEHAVIOR-MAL-CHAIN
+      description: Reconstructed behavior chain contains a CRITICAL segment
+      bucket: behavior_chain
+      weight: 20
+      match:
+        severity_in: [CRITICAL]
+
+    - id: R-BEHAVIOR-CRITICAL-SUMMARY
+      description: Behavior-chain summary describes a critical malicious path
+      bucket: behavior_chain
+      weight: 25
+      match:
+        indicator_type: module_chain_summary
+        severity_in: [CRITICAL]
+
+    - id: R-BEHAVIOR-CRITICAL-FUNCTION
+      description: Function-level behavior node captures a critical malicious step
+      bucket: behavior_chain
+      weight: 15
+      match:
+        indicator_type: function_behavior_node
+        severity_in: [CRITICAL]
+
+    - id: R-LLM-MAL-INFERENCE
+      description: LLM-inferred CRITICAL finding backed by HIGH confidence
+      bucket: llm_inferences
+      weight: 15
+      match:
+        severity_in: [CRITICAL]
+        confidence_in: [HIGH]
+
+    - id: R-FAMILY-CANDIDATE-HIGH
+      description: FR-08 or FR-13 produced a high-confidence family candidate
+      bucket: llm_inferences
+      weight: 20
+      match:
+        indicator_type: family_candidate
+        confidence_in: [HIGH]
+
+    - id: R-THREAT-CLASS-HIGH
+      description: FR-08 produced a high-confidence malware threat class
+      bucket: llm_inferences
+      weight: 15
+      match:
+        indicator_type: threat_class
+        confidence_in: [HIGH]
+
+  combos:
+    - id: COMBO-PACKED-DROPPER
+      description: >-
+        Classic packed-dropper silhouette - high entropy, sparse imports, and
+        anti-debug strings observed together.  The combined weight is set so
+        that the total exceeds the sum of the three member rules alone
+        (FR-13 AC-6 multi-source correlation).
+      rule_ids: [R-ENTROPY-HIGH, R-IMPORTS-SPARSE, R-ANTIDEBUG-STRING]
+      bonus_weight: 25
+
+# ─────────────────────────────────────────────────────────────────────────────
+# document: namespace  —  Office / PDF / RTF / HTA / OneNote scoring rules
+# (e2e02, FR-13 AC-3)
+# ─────────────────────────────────────────────────────────────────────────────
+
+document:
+  thresholds:
+    malicious: 55
+    suspicious: 30
+    unknown_low_confidence_max: 50
+
+  rules:
+    # ── Macro / VBA rules ────────────────────────────────────────────────────
+
+    - id: R-DOC-VBA-AUTO-TRIGGER
+      description: >-
+        VBA macro auto-trigger present (AutoOpen / DocumentOpen /
+        Workbook_Open) — indicates the document will execute code on open
+        without user interaction.
+      bucket: document_analysis
+      weight: 25
+      match:
+        indicator_type: trigger
+        data_tag_in: [auto_trigger]
+
+    - id: R-DOC-MACRO-LOLBIN
+      description: >-
+        Living-off-the-land binary invoked from macro simulation
+        (powershell / mshta / certutil / regsvr32 / rundll32 / wscript).
+        Strong indicator of staged payload delivery.
+      bucket: macro_analysis
+      weight: 30
+      match:
+        indicator_type: macro_action_call
+        data_tag_in: [lolbin]
+
+    - id: R-DOC-MACRO-SIM-EVENTS
+      description: >-
+        Macro simulation captured delivery-behavior events: network request,
+        shell command invocation, or file write.  Indicates macro contains
+        active delivery logic.
+      bucket: macro_analysis
+      weight: 25
+      match:
+        indicator_type: macro_action_call
+        data_tag_in: [command_invocation, network_request, file_write]
+
+    # ── Document-structure rules ─────────────────────────────────────────────
+
+    - id: R-DOC-REMOTE-TEMPLATE
+      description: >-
+        Remote template injection reference detected — the document fetches
+        a template from a remote URL on open, enabling macro injection
+        without embedding VBA locally.
+      bucket: document_analysis
+      weight: 30
+      match:
+        indicator_type: remote_template_ref
+
+    - id: R-DOC-DDE-COMMAND
+      description: >-
+        DDE (Dynamic Data Exchange) command field present — can execute
+        arbitrary shell commands when the document is opened in
+        an unpatched Office installation.
+      bucket: document_analysis
+      weight: 20
+      match:
+        indicator_type: dde_field
+
+    - id: R-DOC-MOTW-BYPASS
+      description: >-
+        Mark-of-the-Web bypass via container delivery (ISO / ZIP / 7z /
+        VHD wrapping the document) — neutralises Protected View and allows
+        macros to run without security warning.
+      bucket: document_analysis
+      weight: 15
+      match:
+        indicator_type: trigger
+        data_tag_in: [motw_bypass]
+
+    # ── Embedded payload rules ───────────────────────────────────────────────
+
+    - id: R-DOC-EMBEDDED-PE
+      description: >-
+        Embedded OLE object identified as a PE (executable) payload —
+        the document directly hosts a runnable binary, a defining
+        characteristic of dropper documents.
+      bucket: embedded_payloads
+      weight: 35
+      match:
+        indicator_type: embedded_ole_object
+        data_equals:
+          suggested_format: pe
+
+    - id: R-DOC-PDF-EMBEDDED-PE
+      description: >-
+        PDF embedded file identified as a PE payload — the PDF directly hosts a
+        runnable binary and should be treated as a payload-hosting document.
+      bucket: embedded_payloads
+      weight: 35
+      match:
+        indicator_type: pdf_embedded_file
+        data_equals:
+          suggested_format: pe
+
+    # ── PDF-specific rules ───────────────────────────────────────────────────
+
+    - id: R-DOC-PDF-JS
+      description: >-
+        JavaScript trigger in PDF action chain (/JS or /JavaScript) —
+        PDF-embedded JavaScript can perform drive-by downloads or
+        exploit reader vulnerabilities.
+      bucket: document_analysis
+      weight: 15
+      match:
+        indicator_type: pdf_action_chain
+        data_tag_in: [js_trigger]
+
+    - id: R-DOC-PDF-LAUNCH
+      description: >-
+        Launch action in PDF (/Launch) — instructs the PDF reader to
+        open an external process or file, a classic PDF dropper technique.
+      bucket: document_analysis
+      weight: 20
+      match:
+        indicator_type: pdf_action_chain
+        data_tag_in: [launch_action]
+
+    - id: R-DOC-PDF-XFA
+      description: >-
+        XFA form with script content present — complex PDF form logic can carry
+        credential phishing or reader exploit logic.
+      bucket: document_analysis
+      weight: 15
+      match:
+        indicator_type: xfa_form
+
+    - id: R-DOC-PDF-JBIG2
+      description: >-
+        JBIG2Decode filter present in a PDF — historically associated with
+        reader exploit chains and high-risk image parser attack surface.
+      bucket: document_analysis
+      weight: 20
+      match:
+        indicator_type: pdf_keyword_summary
+        data_equals:
+          has_jbig2decode: true
+
+    - id: R-DOC-PDF-SUBMITFORM
+      description: >-
+        SubmitForm action present in a PDF — indicates a form can transmit
+        user data to a remote endpoint and is relevant to phishing triage.
+      bucket: document_analysis
+      weight: 10
+      match:
+        indicator_type: pdf_keyword_summary
+        data_equals:
+          has_submit_form: true
+
+    - id: R-DOC-PDF-SHELLCODE-JS
+      description: >-
+        PDF JavaScript contains shellcode-oriented markers such as heap-spray,
+        NOP sled, or exploit API patterns.
+      bucket: document_analysis
+      weight: 30
+      match:
+        indicator_type: pdf_js_analysis
+        data_equals:
+          has_shellcode_markers: true
+
+    - id: R-DOC-PDF-OBFUSCATED-JS
+      description: >-
+        PDF JavaScript contains obfuscation markers such as unescape,
+        String.fromCharCode, eval, or ActiveX construction.
+      bucket: document_analysis
+      weight: 10
+      match:
+        indicator_type: pdf_js_analysis
+        data_equals:
+          has_obfuscation_markers: true
+
+  # ── DocumentRole classifier ─────────────────────────────────────────────────
+  # First-match semantics: rules are evaluated in order; the first rule
+  # whose conditions are satisfied determines document_role.  The final
+  # entry must be a {default: ...} fallback (FR-13 AC-4/5).
+
+  document_role_rules:
+    # infection_source: embedded PE payload + active delivery logic
+    - if_all: [R-DOC-EMBEDDED-PE]
+      if_any: [R-DOC-MACRO-SIM-EVENTS, R-DOC-MACRO-LOLBIN,
+               R-DOC-REMOTE-TEMPLATE, R-DOC-DDE-COMMAND, R-DOC-PDF-LAUNCH]
+      then: infection_source
+
+    - if_all: [R-DOC-PDF-EMBEDDED-PE]
+      if_any: [R-DOC-PDF-JS, R-DOC-PDF-LAUNCH, R-DOC-PDF-XFA,
+               R-DOC-PDF-JBIG2, R-DOC-PDF-SHELLCODE-JS]
+      then: infection_source
+
+    # payload_host: embedded PE payload without delivery logic
+    - if_all: [R-DOC-EMBEDDED-PE]
+      then: payload_host
+
+    - if_all: [R-DOC-PDF-EMBEDDED-PE]
+      then: payload_host
+
+    # carrier: delivery logic present but no embedded PE
+    - if_any: [R-DOC-VBA-AUTO-TRIGGER, R-DOC-MACRO-LOLBIN,
+               R-DOC-MACRO-SIM-EVENTS, R-DOC-REMOTE-TEMPLATE,
+               R-DOC-DDE-COMMAND, R-DOC-PDF-JS, R-DOC-PDF-LAUNCH,
+               R-DOC-PDF-XFA, R-DOC-PDF-JBIG2, R-DOC-PDF-SUBMITFORM,
+               R-DOC-PDF-SHELLCODE-JS, R-DOC-MOTW-BYPASS]
+      then: carrier
+
+    # clean: no suspicious document indicators
+    - default: clean

@@ -1,0 +1,279 @@
+{
+  "AccountId": "524095063240",
+  "Arn": "arn:aws:guardduty:us-east-1:524095063240:detector/c481ccbc23b4467d862bd3970e671954/finding/82cac862c2a4847a7a0e9e704fd5a4b8",
+  "CreatedAt": "2025-03-13T18:30:18.697Z",
+  "Description": "A resource of type ECSCluster has executed suspicious tool nmap of category Network Scanner Tool.",
+  "Id": "82cac862c2a4847a7a0e9e704fd5a4b8",
+  "Partition": "aws",
+  "Region": "us-east-1",
+  "Resource": {
+    "InstanceDetails": {
+      "AvailabilityZone": "us-east-1a",
+      "IamInstanceProfile": {
+        "Arn": "arn:aws:iam::524095063240:instance-profile/demOS-dzone-project-1qxo5q2k-stack-dca44olo-ProfileInstancesWorkersPublic-viOpX3wjnwTI",
+        "Id": "AIPAXUBUAATELHTF766LB"
+      },
+      "ImageDescription": "Amazon Linux AMI 2023.0.20241115 arm64 ECS HVM EBS",
+      "ImageId": "ami-0c70709858a4ff58c",
+      "InstanceId": "i-02e0c37f482b54167",
+      "InstanceState": "running",
+      "InstanceType": "t4g.micro",
+      "LaunchTime": "2025-03-13T17:46:32.000Z",
+      "NetworkInterfaces": [
+        {
+          "Ipv6Addresses": [
+            "2600:1f18:5aba:450a:356:7133:2221:392d"
+          ],
+          "NetworkInterfaceId": "eni-0ff291422293fe147",
+          "PrivateDnsName": "i-02e0c37f482b54167.ec2.internal",
+          "PrivateIpAddress": "10.4.1.182",
+          "PrivateIpAddresses": [
+            {
+              "PrivateDnsName": "i-02e0c37f482b54167.ec2.internal",
+              "PrivateIpAddress": "10.4.1.182"
+            }
+          ],
+          "PublicDnsName": "ec2-3-82-93-34.compute-1.amazonaws.com",
+          "PublicIp": "3.82.93.34",
+          "SecurityGroups": [
+            {
+              "GroupId": "sg-014923ae844000473",
+              "GroupName": "dzone-1qxo5q2k-dca44olo.App10"
+            }
+          ],
+          "SubnetId": "subnet-099a2dd2943695114",
+          "VpcId": "vpc-0e289f9bf2b01087b"
+        }
+      ],
+      "ProductCodes": [],
+      "Tags": [
+        {
+          "Key": "StateOff",
+          "Value": "stopped"
+        },
+        {
+          "Key": "demOS:bundle",
+          "Value": "aws-demo-regional/1.1"
+        },
+        {
+          "Key": "demOS:domain",
+          "Value": "dzone.live"
+        },
+        {
+          "Key": "aws:cloudformation:stack-id",
+          "Value": "arn:aws:cloudformation:us-east-1:524095063240:stack/demOS-dzone-project-1qxo5q2k-stack-dca44olo/c6dd97f0-ac35-11ef-89df-0e9b767e4af5"
+        },
+        {
+          "Key": "aws:cloudformation:stack-name",
+          "Value": "demOS-dzone-project-1qxo5q2k-stack-dca44olo"
+        },
+        {
+          "Key": "demOS:host:type",
+          "Value": "EcsWorker"
+        },
+        {
+          "Key": "StateOn",
+          "Value": "running"
+        },
+        {
+          "Key": "demOS:bundle:version",
+          "Value": "1.0"
+        },
+        {
+          "Key": "demOS:namespace",
+          "Value": "dzone"
+        },
+        {
+          "Key": "demOS:stack:id",
+          "Value": "dca44olo"
+        },
+        {
+          "Key": "aws:cloudformation:logical-id",
+          "Value": "InstanceApp1"
+        },
+        {
+          "Key": "demOS:version",
+          "Value": "0.1.0"
+        },
+        {
+          "Key": "demOS:project:scope",
+          "Value": "user"
+        },
+        {
+          "Key": "Name",
+          "Value": "app1"
+        },
+        {
+          "Key": "demOS:host:label",
+          "Value": "App1"
+        },
+        {
+          "Key": "demOS:bundle:label",
+          "Value": "aws-demo-regional"
+        },
+        {
+          "Key": "demOS:project:id",
+          "Value": "1qxo5q2k"
+        },
+        {
+          "Key": "demOS:project:stack:height",
+          "Value": "one"
+        },
+        {
+          "Key": "Group",
+          "Value": "workerspublic"
+        },
+        {
+          "Key": "demOS:stack:name",
+          "Value": "demOS-dzone-project-1qxo5q2k"
+        }
+      ]
+    },
+    "ResourceType": "ECSCluster",
+    "EcsClusterDetails": {
+      "Name": "dzone-1qxo5q2k-dca44olo",
+      "Arn": "arn:aws:ecs:us-east-1:524095063240:cluster/dzone-1qxo5q2k-dca44olo",
+      "Status": "ACTIVE",
+      "Tags": [
+        {
+          "Key": "demOS:bundle",
+          "Value": "aws-demo-regional/1.1"
+        },
+        {
+          "Key": "demOS:project:id",
+          "Value": "1qxo5q2k"
+        },
+        {
+          "Key": "aws:cloudformation:stack-name",
+          "Value": "demOS-dzone-project-1qxo5q2k-stack-dca44olo"
+        },
+        {
+          "Key": "demOS:bundle:label",
+          "Value": "aws-demo-regional"
+        },
+        {
+          "Key": "aws:cloudformation:stack-id",
+          "Value": "arn:aws:cloudformation:us-east-1:524095063240:stack/demOS-dzone-project-1qxo5q2k-stack-dca44olo/c6dd97f0-ac35-11ef-89df-0e9b767e4af5"
+        },
+        {
+          "Key": "demOS:project:stack:height",
+          "Value": "one"
+        },
+        {
+          "Key": "demOS:bundle:version",
+          "Value": "1.0"
+        },
+        {
+          "Key": "Name",
+          "Value": "dzone-1qxo5q2k-dca44olo"
+        },
+        {
+          "Key": "demOS:domain",
+          "Value": "dzone.live"
+        },
+        {
+          "Key": "demOS:namespace",
+          "Value": "dzone"
+        },
+        {
+          "Key": "demOS:stack:name",
+          "Value": "demOS-dzone-project-1qxo5q2k"
+        },
+        {
+          "Key": "demOS:project:scope",
+          "Value": "user"
+        },
+        {
+          "Key": "demOS:version",
+          "Value": "0.1.0"
+        },
+        {
+          "Key": "demOS:stack:id",
+          "Value": "dca44olo"
+        },
+        {
+          "Key": "aws:cloudformation:logical-id",
+          "Value": "Cluster"
+        }
+      ],
+      "TaskDetails": {
+        "Arn": "arn:aws:ecs:us-east-1:524095063240:task/dzone-1qxo5q2k-dca44olo/5033423d193d41c0ac8df75086aedd65",
+        "DefinitionArn": "arn:aws:ecs:us-east-1:524095063240:task-definition/demOS-dzone-project-1qxo5q2k-stack-dca44olo-EcsTaskDefApp-GY3kMYYFYNEW:1",
+        "Version": "3",
+        "TaskCreatedAt": "2025-03-13T17:48:28.494000+00:00",
+        "StartedBy": "ecs-svc/0156266328862854571",
+        "Containers": [
+          {
+            "ContainerRuntime": "docker",
+            "Id": "aa806be1245bd35db93b17fc270b816bca3e74d51263cbb519a43c0bfb6584e7",
+            "Name": "kazemock",
+            "Image": "524095063240.dkr.ecr.us-east-1.amazonaws.com/dzone/aws-demo-regional/kazemock:1.1",
+            "ImagePrefix": "524095063240.dkr.ecr.us-east-1.amazonaws.com/dzone/aws-demo-regional"
+          }
+        ]
+      }
+    }
+  },
+  "SchemaVersion": "2.0",
+  "Service": {
+    "Archived": false,
+    "Count": 1,
+    "DetectorId": "c481ccbc23b4467d862bd3970e671954",
+    "EventFirstSeen": "2025-03-13T18:25:11.621Z",
+    "EventLastSeen": "2025-03-13T18:25:11.621Z",
+    "ServiceName": "guardduty",
+    "AdditionalInfo": {
+      "Value": "{}",
+      "Type": "default"
+    },
+    "FeatureName": "RuntimeMonitoring",
+    "RuntimeDetails": {
+      "Process": {
+        "Name": "nmap",
+        "ExecutablePath": "/usr/bin/nmap",
+        "ExecutableSha256": "d35b48d481ce8b5ba122d058f5d05489b816584232474ec62a615c4ef90258f1",
+        "NamespacePid": 3095,
+        "Pwd": "/app",
+        "Pid": 12558,
+        "StartTime": "2025-03-13T18:25:11.611000+00:00",
+        "Uuid": "3c9357fc-5fb3-e7b8-3671-eb38fe497a97",
+        "ParentUuid": "9fd08430-d107-850a-7c2b-064ed313430c",
+        "User": "root",
+        "UserId": 0,
+        "Euid": 0,
+        "Lineage": [
+          {
+            "StartTime": "2025-03-13T18:25:11.609000+00:00",
+            "NamespacePid": 3094,
+            "UserId": 0,
+            "Name": "sh",
+            "Pid": 12557,
+            "Uuid": "9fd08430-d107-850a-7c2b-064ed313430c",
+            "ExecutablePath": "/usr/bin/dash",
+            "Euid": 0,
+            "ParentUuid": "94d055ad-68bf-d24d-e434-40acdb3c4e23"
+          },
+          {
+            "StartTime": "2025-03-13T17:48:40.139000+00:00",
+            "NamespacePid": 1,
+            "UserId": 0,
+            "Name": "flask",
+            "Pid": 3130,
+            "Uuid": "94d055ad-68bf-d24d-e434-40acdb3c4e23",
+            "ExecutablePath": "/usr/bin/python3.11",
+            "Euid": 0,
+            "ParentUuid": "0d045104-ed64-0932-aa91-26d00e3b2d3f"
+          }
+        ]
+      },
+      "Context": {
+        "ToolName": "nmap",
+        "ToolCategory": "Network Scanner Tool"
+      }
+    }
+  },
+  "Severity": 8,
+  "Title": "A resource of type ECSCluster has executed suspicious tool.",
+  "Type": "Execution:Runtime/SuspiciousTool",
+  "UpdatedAt": "2025-03-13T18:30:18.697Z"
+}

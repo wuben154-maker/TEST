@@ -1,0 +1,119 @@
+# 1. 只读API调用
+- name: filter_read_only_api
+  condition: "alert.get('api_action', '').startswith(('Get', 'List', 'Describe'))"
+  action: "discard"
+  description: "过滤只读API调用"
+
+# 2. 云控制台正常登录（低危）
+- name: filter_console_login_low
+  condition: "alert.get('event_type') == 'ConsoleLogin' and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤低风险控制台登录"
+
+# 3. 来自企业办公IP的访问
+- name: filter_office_ip_access
+  condition: "alert.get('source_ip') in alert.get('office_ip_whitelist', [])"
+  action: "discard"
+  description: "过滤办公网访问"
+
+# 4. 服务账号行为（低危）
+- name: filter_service_account
+  condition: "alert.get('user') in alert.get('service_accounts', []) and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤服务账号低风险行为"
+
+# 5. 自动化工具调用（Terraform / SDK）
+- name: filter_automation_tools
+  condition: "any(tool in alert.get('user_agent', '').lower() for tool in ['terraform', 'aws-sdk', 'aliyun-sdk'])"
+  action: "discard"
+  description: "过滤自动化工具调用"
+
+# 6. 定时任务行为
+- name: filter_scheduled_cloud_task
+  condition: "alert.get('user') in alert.get('service_accounts', []) and alert.get('is_scheduled') == True"
+  action: "discard"
+  description: "过滤定时云任务"
+
+# 7. 同区域访问
+- name: filter_same_region
+  condition: "alert.get('source_region') == alert.get('target_region') and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤同区域低风险操作"
+
+# 8. 白名单资源操作
+- name: filter_whitelisted_resource
+  condition: "alert.get('resource_id') in alert.get('trusted_resources', [])"
+  action: "discard"
+  description: "过滤白名单资源操作"
+
+# 9. 容器健康检查
+- name: filter_k8s_health_check
+  condition: "alert.get('k8s_path') in ['/healthz', '/readyz', '/livez']"
+  action: "discard"
+  description: "过滤K8s健康检查"
+
+# 10. Pod正常重启
+- name: filter_pod_restart
+  condition: "alert.get('event_type') == 'PodRestart' and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤低风险Pod重启"
+
+# 11. 镜像拉取行为
+- name: filter_image_pull
+  condition: "alert.get('event_type') == 'PullImage'"
+  action: "discard"
+  description: "过滤镜像拉取"
+
+# 12. 内部服务通信（K8s）
+- name: filter_k8s_internal_service
+  condition: "alert.get('src_namespace') == alert.get('dst_namespace')"
+  action: "discard"
+  description: "过滤K8s内部通信"
+
+# 13. 已认证用户API调用
+- name: filter_authenticated_api
+  condition: "alert.get('authenticated') == True and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤已认证API调用"
+
+# 14. 日志/监控服务访问
+- name: filter_logging_monitoring_service
+  condition: "alert.get('service') in ['CloudWatch', 'Stackdriver', 'LogService']"
+  action: "discard"
+  description: "过滤日志/监控服务访问"
+
+# 15. 存储服务读取（低风险）
+- name: filter_storage_read
+  condition: "alert.get('service') in ['S3', 'OSS', 'Blob'] and alert.get('operation') == 'GetObject' and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤对象存储读取"
+
+# 16. 内网VPC流量
+- name: filter_vpc_internal
+  condition: "alert.get('src_ip', '').startswith(('10.', '172.', '192.168.')) and alert.get('dst_ip', '').startswith(('10.', '172.', '192.168.'))"
+  action: "discard"
+  description: "过滤VPC内网流量"
+
+# 17. 默认命名空间操作（低风险）
+- name: filter_default_namespace_low
+  condition: "alert.get('k8s_namespace') == 'default' and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤默认命名空间低风险操作"
+
+# 18. 重复云审计日志
+- name: filter_duplicate_cloudtrail
+  condition: "alert.get('is_duplicate') == True"
+  action: "discard"
+  description: "过滤重复云审计日志"
+
+# 19. 资源标签操作（低风险）
+- name: filter_tagging_operation
+  condition: "alert.get('api_action', '').startswith('Tag') and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤资源标签操作"
+
+# 20. 安全组读取操作
+- name: filter_security_group_read
+  condition: "alert.get('api_action') in ['DescribeSecurityGroups']"
+  action: "discard"
+  description: "过滤安全组查询操作"

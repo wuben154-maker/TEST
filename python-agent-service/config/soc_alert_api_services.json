@@ -1,0 +1,28 @@
+{
+  "api_services": {
+    "virustotal": {
+      "enabled": true,
+      "base_url": "{env:VIRUSTOTAL_API_BASE_URL}",
+      "timeout": 30,
+      "apiKey": "{env:VIRUSTOTAL_API_KEY}"
+    },
+    "onesec_api": {
+      "enabled": true,
+      "base_url": "{env:EDR_MOCK_BASE_URL}",
+      "timeout": 30
+    },
+    "tdp_api": {
+      "enabled": true,
+      "base_url": "{env:TDP_MOCK_BASE_URL}",
+      "timeout": 30
+    },
+    "splunk_api": {
+      "enabled": true,
+      "base_url": "{env:SPLUNK_API_BASE_URL}",
+      "timeout": 30,
+      "apiKey": "{env:SPLUNK_API_KEY}",
+      "verify": false
+    }
+  }
+}
+

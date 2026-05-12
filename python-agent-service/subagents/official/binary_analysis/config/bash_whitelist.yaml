@@ -1,0 +1,51 @@
+# Bash command whitelist (C7-AC1, ADR-13 / IR-10)
+#
+# These are the ONLY CLI binaries that `BashTool` and `PythonExecTool` are
+# allowed to launch inside the sandbox.  The check is performed against
+# `posixpath.basename(argv[0])` — the first token of the resolved command —
+# so full paths like `/usr/bin/yara` still match the `yara` entry.
+#
+# Rules of the list:
+# - May be *extended* in later batches (e.g. adding `ghidra-server`).
+# - Must never be *narrowed*: any removal is a breaking change and requires
+#   a spec bump.
+# - Entries must be the executable basename only; no shell metacharacters.
+#
+# Spec anchors: DESIGN.md §2.3.2 / ADR-13 / SPEC.md IR-10.
+
+commands:
+  # Ghidra headless analyzer (FR-07). IMPORTANT: `analyzeHeadless` is only
+  # sanctioned via the `ghidra-priority-queue-workflow` skill. Every
+  # invocation MUST pass `-postScript DecompileByList.py` together with
+  # `-scriptPath /opt/ghidra/scripts` and its three script-args
+  # (`<priority_list_path> <output_dir> <per_fn_timeout_s>`) so FR-07
+  # AC-7 (per-function timeout), IR-05 (priority BEFORE decompile), and
+  # IR-04 (per-function chunked output) all hold. A default
+  # whole-binary decompile (bare `analyzeHeadless ... -import sample`)
+  # blows the NFR-02 budget and streams far more than BashTool's 64 KiB
+  # stdout cap can carry — it is a protocol violation even though the
+  # whitelist itself matches only the basename. BashTool's tool
+  # description + `prompts/agent.md` §"Operating Principles" carry the
+  # mechanical enforcement; this comment is the contract surface.
+  - analyzeHeadless
+  - upx               # UPX-family unpacking (FR-05 AC-8); only use `upx -t` / `upx -d ... -o ...` through the UPX workflow skill.
+  - floss             # FireEye string extractor (FR-06)
+  - diec              # Detect-It-Easy CLI (FR-05); `die` is the Qt GUI binary and MUST NOT be whitelisted — it hangs in headless E2B sandboxes even with QT_QPA_PLATFORM=offscreen.
+  - yara              # Optional offline signature scanner; not required by the FR-02 baseline.
+  - strings           # GNU binutils strings (FR-06)
+  - sha256sum         # Cryptographic hash (FR-01)
+  - file              # libmagic file-type probe (FR-01 cross-check)
+  - ssdeep            # Fuzzy hash CLI (FR-01)
+  - tlsh              # Locality-sensitive hash CLI (FR-01)
+  - python3           # Python interpreter entry point (FR-04 / FR-05 / FR-06)
+  # Read-only workspace inspection primitives. LLM reaches for these
+  # naturally when orienting inside `/workspace/<analysis_id>/`; pre-
+  # F-manual whitelist forced a degraded path on the first `ls` call
+  # (FB-F-05). IR-10 "May be extended in later batches" clause applies.
+  # NOTE: deliberately NOT including `cat` / `head` / `tail` / `xxd` /
+  # `hexdump` / `od` — those would let the LLM stream raw sample bytes
+  # via stdout, bypassing the `FileReadTool._FORBIDDEN_BASENAMES`
+  # (NFR-03) guard. Any future addition here must first prove it cannot
+  # exfiltrate `sample.bin` bytes into the agent context.
+  - ls                # Directory listing — workspace discovery
+  - pwd               # Confirm workspace-relative cwd

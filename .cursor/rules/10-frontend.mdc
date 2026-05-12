@@ -1,0 +1,24 @@
+---
+description: 前端开发规范。适用于 React/Vue/Web 相关代码。包含组件设计、状态管理和样式指南。
+globs: **/*.tsx, **/*.ts, **/*.jsx, **/*.js, **/*.css, **/*.scss, src/app/**, src/components/**
+---
+# Frontend Development Rules
+
+## 1. 技术栈约束
+*请参考 `project_context.md` 中的具体版本，但通常遵循以下原则：*
+- **组件风格**: 优先使用函数式组件 (Functional Components)。
+- **类型安全**: 必须使用 TypeScript，严禁使用 `any` 类型。定义 Interface 优先于 Type。
+- **样式**: (根据你的项目修改) 优先使用 TailwindCSS，避免内联 Style。
+
+## 2. 组件设计 (Component Design)
+- **Props**: 组件 Props 必须定义明确的 Interface。
+- **Server/Client**: (如果是 Next.js) 默认为 Server Components。只有在需要 hooks (useState, useEffect) 时才添加 `'use client'`。
+- **分离**: 复杂的业务逻辑应抽取为 Custom Hooks，保持 UI 组件纯净。
+
+## 3. 测试策略 (Frontend TDD)
+- **Unit Test**: 使用 Jest/Vitest 测试纯函数逻辑。
+- **Component Test**: 使用 React Testing Library 测试组件交互。
+- **Rule**: 在创建组件前，先写测试用例描述预期行为。
+
+## 4. 目录规范
+- 新建组件必须包含：`index.ts` (导出), `Component.tsx`, `Component.test.tsx`。

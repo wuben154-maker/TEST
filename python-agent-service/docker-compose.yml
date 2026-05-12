@@ -1,0 +1,106 @@
+version: '3.8'
+
+services:
+  deep-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - VIRUSTOTAL_API_KEY=${VIRUSTOTAL_API_KEY}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - LANGSMITH_API_KEY=${LANGSMITH_API_KEY}
+      - LANGSMITH_PROJECT=${LANGSMITH_PROJECT}
+      - LANGSMITH_TRACING=${LANGSMITH_TRACING}
+      - DEFAULT_MODEL=${DEFAULT_MODEL:-anthropic/claude-sonnet-4-20250514}
+      - MAX_ITERATIONS=${MAX_ITERATIONS:-20}
+      - TIMEOUT_SECONDS=${TIMEOUT_SECONDS:-300}
+      # Local Firecrawl configuration
+      - FIRECRAWL_API_URL=http://firecrawl:3002
+      - FIRECRAWL_API_KEY=${FIRECRAWL_API_KEY:-fc-local}
+    volumes:
+      - ./app:/app/app:ro
+    restart: unless-stopped
+    depends_on:
+      firecrawl:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - agent-network
+
+  # ============================================================================
+  # Firecrawl Simple - Local Web Scraping Service
+  # https://github.com/devflowinc/firecrawl-simple
+  # ============================================================================
+  firecrawl:
+    image: ghcr.io/devflowinc/firecrawl-simple:latest
+    ports:
+      - "3002:3002"
+    environment:
+      - PORT=3002
+      - HOST=0.0.0.0
+      # Optional: Set API key for authentication (use any string)
+      - FIRECRAWL_API_KEY=${FIRECRAWL_API_KEY:-fc-local}
+      # Playwright configuration
+      - PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium
+      # Rate limiting (requests per minute)
+      - RATE_LIMIT_RPM=${FIRECRAWL_RATE_LIMIT:-60}
+      # Max concurrent scrapes
+      - MAX_CONCURRENCY=${FIRECRAWL_MAX_CONCURRENCY:-10}
+    volumes:
+      # Cache for faster subsequent scrapes
+      - firecrawl-cache:/app/.cache
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - agent-network
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
+
+  # ============================================================================
+  # Redis - Required for Firecrawl job queue (optional, for crawl feature)
+  # ============================================================================
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - agent-network
+    command: redis-server --appendonly yes
+
+networks:
+  agent-network:
+    driver: bridge
+
+volumes:
+  firecrawl-cache:
+  redis-data:

@@ -1,0 +1,113 @@
+[project]
+name = "binary-analysis"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "deepagents>=0.4.3",
+    "pydantic>=2",
+    "pydantic-settings>=2",
+    "python-ulid>=3",
+    # F-manual production wiring: LLM providers + .env loading.
+    # The provider set is minimal by design — extend in a follow-up if the
+    # lab needs more backends (e.g. langchain-openai / langchain-anthropic).
+    "langchain-google-genai>=3.1.0",
+    "python-dotenv>=1.0.0",
+    # `langgraph dev` entrypoint used by deep-agents-ui during local
+    # debugging (see langgraph.json + langgraph_entry.py). The in-memory
+    # server is dev-only and carries no extra cost for F-manual runs.
+    "langgraph-cli[inmem]>=0.1.55",
+]
+
+[project.scripts]
+deepagent-analyze = "cli:main"
+
+[project.optional-dependencies]
+# Document-analysis sandbox worker dependencies (C4 / ADR-DOC-01 / FR-03).
+# Install via `pip install binary-analysis[documents]` or
+# `uv pip install -e .[documents]` for local tests / subprocess backend.
+# The E2B image `binary-analysis-ubuntu-2204` installs the same + ViperMonkey /
+# peepdf (see `e2b-templates/binary_analysis/template.py`).
+#
+# Notes on availability (G-BLOCK-3 / G-BLOCK-4):
+#   - vipermonkey: no PyPI package named "viper-monkey"; install from Git if needed:
+#       pip install git+https://github.com/decalage2/ViperMonkey.git
+#   - peepdf: depends on pillow==3.2.0 which has no Py 3.12 wheel on Windows;
+#       Linux-only for now; pinned to a fork if upstream is broken.
+#   - pyOneNote: A-03 degraded path is always available (byte-level GUID scan);
+#       pyOneNote is optional for higher-fidelity extraction.
+# The packages below are the ones confirmed installable on Py 3.12 (G smoke):
+documents = [
+    "oletools>=0.60",
+    "msoffcrypto-tool>=5.0",
+    "pypdf>=4.0",
+    "pdfminer.six>=20231228",
+    "XLMMacroDeobfuscator>=0.2.0",
+]
+
+[dependency-groups]
+test = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+]
+# Optional group for E2B sandbox backend + template build scripts (C16/ADR-17).
+# Users running exclusively with the subprocess fallback do NOT need this group;
+# install via `uv sync --group e2b` when publishing a template or using
+# `BINARY_ANALYSIS_USE_E2B=true` at runtime.
+e2b = [
+    "e2b>=2.20",
+]
+
+[build-system]
+requires = ["setuptools>=73.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+
+py-modules = [
+    "analyst_graph",
+    "api",
+    "audit",
+    "budget_guards",
+    "cli",
+    "config",
+    "embedded_recursion",
+    "errors",
+    "facts_report",
+    "langgraph_entry",
+    "registry",
+    "report_bootstrap",
+    "tool_builder",
+    "ui_backend",
+    "upload_materializer",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["tools*", "schema*", "sandbox*", "prompts*", "evidence_chain*"]
+exclude = ["tests*", "skills*", "specs*", "e2b-templates*", "fmanual-runs*", "logs*"]
+
+[tool.setuptools.package-data]
+"prompts" = ["*.md"]
+
+[tool.uv.sources]
+deepagents = { path = "../../libs/deepagents", editable = true }
+
+[tool.ruff]
+lint.select = ["E", "F", "I", "UP"]
+lint.ignore = ["E501"]
+exclude = [
+    "skills",
+    "specs",
+    "e2b-templates",
+    "fmanual-runs",
+    "logs",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D", "S101"]
+"tests/unit_tests/test_agent.py" = ["E402", "I001"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+addopts = "--import-mode=importlib"
+pythonpath = ["."]

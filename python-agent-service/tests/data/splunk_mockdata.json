@@ -1,0 +1,21 @@
+{
+  "result": {
+    "_time": "2026-04-15T20:15:30.000Z",
+    "host": "DC-01.prod.corp.com",
+    "source": "WinEventLog:Security",
+    "sourcetype": "XmlWinEventLog",
+    "index": "prod_security",
+    "severity": "critical",
+    "alert_type": "Golden Ticket Attack Detected",
+    "_raw": "A Kerberos Golden Ticket attack was detected. Account: svc_backup@PROD.CORP.COM requested a TGT with unusually long lifetime (99999 minutes) from Domain Controller DC-01. This is indicative of a forged Ticket Granting Ticket (TGT) commonly used for persistent domain persistence. Source Workstation: WORKSTATION-7 (10.10.5.22).",
+    "user": "svc_backup",
+    "src": "10.10.5.22",
+    "dst": "DC-01.prod.corp.com",
+    "event_id": "4769",
+    "ticket_lifetime": "99999",
+    "ticket_encryption_type": "0x17",
+    "threat_actor_ttps": "T1558.001 - Golden Ticket"
+  },
+  "sid": "rt_scheduler__admin__search_Golden_Ticket_Detection_at_1721160930_123456789",
+  "search_name": "Golden_Ticket_Detection_Rule"
+}

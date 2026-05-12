@@ -1,0 +1,12 @@
+{
+  "rule_name": "Suspicious PowerShell encoded command",
+  "severity": "high",
+  "timestamp": "2026-04-07T12:00:00Z",
+  "host": "win-workstation-01",
+  "user": "jdoe",
+  "process": {
+    "name": "powershell.exe",
+    "command_line": "powershell -enc JABzAD0ATgBlAHcALQBPAGIAagBlAGMAdAAgAEkATwAuAE0AZQBtAG8AcgB5AFMAdAByAGUAYQBtADsAJABzAC4AUgBlAGEAZAAoACkA"
+  },
+  "summary": "Encoded PowerShell one-liner execution observed on endpoint."
+}

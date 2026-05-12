@@ -1,0 +1,8 @@
+# Which packages under the global skills directory (SKILLS_DIR) the main DeepAgent may load.
+# Only directory names listed here are exposed to the main agent via SkillsMiddleware (/skills/ or /skills-main/).
+# Subagents use bundle-local skills under subagents/official/<id>/skills/ — not controlled by this file.
+schema_version: 1
+main_agent_skill_packages:
+  - general-security
+  - vuln-scan
+  - security-report-mermaid

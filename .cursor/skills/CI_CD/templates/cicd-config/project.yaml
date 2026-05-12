@@ -1,0 +1,95 @@
+version: 1
+generated_by: aws-cicd
+generated_at: TODO_AUTO_DETECTED
+
+repository:
+  owner: TODO_AUTO_DETECTED
+  name: TODO_AUTO_DETECTED
+  default_branch: TODO_AUTO_DETECTED
+  current_branch: TODO_AUTO_DETECTED
+  remote_url: TODO_AUTO_DETECTED
+
+project:
+  layout: TODO_AUTO_DETECTED # single-app | split-frontend-backend | monorepo | worker-only
+  workspace_manager: TODO_AUTO_DETECTED
+  package_manager: TODO_AUTO_DETECTED
+  deployment_target_default: ecs
+  deployment_mode_default: single-node
+
+services:
+  frontend:
+    enabled: TODO_AUTO_DETECTED
+    path: TODO_AUTO_DETECTED
+    role: frontend
+    runtime: TODO_AUTO_DETECTED
+    package_manager: TODO_AUTO_DETECTED
+    dockerfile: TODO_AUTO_DETECTED
+    build_context: TODO_AUTO_DETECTED
+    container_name: TODO_AUTO_DETECTED
+    container_port: TODO_AUTO_DETECTED
+    health_path: TODO_AUTO_DETECTED
+    commands:
+      install: TODO_AUTO_DETECTED
+      lint: TODO_AUTO_DETECTED
+      typecheck: TODO_AUTO_DETECTED
+      test: TODO_AUTO_DETECTED
+      build: TODO_AUTO_DETECTED
+      start: TODO_AUTO_DETECTED
+  backend:
+    enabled: TODO_AUTO_DETECTED
+    path: TODO_AUTO_DETECTED
+    role: backend
+    runtime: TODO_AUTO_DETECTED
+    package_manager: TODO_AUTO_DETECTED
+    dockerfile: TODO_AUTO_DETECTED
+    build_context: TODO_AUTO_DETECTED
+    container_name: TODO_AUTO_DETECTED
+    container_port: TODO_AUTO_DETECTED
+    health_path: TODO_AUTO_DETECTED
+    commands:
+      install: TODO_AUTO_DETECTED
+      lint: TODO_AUTO_DETECTED
+      typecheck: TODO_AUTO_DETECTED
+      test: TODO_AUTO_DETECTED
+      build: TODO_AUTO_DETECTED
+      start: TODO_AUTO_DETECTED
+  worker:
+    enabled: TODO_AUTO_DETECTED
+    path: TODO_AUTO_DETECTED
+    role: worker
+    runtime: TODO_AUTO_DETECTED
+    package_manager: TODO_AUTO_DETECTED
+    dockerfile: TODO_AUTO_DETECTED
+    build_context: TODO_AUTO_DETECTED
+    container_name: TODO_AUTO_DETECTED
+    commands:
+      install: TODO_AUTO_DETECTED
+      lint: TODO_AUTO_DETECTED
+      typecheck: TODO_AUTO_DETECTED
+      test: TODO_AUTO_DETECTED
+      build: TODO_AUTO_DETECTED
+      start: TODO_AUTO_DETECTED
+
+database:
+  migration_tool: TODO_AUTO_DETECTED
+  migration_command: TODO_AUTO_DETECTED
+  migration_required_before_deploy: TODO_AUTO_DETECTED
+
+detection:
+  existing_workflows: TODO_AUTO_DETECTED
+  existing_cicd_config: TODO_AUTO_DETECTED
+  docker_compose_files: TODO_AUTO_DETECTED
+  env_examples: TODO_AUTO_DETECTED
+
+generated_files:
+  workflows:
+    - .github/workflows/ci.yml
+    - .github/workflows/release.yml
+    - .github/workflows/deploy-aws.yml
+  config:
+    - .cicd/project.yaml
+    - .cicd/env/dev.yaml.example
+    - .cicd/env/staging.yaml.example
+    - .cicd/env/prod.yaml.example
+    - .cicd/secrets/README.md
+    - .cicd/runbooks/rollback.md

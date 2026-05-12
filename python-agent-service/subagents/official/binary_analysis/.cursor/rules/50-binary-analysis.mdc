@@ -1,0 +1,25 @@
+---
+description: binary-analysis example (E2E-01 backend) constraints
+globs: examples/binary_analysis/**/*.py, examples/binary_analysis/**/*.yaml, examples/binary_analysis/**/SKILL.md
+---
+
+E2E-01 二进制分析后端实现约束。Spec 在 `examples/binary_analysis/specs/e2e01-backend/`，
+实施手册在同目录 `IMPL-PLAYBOOK.md`，进度在 `IMPL-PROGRESS.md`。
+
+硬约束（违反即架构红线）：
+- **零执行**（ADR-05 / NFR-04）：严禁在宿主调用 `subprocess.run(<sample_path>)` 之类直接执行样本字节；所有与样本交互的命令必须经 `SandboxClient.exec`。
+- **二进制隔离**（NFR-03）：样本 bytes 仅经 `SandboxClient.upload` 进入 `/workspace/<analysis_id>/`；LLM 请求体、Tool 返回值均不得含原始字节。
+- **证据链 append-only**（FR-09 AC-8 / ADR-02）：`EvidenceChainStore` 禁止 `update / delete` 方法；`Indicator.id` 全局唯一（ULID）。
+- **fact vs inference 强制标注**（ADR-03）：`Indicator.kind ∈ {fact, inference}`；`inference` 必须有非空 `evidence_refs` 且标 HIGH/MEDIUM/LOW confidence。
+- **规则引擎为主**（ADR-04）：Verdict 和 Risk Score 由 `ScoringTool` 规则引擎产出，LLM 仅作旁证；分歧时 `verdict_divergence` 字段记录 LLM 值但以规则为准。
+- **Prompt 消毒**（ADR-08 / NFR-10）：所有样本派生字符串（strings/URL/IOC）进入 LLM 上下文前必须 `prompts.sanitize()` 转义并包裹 `<untrusted_sample_content>` 标签。
+- **Schema SemVer 冻结**（NFR-12）：C2 冻结 `schema_version = "1.0.0"`；仅允许新增可选字段，任何破坏性变更必须 bump major。
+- **审计完整**（NFR-06）：所有工具调用、LLM 请求、沙箱生命周期事件写入 `<analysis_id>.audit.jsonl`；绝不记录样本字节原文。
+- **Tool 精简**（ADR-13）：自研 Tool 仅 5 个（FileIdentify / EvidenceChain / Scoring / DecisionGate / ReportGen）+ 3 原始（Bash / PythonExec / FileRead）；不得新增其他 Tool——复杂度通过 skill 消化。
+- **单目录 skill**（ADR-15，v0.7）：`examples/binary_analysis/skills/` 扁平，子目录名 = skill name（小写+连字符）；目录下所有 skill（原上游 vendor-in + 项目初创）统一视为项目自有资产，可自由编辑；推荐（非强制）在 `skills/CHANGELOG.md` 记录修改摘要以便审计与同步。
+
+代码风格（对齐 AGENTS.md）：Python 类型注解 + Google docstring；复杂函数 (>20 行) 拆分；禁 bare `except:`；使用 `pydantic` v2 + `contextvars` 传 `analysis_id`。
+
+验证：`cd examples/binary_analysis/ && uv run --group test pytest tests/unit_tests/ -v && uv run ruff check . && uv run ruff format --check .`
+
+上下文节流（补充 `00-global.mdc` §0 策略的项目特定数字）：本文件的硬约束条目 + `PROJECT_OVERVIEW.md` §1-§2 已覆盖 95% 日常改动；`SPEC.md` 位于 `specs/e2e01-backend/SPEC.md`（1300+ 行），按 FR-NN / ADR-NN / AC-N 用 `Grep` 定位单段；进度查 `IMPL-PROGRESS.md`，批次查 `IMPL-PLAYBOOK.md`。

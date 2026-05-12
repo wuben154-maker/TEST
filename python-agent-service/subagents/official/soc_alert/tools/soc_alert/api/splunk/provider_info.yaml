@@ -1,0 +1,56 @@
+name: splunk
+provider_code: splunk
+service_id: splunk_api
+description: >
+  Splunk Enterprise REST API service. Configure username, password, and optional
+  Base URL separately in the credentials form. Base URL defaults to
+  `https://127.0.0.1:8089`.
+description_cn: >
+  Splunk Enterprise REST API 服务。当前配置页需要分别填写用户名、密码和可选
+  Base URL；其中 Base URL 可留空，默认使用 `https://127.0.0.1:8089`。
+auth:
+  type: basic
+  secret: splunk_username
+  secret_secret: splunk_password
+  inject_as: header
+  header_name: Authorization
+credential_fields:
+  - key: username
+    label: Username
+    storage: secret
+    config_key: username
+    secret_id: splunk_username
+    input_type: text
+    required: true
+  - key: password
+    label: Password
+    storage: secret
+    config_key: password
+    secret_id: splunk_password
+    input_type: password
+    required: true
+  - key: base_url
+    label: Base URL
+    storage: config
+    config_key: base_url
+    input_type: url
+    default: "https://127.0.0.1:8089"
+defaults:
+  base_url: "https://127.0.0.1:8089"
+  timeout: 30
+  category: custom
+  verify: false
+notes: |
+  Splunk REST access endpoints require username/password authentication for login.
+  Common management port is 8089 (HTTPS).
+
+  The service supports:
+    - HTTP Basic authorization for management endpoints.
+    - /services/auth/login to obtain sessionKey.
+    - Authorization: Splunk <sessionKey> for token-based follow-up requests.
+    - Optional cookie-based auth (cookie=1 on auth/login, receives Set-Cookie).
+
+  Recommended configuration fields:
+    - Username
+    - Password
+    - Base URL (optional)

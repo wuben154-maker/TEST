@@ -1,0 +1,91 @@
+environment: staging
+
+aws:
+  account_id: TODO_REQUIRED
+  region: us-east-1
+  oidc_role_arn_secret: AWS_RELEASE_ROLE_ARN
+
+deployment:
+  target: ecs
+  mode: distributed
+  service_scope: all
+
+release:
+  require_manual_approval: true
+  allow_rollback: true
+  freeze_window_policy: TODO_OPTIONAL
+
+health:
+  frontend_url: TODO_REQUIRED_IF_FRONTEND
+  backend_url: TODO_REQUIRED_IF_BACKEND
+  frontend_path: TODO_AUTO_DETECTED
+  backend_path: TODO_AUTO_DETECTED
+  timeout_seconds: 10
+  retries: 10
+
+ecr:
+  frontend_repository: TODO_REQUIRED_IF_FRONTEND
+  backend_repository: TODO_REQUIRED_IF_BACKEND
+  worker_repository: TODO_REQUIRED_IF_WORKER
+
+ecs:
+  cluster_name: TODO_REQUIRED_IF_ECS
+  launch_type: FARGATE
+  desired_count:
+    single_node: 1
+    distributed: 2
+  autoscaling:
+    enabled: TODO_CONFIRM_FOR_STAGING
+    min_capacity: 2
+    max_capacity: TODO_REQUIRED_IF_AUTOSCALING
+    cpu_target_percent: 60
+    memory_target_percent: 70
+  services:
+    frontend:
+      service_name: TODO_REQUIRED_IF_FRONTEND
+      task_family: TODO_REQUIRED_IF_FRONTEND
+      execution_role_arn: TODO_REQUIRED_IF_FRONTEND
+      task_role_arn: TODO_REQUIRED_IF_FRONTEND
+      container_name: TODO_AUTO_DETECTED
+      target_group_arn: TODO_REQUIRED_IF_FRONTEND
+    backend:
+      service_name: TODO_REQUIRED_IF_BACKEND
+      task_family: TODO_REQUIRED_IF_BACKEND
+      execution_role_arn: TODO_REQUIRED_IF_BACKEND
+      task_role_arn: TODO_REQUIRED_IF_BACKEND
+      container_name: TODO_AUTO_DETECTED
+      target_group_arn: TODO_REQUIRED_IF_BACKEND
+    worker:
+      service_name: TODO_REQUIRED_IF_WORKER
+      task_family: TODO_REQUIRED_IF_WORKER
+      execution_role_arn: TODO_REQUIRED_IF_WORKER
+      task_role_arn: TODO_REQUIRED_IF_WORKER
+      container_name: TODO_AUTO_DETECTED
+
+network:
+  vpc_id: TODO_REQUIRED_IF_ECS
+  subnet_ids:
+    - TODO_REQUIRED_IF_ECS
+  security_group_ids:
+    - TODO_REQUIRED_IF_ECS
+
+ec2:
+  ssh_user: ec2-user
+  ssh_private_key_secret: AWS_EC2_SSH_PRIVATE_KEY
+  container_runtime: docker
+  single_node:
+    host: TODO_REQUIRED_IF_EC2_SINGLE_NODE
+  distributed:
+    hosts:
+      - host: TODO_REQUIRED_IF_EC2_DISTRIBUTED
+        role: all
+      - host: TODO_REQUIRED_IF_EC2_DISTRIBUTED
+        role: all
+  ports:
+    frontend_host_port: TODO_AUTO_DETECTED
+    backend_host_port: TODO_AUTO_DETECTED
+
+runtime_secrets:
+  env_source: github_environment_or_aws_secrets_manager
+  names:
+    - TODO_SECRET_NAME_ONLY

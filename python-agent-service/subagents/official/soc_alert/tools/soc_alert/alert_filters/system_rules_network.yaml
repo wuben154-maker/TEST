@@ -1,0 +1,119 @@
+# 1. 内网到内网通信（低风险）
+- name: filter_internal_to_internal
+  condition: "alert.get('src_ip', '').startswith(('10.', '172.', '192.168.')) and alert.get('dst_ip', '').startswith(('10.', '172.', '192.168.')) and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤内网主机间低风险通信"
+
+# 2. 已知白名单IP通信
+- name: filter_whitelisted_ip_communication
+  condition: "alert.get('src_ip') in alert.get('trusted_ips', []) or alert.get('dst_ip') in alert.get('trusted_ips', [])"
+  action: "discard"
+  description: "过滤白名单IP通信"
+
+# 3. 常见DNS请求
+- name: filter_dns_query
+  condition: "alert.get('protocol') == 'DNS' and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤普通DNS解析请求"
+
+# 4. 常见NTP时间同步
+- name: filter_ntp_traffic
+  condition: "alert.get('protocol') == 'NTP'"
+  action: "discard"
+  description: "过滤时间同步流量"
+
+# 5. DHCP请求
+- name: filter_dhcp
+  condition: "alert.get('protocol') == 'DHCP'"
+  action: "discard"
+  description: "过滤DHCP分配行为"
+
+# 6. CDN/云服务流量
+- name: filter_cdn_traffic
+  condition: "alert.get('dst_ip') in alert.get('cdn_ip_list', [])"
+  action: "discard"
+  description: "过滤CDN节点流量"
+
+# 7. 常见Web端口访问（低危）
+- name: filter_common_web_ports
+  condition: "alert.get('dst_port') in [80, 443] and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤常见Web访问"
+
+# 8. 已建立连接流量
+- name: filter_established_connection
+  condition: "alert.get('connection_state') == 'ESTABLISHED'"
+  action: "discard"
+  description: "过滤已建立连接"
+
+# 9. 小流量扫描（低频）
+- name: filter_low_port_scan
+  condition: "alert.get('scan_count', 0) < 10 and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤低频端口扫描"
+
+# 10. 本机回环通信
+- name: filter_loopback
+  condition: "alert.get('src_ip') == '127.0.0.1' or alert.get('dst_ip') == '127.0.0.1'"
+  action: "discard"
+  description: "过滤本地回环通信"
+
+# 11. 广播流量
+- name: filter_broadcast_traffic
+  condition: "alert.get('dst_ip', '').endswith('.255')"
+  action: "discard"
+  description: "过滤广播流量"
+
+# 12. 多播流量
+- name: filter_multicast
+  condition: "alert.get('dst_ip', '').startswith('224.')"
+  action: "discard"
+  description: "过滤多播流量"
+
+# 13. ICMP探测（低危）
+- name: filter_icmp_ping
+  condition: "alert.get('protocol') == 'ICMP' and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤普通ping探测"
+
+# 14. 常见邮件协议流量
+- name: filter_mail_protocol
+  condition: "alert.get('dst_port') in [25, 110, 143, 587]"
+  action: "discard"
+  description: "过滤邮件协议流量"
+
+# 15. FTP正常连接
+- name: filter_ftp_normal
+  condition: "alert.get('dst_port') in [20, 21] and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤FTP正常连接"
+
+# 16. VPN隧道流量
+- name: filter_vpn_traffic
+  condition: "alert.get('src_ip') in alert.get('vpn_ip_list', []) or alert.get('dst_ip') in alert.get('vpn_ip_list', [])"
+  action: "discard"
+  description: "过滤VPN流量"
+
+# 17. 内部资产扫描（低危）
+- name: filter_internal_scan_low
+  condition: "alert.get('src_ip', '').startswith(('10.', '172.', '192.168.')) and alert.get('scan_count', 0) < 20"
+  action: "discard"
+  description: "过滤内网低频扫描"
+
+# 18. 重复流量告警
+- name: filter_duplicate_flow
+  condition: "alert.get('is_duplicate') == True"
+  action: "discard"
+  description: "过滤重复流量告警"
+
+# 19. 小数据量传输
+- name: filter_small_traffic
+  condition: "alert.get('bytes', 0) < 500 and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤小流量通信"
+
+# 20. 已知安全服务通信
+- name: filter_known_service_ports
+  condition: "alert.get('dst_port') in alert.get('trusted_service_ports', [])"
+  action: "discard"
+  description: "过滤已知业务端口通信"

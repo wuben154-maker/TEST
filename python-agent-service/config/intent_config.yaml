@@ -1,0 +1,80 @@
+# Intent Understanding Configuration
+# 意图理解模块配置文件
+
+# Confidence threshold for intent classification
+confidence_threshold: 0.7
+
+# Maximum number of enrichment queries in Phase 2
+max_enrichment_queries: 5
+
+# Short-term memory limit (number of recent interactions)
+short_term_limit: 20
+
+# File processing configuration
+file_processing:
+  # File size thresholds (in bytes)
+  small_file_threshold: 1048576      # 1 MB
+  medium_file_threshold: 10485760    # 10 MB
+  large_file_threshold: 104857600   # 100 MB
+  
+  # Sampling configuration
+  head_lines: 500
+  tail_lines: 500
+  middle_sample_size: 200
+  
+  # Maximum content length for parsing (in characters)
+  max_content_length: 1000000  # 1M characters
+
+# Context retrieval configuration
+context:
+  # Long-term memory retrieval limit
+  long_term_limit: 10
+  
+  # Fuzzy matching configuration (simple text similarity, no vectors)
+  fuzzy_matching:
+    enabled: true
+    min_similarity: 0.3  # Minimum similarity threshold (0.0-1.0)
+    # Strategies: exact_contains, jaccard, value_match
+    # exact_contains: Check if query is substring of key or vice versa
+    # jaccard: Word set overlap (Jaccard similarity)
+    # value_match: Match against stored value content
+  
+  # Vector similarity threshold (for future pgvector support)
+  # vector_similarity_threshold: 0.8
+  
+  # Summary generation
+  summary_max_tokens: 500
+  
+  # Context summary configuration (Stage 1 Enhancement)
+  summary:
+    # Extraction limits
+    max_entities: 20          # Maximum number of entities to extract
+    max_files: 10              # Maximum number of files to list
+    max_summaries: 10          # Maximum number of summary entries
+    summary_length: 200        # Maximum length per summary entry (characters)
+    
+    # Long-term memory integration
+    include_long_term: true    # Whether to include long-term memory
+    long_term_limit: 10        # Maximum number of long-term memory items
+    
+    # Fallback summary length
+    fallback_summary_length: 250  # Length for fallback summaries (characters)
+
+# LLM configuration
+llm:
+  # Model to use for intent classification
+  model: "gpt-4o-mini"
+  
+  # Temperature for classification
+  temperature: 0.1
+  
+  # Max tokens for classification response
+  max_tokens: 1000
+
+# Performance monitoring
+monitoring:
+  # Enable performance tracking
+  enabled: true
+  
+  # Log slow operations (threshold in seconds)
+  slow_operation_threshold: 2.0

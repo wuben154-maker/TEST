@@ -1,0 +1,83 @@
+---
+description: Rules for vendoring Python agent source code into subagents/official/<bundle>/ bundle directories. Covers package registration via sys.modules, relative import requirements, and import rewrite checklist.
+globs: subagents/official/**/*, app/agents/*_compiled.py
+alwaysApply: false
+---
+
+# Bundle Vendor 惯例
+
+当将外部 Python 包（如上游示例 agent）vendored 到 `subagents/official/<bundle>/` 时，
+遵守以下规则。bundle 目录名可能含连字符（如 `email-security`），**不能直接作为 Python 包名**。
+
+## 目录结构约定
+
+```
+subagents/official/<bundle>/      # bundle 根（目录名可含连字符）
+├── AGENT.md                      # 保留（standard 回退与文档）
+├── __init__.py                   # 🆕 必须存在，使目录成为包根
+├── agent.py                      # vendored（import 改写见下）
+├── prompts.py
+├── prompts/*.md
+└── tools/
+    ├── __init__.py
+    └── policy/__init__.py
+```
+
+**禁止**再套一层子目录（如 `email-security/email_security_agent/`）。直接 flat 放。
+
+## sys.modules 注册（连字符目录的导入方式）
+
+在对应的 `app/agents/<name>_compiled.py` 构建器文件中，
+用以下模板将 bundle 目录注册为合法 Python 包别名：
+
+```python
+import importlib.util, sys
+from pathlib import Path
+from app.config.settings import SERVICE_ROOT
+
+_BUNDLE_DIR = (SERVICE_ROOT / "subagents" / "official" / "my-bundle").resolve()
+_PKG_ALIAS = "my_bundle_agent"  # 有效 Python 标识符
+
+def _ensure_bundle_registered() -> None:
+    if _PKG_ALIAS in sys.modules:
+        return
+    spec = importlib.util.spec_from_file_location(
+        _PKG_ALIAS,
+        str(_BUNDLE_DIR / "__init__.py"),
+        submodule_search_locations=[str(_BUNDLE_DIR)],
+    )
+    if spec is None or spec.loader is None:
+        raise ImportError(f"Cannot load {_PKG_ALIAS} from {_BUNDLE_DIR}")
+    pkg = importlib.util.module_from_spec(spec)
+    pkg.__path__ = [str(_BUNDLE_DIR)]
+    pkg.__package__ = _PKG_ALIAS
+    sys.modules[_PKG_ALIAS] = pkg
+    spec.loader.exec_module(pkg)
+
+_ensure_bundle_registered()
+from my_bundle_agent.agent import build_agent  # noqa: E402
+```
+
+**禁止**使用 `sys.path.insert` — 会污染全局模块搜索路径，改用 `sys.modules` 注册。
+
+## Import 改写清单（vendored 文件必须全部执行）
+
+| 原始 import | 改写为 |
+|-------------|--------|
+| `from <pkg_name>.X import Y` | `from .X import Y`（相对 import） |
+| `from deepagents import create_deep_agent` | `from app._vendor.deepagents import create_deep_agent` |
+| `from deepagents.middleware.subagents import CompiledSubAgent` | `from app._vendor.deepagents.middleware.subagents import CompiledSubAgent` |
+| `from research_agent.uploaded_files_backend import ...` | 删除；backend 由调用方传入 |
+| 模块级 `agent = create_agent()` | 删除 |
+| `create_agent()` 入口函数 | 删除 |
+
+## 验证命令
+
+```bash
+# 检查无残留绝对包名 import（替换 <pkg_name> 为实际包名）
+rg "from <pkg_name>" subagents/official/<bundle>/
+# 检查无 deepagents PyPI import
+rg "from deepagents import" subagents/official/<bundle>/
+# 检查无 research_agent import
+rg "from research_agent" subagents/official/<bundle>/
+```

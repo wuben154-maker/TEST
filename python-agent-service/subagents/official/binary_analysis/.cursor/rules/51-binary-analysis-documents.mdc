@@ -1,0 +1,23 @@
+---
+description: E2E-02 document-borne malware analysis constraints (Office / PDF / RTF / HTA / OneNote / encrypted Office)
+globs: examples/binary_analysis/tools/document_extract.py, examples/binary_analysis/sandbox/document_workers/**/*.py, examples/binary_analysis/schema/document_enums.py, examples/binary_analysis/schema/indicator_types_v1_1.py, examples/binary_analysis/prompts/document_user_prompt.py, examples/binary_analysis/skills/document-analysis-e2e-orchestrator/**/*.md
+---
+
+E2E-02 文档载体恶意软件分析切片的硬约束。Spec 在 `examples/binary_analysis/specs/e2e02-documents/`（SPEC / DESIGN / IMPL-GUIDE / IMPL-PLAYBOOK / IMPL-PROGRESS）。e2e01 基线约束见同目录 `50-binary-analysis.mdc`。
+
+硬约束（违反即架构红线）：
+- **Sandbox-only 解析器**（ADR-DOC-01 / NFR-04 / IR-DOC-01/07）：宿主源码树（`tools/`、`schema/`、`prompts/`、`evidence_chain/`、`sandbox/` 除 `document_workers/` 外，以及根目录 `agent.py` / `api.py` / `cli.py` 等）**严禁** `import vmonkey / from vmonkey` / `import peepdf / from peepdf` / `import pyOneNote / from pyOneNote` / `import oletools.olevba` / `import XLMMacroDeobfuscator`；违反 → `tests/static_scan/test_no_vmonkey_import_in_host.py` 失败。
+- **Tool 上限 5+3+1**（ADR-DOC-04）：`build_binary_analyst_tools` 仅允许追加 `DocExtractTool` 一个新工具（总 10 = 5 自研 + 3 原始 + 1 新 + 1 `SandboxSessionTool`）；任何新增 Tool 必须先回写 DESIGN 并走 ADR 论证。
+- **Agent 数量硬上限 = 1**（ADR-DOC-10）：**不得**新建 `build_document_analyst_agent` / `DocumentAnalyst` 类 / `Router` 组件；文档模式切换由 `document-analysis-e2e-orchestrator` skill 承担。
+- **Orchestrator skill 互斥**（ADR-DOC-10）：`document_extract` Tool **仅**在加载 `document-analysis-e2e-orchestrator` skill 后调用；`DocExtractTool._arun` 对 `document_format in {None, PE, ELF, Mach-O}` 立即 `ValueError`；`binary-analysis-e2e-orchestrator/SKILL.md` 必须含 "DO NOT call document_extract" 守卫。
+- **Indicator type 枚举校验**（IR-DOC-02）：`EvidenceChainStore.append` 对 4 个新桶（`document_analysis / macro_analysis / embedded_payloads / delivery_chain_doc`）强制校验 `indicator_type ∈ indicator_types_v1_1` 的对应 frozenset；LLM 不得直接写新桶 Indicator（只写 `llm_inferences` 桶的 `inference` 类型）。
+- **Schema v1.1 扩展式**（ADR-DOC-02 / NFR-12）：`schema_version = "1.1.0"`；新字段全部 `Optional`；`unknown_downgrade_reason` 为有限枚举且必须包含 `all_low_confidence` / `llm_unrecoverable` 历史值；Verdict / `recommended_escalation` 枚举**不扩展**（ADR-DOC-06 / FR-13 AC-2 / FR-14 AC-2）。
+- **递归深度 + 预算**（ADR-DOC-03 / IR-DOC-03/10）：`RecursionDepthGuard` 默认 `max_depth=2` 跨 e2e01/e2e02 共享；token 预算默认 80k，递归特例硬上限 120k；预算紧张时"保子砍父"：父文档 `doc_analysis_partial=true` 且子样本完整跑完；不得让父报告完全丢失（最低保留 fact 层）。
+- **密码不入明文**（FR-03 AC-13 / NFR-06）：加密 Office 字典尝试只记哈希或截断值；LLM 上下文 / 审计日志 / Tool 返回值均不得含密码原文。
+- **sanitize 覆盖文档来源**（NFR-10 / ADR-08）：Office 元数据字段（`author / lastModifiedBy / company / title / subject / template`）、PDF `/URI` 与 `/JavaScript` 解码串、VBA 源码（≤ 80 字符 × 100 行截断）进入 LLM 前必经 `prompts.sanitize()`。
+
+代码风格（对齐 `50-binary-analysis.mdc`）：Pydantic v2 + contextvars + Google docstring；新增的 5 个 worker 脚本保持"纯 stdin JSON → stdout JSON"的无副作用契约；宿主 Tool 只通过 `SandboxClient.run_python` 调 worker，不直接 import 解析器。
+
+验证：`cd examples/binary_analysis && uv run --group test pytest tests/unit_tests/ tests/static_scan/ -v && uv run ruff check . && uv run ruff format --check .`
+
+<!-- 若本子项目作为独立仓库迁出，请将 globs 改为 `src/binary_analysis/...` 等项目内相对路径 -->

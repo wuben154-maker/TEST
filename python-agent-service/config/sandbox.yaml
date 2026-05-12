@@ -1,0 +1,67 @@
+# Sandbox global configuration — the single source of truth for all E2B sandbox settings.
+# Both sandbox tools (app/tools/sandbox_tools.py) and E2BSandboxBackend
+# (app/backends/e2b_sandbox.py) load from this file at startup.
+#
+# Agent convention (see tool schemas): E2B VMs do not mount SecManus /uploads/.
+# Use sandbox_run staging → /workspace/<project_id>/<basename>; manual upload_files may use
+# /tmp/secmanus/work/in/<file>. Write artifacts to /tmp/secmanus/work/out/ and list them in download_paths.
+#
+# Changes require a service restart to take effect (config is LRU-cached).
+
+defaults:
+  template: "base"           # fallback template when caller does not specify one
+  timeout_seconds: 360        # per-command execution timeout
+  max_sandbox_lifetime: 3600  # E2B sandbox TTL in seconds (auto-killed by E2B after this)
+  allow_internet: false      # outbound internet access default
+
+templates:
+  base:
+    template_id: "frank60063004/agent_browser-v1"
+    description: "Default minimal Linux sandbox (Python 3, bash, common Unix tools)"
+    allow_internet: false
+    timeout_seconds: 360
+    env: {}
+
+  binary-analysis:
+    template_id: "base"
+    description: "Binary dynamic analysis — run PE/ELF/scripts, collect IOCs, observe behavior"
+    allow_internet: false
+    timeout_seconds: 120
+    env:
+      ANALYSIS_MODE: "binary"
+      PYTHONDONTWRITEBYTECODE: "1"
+
+  web-simulation:
+    template_id: "base"
+    description: "Simulate malicious URL visits via curl / requests — needs outbound internet"
+    allow_internet: true
+    timeout_seconds: 120
+    env:
+      SIMULATION_MODE: "web"
+
+  script-exec:
+    template_id: "base"
+    description: "General untrusted script execution (Python, bash, Node, etc.)"
+    allow_internet: false
+    timeout_seconds: 120
+    env: {}
+
+  desktop:
+    template_id: "desktop"
+    description: "Full Linux desktop with Chromium / Playwright for browser-based simulations"
+    allow_internet: true
+    timeout_seconds: 600
+    env: {}
+
+  web-dynamic:
+    template_id: "base"
+    description: "Web file dynamic analysis — execute PHP/Python/JS or strings-analyse JSP/ASPX in isolation"
+    allow_internet: false
+    timeout_seconds: 120
+    env:
+      ANALYSIS_MODE: "web_dynamic"
+      PYTHONDONTWRITEBYTECODE: "1"
+
+network_policy:
+  # Future extension point: per-template egress domain allow/block lists.
+  blocked_domains: []

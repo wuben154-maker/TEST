@@ -1,0 +1,33 @@
+{
+  // Python interpreter path - use workspace variable for portability
+  // Note: If interpreter selector shows relative path, select the auto-detected "Python 3.14.0" option instead
+  "python.defaultInterpreterPath": "${workspaceFolder}/python-agent-service/venv/Scripts/python.exe",
+  "python.terminal.activateEnvironment": true,
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/python-agent-service"
+  ],
+  "python.analysis.autoImportCompletions": true,
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": false,
+  "python.linting.flake8Enabled": true,
+  "python.linting.flake8Args": [
+    "--max-line-length=88",
+    "--ignore=E203,W503"
+  ],
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/*.pyc": true
+  },
+  "[python]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+  "cursorpyright.analysis.autoImportCompletions": true,
+  "cursorpyright.analysis.extraPaths": [
+    "${workspaceFolder}/python-agent-service"
+  ]
+}
+

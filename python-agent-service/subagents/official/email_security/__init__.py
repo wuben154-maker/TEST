@@ -1,0 +1,2 @@
+"""Email security analysis agent."""
+

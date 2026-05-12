@@ -1,0 +1,75 @@
+# VM / air-gapped friendly stack: Postgres + Deep Agent only.
+# Omit Firecrawl (ghcr pulls may fail without GHCR login). Web scrape tools fall back per settings.firecrawl_url.
+version: '3.8'
+
+services:
+  deep-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Pass through all keys from host .env; explicit `environment` below wins on conflicts.
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - DATABASE_MODE=local
+      - LOCAL_DB_HOST=postgres
+      - LOCAL_DB_PORT=5432
+      - LOCAL_DB_NAME=secmanus
+      - LOCAL_DB_USER=postgres
+      - LOCAL_DB_PASSWORD=postgres
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY:-}
+      # Leave empty so app does not point at unpublished firecrawl:3002 service (see settings.firecrawl_url).
+      - FIRECRAWL_API_URL=
+      - FIRECRAWL_API_KEY=
+      - VIRUSTOTAL_API_KEY=${VIRUSTOTAL_API_KEY:-}
+      - DEFAULT_MODEL=${DEFAULT_MODEL:-google/gemini-2.5-flash}
+      - MAX_ITERATIONS=${MAX_ITERATIONS:-20}
+      - TIMEOUT_SECONDS=${TIMEOUT_SECONDS:-300}
+      - LANGSMITH_API_KEY=${LANGSMITH_API_KEY:-}
+      - LANGSMITH_PROJECT=${LANGSMITH_PROJECT:-security-deep-agent}
+      - LANGSMITH_TRACING=${LANGSMITH_TRACING:-false}
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    networks:
+      - agent-network
+
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      - POSTGRES_DB=secmanus
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/db/init_local_db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - agent-network
+
+networks:
+  agent-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+    driver: local

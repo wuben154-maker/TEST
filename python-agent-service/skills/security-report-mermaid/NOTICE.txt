@@ -1,0 +1,16 @@
+security-report-mermaid (SecManus)
+==================================
+
+This skill package bundles Markdown/Mermaid authoring guides and templates derived
+from third-party Apache-2.0 material.
+
+Upstream (style guides, diagram references, templates, example assets)
+------------------------------------------------------------------------
+Repository: https://github.com/SuperiorByteWorks-LLC/agent-project
+License:    Apache License 2.0 (see LICENSE in this directory)
+Authors:    Clayton Young / Superior Byte Works, LLC; K-Dense Team (see SKILL.md metadata)
+
+SecManus-specific content
+-------------------------
+The SKILL.md frontmatter and the "SecManus workspace" section are product-specific
+additions; they do not modify the license of the bundled upstream files.

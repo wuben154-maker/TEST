@@ -1,0 +1,116 @@
+# Official subagent registry (schema v3). See docs in python-agent-service/README.md (Subagent registry).
+schema_version: 3
+defaults:
+  bundles_root: subagents/official
+shared_skills:
+  package_ids: []
+subagents:
+  - id: binary-analysis
+    enabled: true
+    source: official
+    bundle_path: binary_analysis
+    description: "Analyze binary files, PE headers, packers, strings, and malware indicators."
+    routing_hints: "Use for executables, DLLs, reverse engineering, or malware sample analysis."
+    tools:
+      - name: file_identify
+        provider: binary_analysis
+      - name: evidence_chain
+        provider: binary_analysis
+      - name: scoring
+        provider: binary_analysis
+      - name: decision_gate
+        provider: binary_analysis
+      - name: report_gen
+        provider: binary_analysis
+      - name: bash
+        provider: binary_analysis
+      - name: python_exec
+        provider: binary_analysis
+      - name: file_read
+        provider: binary_analysis
+      - name: sandbox_session
+        provider: binary_analysis
+      - name: document_extract
+        provider: binary_analysis
+    tool_profile: default
+    extra_skill_package_ids: []
+    include_shared_skills: false
+    runtime: standard
+
+  - id: email-security
+    enabled: true
+    source: official
+    bundle_path: email_security
+    description: "Email security analysis: headers, phishing indicators, and threat assessment."
+    routing_hints: "Use for .eml, phishing, BEC, SPF/DKIM/DMARC, or message security."
+    tools:
+      - name: list_uploaded_files
+        backend_binding: required
+      - name: parse_eml
+        backend_binding: required
+      - name: analyze_email_headers
+      - name: scan_body_threats
+      - name: analyze_all_urls
+      - name: scan_quishing
+        backend_binding: required
+      - name: scan_image_threats
+        backend_binding: required
+      - name: analyze_attachment
+        backend_binding: required
+      - name: scan_attachment_second_pass
+        backend_binding: required
+      - name: compute_risk_score
+      - name: lookup_urlhaus
+      - name: lookup_malwarebazaar
+      - name: rdap_lookup
+      - name: fetch_url_metadata
+      - name: render_url_fingerprint
+      - name: run_enrich_phase
+    tool_profile: email-security
+    extra_skill_package_ids: []
+    include_shared_skills: false
+    runtime: standard
+    allow_nested_task: true
+    nested_subagent_allowlist:
+      - binary-analysis
+    nested_max_depth: 1
+    nested_task_system_prompt: "Use task() only for deep attachment analysis and only with subagent_type=\"binary-analysis\". Never recurse beyond one nested level."
+
+  - id: web-security
+    enabled: true
+    source: official
+    bundle_path: web_security
+    description: "Web application security: injection, XSS, RCE patterns, and hardening guidance."
+    routing_hints: "Use for HTTP traffic, WAF alerts, OWASP-style issues, or URL analysis."
+    tool_profile: web-security
+    extra_skill_package_ids: []
+    include_shared_skills: false
+    runtime: standard
+
+  - id: soc-alert
+    enabled: true
+    source: official
+    bundle_path: soc_alert
+    description: "SOC alert triage: SIEM events, correlation, and incident recommendations."
+    routing_hints: "Use for SIEM alerts, EDR detections, incident triage, or SOC workflows."
+    tool_profile: soc-alert-api
+    extra_skill_package_ids: []
+    include_shared_skills: false
+    runtime: standard
+
+  - id: deep-research
+    enabled: true
+    source: official
+    bundle_path: deep_research
+    description: "Multi-step open research with web search, synthesis, and structured reporting."
+    routing_hints: "Use for in-depth investigations requiring search, comparison, or long reports."
+    # Explicit tool list (content-builder-agent style). When present, this takes
+    # precedence over tool_profile in registry parsing.
+    tools:
+      - web_search
+      - scrape_url
+      - summarize_content
+    tool_profile: deep-research
+    extra_skill_package_ids: []
+    include_shared_skills: false
+    runtime: compiled

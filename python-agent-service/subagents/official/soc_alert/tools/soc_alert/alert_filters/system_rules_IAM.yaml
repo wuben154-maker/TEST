@@ -1,0 +1,119 @@
+# 1. 内网正常登录（低危）
+- name: filter_internal_login_low_risk
+  condition: "alert.get('src_ip', '').startswith(('10.', '172.', '192.168.')) and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤内网来源的低风险登录行为"
+
+# 2. 已知办公IP登录
+- name: filter_office_ip_login
+  condition: "alert.get('src_ip') in alert.get('office_ip_whitelist', [])"
+  action: "discard"
+  description: "过滤办公网出口IP的登录行为"
+
+# 3. VPN出口IP登录
+- name: filter_vpn_login
+  condition: "alert.get('src_ip') in alert.get('vpn_ip_list', [])"
+  action: "discard"
+  description: "过滤VPN出口登录"
+
+# 4. 已知设备登录
+- name: filter_known_device_login
+  condition: "alert.get('device_id') in alert.get('trusted_devices', [])"
+  action: "discard"
+  description: "过滤已登记设备登录"
+
+# 5. 单次登录失败（低危）
+- name: filter_single_login_failure
+  condition: "alert.get('event_type') == 'login_failed' and alert.get('fail_count', 1) == 1"
+  action: "discard"
+  description: "过滤单次登录失败"
+
+# 6. 少量连续失败（未达暴力破解阈值）
+- name: filter_low_bruteforce_attempt
+  condition: "alert.get('event_type') == 'login_failed' and alert.get('fail_count', 0) < 5"
+  action: "discard"
+  description: "过滤低频登录失败尝试"
+
+# 7. 用户主动退出登录
+- name: filter_logout_event
+  condition: "alert.get('event_type') == 'logout'"
+  action: "discard"
+  description: "过滤正常登出行为"
+
+# 8. Token刷新
+- name: filter_token_refresh
+  condition: "alert.get('event_type') in ['token_refresh', 'session_refresh']"
+  action: "discard"
+  description: "过滤会话刷新行为"
+
+# 9. SSO正常登录
+- name: filter_sso_login
+  condition: "alert.get('auth_method') == 'SSO' and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤SSO正常登录"
+
+# 10. 服务账号行为
+- name: filter_service_account_activity
+  condition: "alert.get('user') in alert.get('service_accounts', []) and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤服务账号低风险行为"
+
+# 11. API调用（白名单Key）
+- name: filter_whitelisted_api_key
+  condition: "alert.get('api_key') in alert.get('trusted_api_keys', [])"
+  action: "discard"
+  description: "过滤可信API Key调用"
+
+# 12. 定时任务认证行为
+- name: filter_scheduled_auth
+  condition: "alert.get('user') in alert.get('service_accounts', []) and alert.get('login_time') in alert.get('scheduled_time_range', [])"
+  action: "discard"
+  description: "过滤定时任务认证"
+
+# 13. 内部系统间调用
+- name: filter_internal_service_to_service
+  condition: "alert.get('src_ip', '').startswith(('10.', '172.', '192.168.')) and alert.get('dst_service') in alert.get('internal_services', [])"
+  action: "discard"
+  description: "过滤内部服务调用认证"
+
+# 14. MFA成功验证
+- name: filter_mfa_success
+  condition: "alert.get('event_type') == 'mfa_success'"
+  action: "discard"
+  description: "过滤多因素认证成功事件"
+
+# 15. 密码修改成功
+- name: filter_password_change_success
+  condition: "alert.get('event_type') == 'password_change' and alert.get('result') == 'success'"
+  action: "discard"
+  description: "过滤成功密码修改"
+
+# 16. 权限查询类操作
+- name: filter_permission_read
+  condition: "alert.get('event_type') in ['get_user', 'list_roles', 'describe_policy']"
+  action: "discard"
+  description: "过滤权限读取类操作"
+
+# 17. 合规扫描工具访问
+- name: filter_compliance_scanner
+  condition: "alert.get('user_agent', '').lower().find('scanner') != -1"
+  action: "discard"
+  description: "过滤合规扫描工具访问"
+
+# 18. 已知国家正常登录
+- name: filter_expected_geo_login
+  condition: "alert.get('country') in alert.get('allowed_countries', []) and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤正常国家来源登录"
+
+# 19. 正常工作时间登录
+- name: filter_working_hours_login
+  condition: "9 <= alert.get('login_hour', -1) <= 18 and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤工作时间登录"
+
+# 20. 浏览器标准登录行为
+- name: filter_standard_browser_login
+  condition: "alert.get('user_agent') in alert.get('known_browser_agents', []) and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤常见浏览器登录"

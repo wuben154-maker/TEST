@@ -1,0 +1,30 @@
+######
+{"id": "alert-001", "timestamp": "2024-01-15T10:00:00Z", "src_ip": "192.168.1.100", "dst_ip": "8.8.8.8", "alert_type": "malware", "severity": "High", "user_agent": "Mozilla/5.0", "response_code": 200, "url_path": "/api/login"}
+######
+{"id": "alert-002", "timestamp": "2024-01-15T10:00:01Z", "src_ip": "192.168.1.100", "dst_ip": "8.8.8.8", "alert_type": "malware", "severity": "High", "user_agent": "Mozilla/5.0", "response_code": 200, "url_path": "/api/login"}
+######
+{"id": "alert-003", "timestamp": "2024-01-15T10:00:05Z", "src_ip": "10.0.0.1", "dst_ip": "10.0.0.2", "alert_type": "scan", "severity": "Low", "user_agent": "python-requests/2.28", "response_code": 403, "url_path": "/admin"}
+######
+{"id": "alert-004", "timestamp": "2024-01-15T10:00:10Z", "src_ip": "10.0.0.1", "dst_ip": "10.0.0.2", "alert_type": "scan", "severity": "Low", "user_agent": "python-requests/2.28", "response_code": 403, "url_path": "/admin"}
+######
+{"id": "alert-005", "timestamp": "2024-01-15T10:00:15Z", "src_ip": "10.0.0.1", "dst_ip": "10.0.0.3", "alert_type": "brute_force", "severity": "Medium", "user_agent": "Hydra", "response_code": 401, "url_path": "/wp-login.php", "dst_port": 22}
+######
+{"id": "alert-006", "timestamp": "2024-01-15T10:00:20Z", "src_ip": "203.0.113.1", "dst_ip": "192.168.1.50", "alert_type": "exploit", "severity": "Critical", "user_agent": "sqlmap/1.6", "response_code": 404, "url_path": "/index.php?id=1'"}
+######
+{"id": "alert-007", "timestamp": "2024-01-15T10:00:25Z", "src_ip": "10.0.0.100", "dst_ip": "8.8.8.8", "alert_type": "c2_communication", "severity": "High", "user_agent": "UptimeRobot/2.0", "response_code": 200, "url_path": "/health"}
+######
+{"id": "alert-008", "timestamp": "2024-01-15T10:00:30Z", "src_ip": "10.0.0.5", "dst_ip": "10.0.0.6", "alert_type": "port_scan", "severity": "Low", "user_agent": "nmap/7.80", "dst_port": 80}
+######
+{"id": "alert-009", "timestamp": "2024-01-15T10:00:35Z", "src_ip": "192.168.1.100", "dst_ip": "8.8.8.8", "alert_type": "data_exfiltration", "severity": "High", "user_agent": "Mozilla/5.0", "response_code": 200, "url_path": "/download"}
+######
+{"id": "alert-010", "timestamp": "2024-01-15T10:00:40Z", "src_ip": "10.0.0.1", "dst_ip": "10.0.0.2", "alert_type": "scan", "severity": "Low", "user_agent": "zgrab/0.x", "response_code": 403, "url_path": "/.git/config"}
+######
+{"id": "alert-011", "timestamp": "2024-01-15T10:00:45Z", "src_ip": "198.51.100.1", "dst_ip": "192.168.1.99", "alert_type": "phishing", "severity": "Medium", "user_agent": "Go-http-client/1.1", "response_code": 200, "url_path": "/fake-login"}
+######
+{"id": "alert-012", "timestamp": "2024-01-15T10:00:50Z", "src_ip": "10.0.0.1", "dst_ip": "10.0.0.2", "alert_type": "scan", "severity": "Low", "user_agent": "nessus", "response_code": 404, "url_path": "/test.php"}
+######
+{"id": "alert-013", "timestamp": "2024-01-15T10:00:55Z", "src_ip": "192.168.1.101", "dst_ip": "8.8.4.4", "alert_type": "suspicious_dns", "severity": "Low", "query": "malicious-domain.com"}
+######
+{"id": "alert-014", "timestamp": "2024-01-15T10:01:00Z", "src_ip": "10.0.0.7", "dst_ip": "10.0.0.8", "alert_type": "internal_scan", "severity": "Low", "dst_port": 3389}
+######
+{"id": "alert-015", "timestamp": "2024-01-15T10:01:05Z", "src_ip": "10.0.0.7", "dst_ip": "10.0.0.8", "alert_type": "internal_scan", "severity": "Low", "dst_port": 3389}

@@ -1,0 +1,61 @@
+# UTF-8. Conditions run in eval with ``alert`` and ``re`` in scope.
+# Rule order matters: first matched rule decides action.
+rules:
+  # 1) Protective keep rules first: avoid accidental dropping of serious incidents.
+  - name: keep_high_and_critical
+    condition: "str(alert.get('severity', '')).lower() in ['high', 'critical']"
+    action: "pass"
+    description: "高危/严重告警优先保留，避免被后续噪声规则误过滤"
+
+  # 2) Known low-value traffic (restricted to low severity where possible).
+  - name: filter_whitelist_ips_low_only
+    condition: "alert.get('src_ip') in ['192.168.1.100', '192.168.1.101'] and str(alert.get('severity', '')).lower() == 'low'"
+    action: "discard"
+    description: "仅过滤白名单IP触发的低危告警，避免误杀中高危"
+
+  - name: filter_http_40x_low_only
+    condition: "alert.get('response_code') in [403, 404] and str(alert.get('severity', '')).lower() == 'low'"
+    action: "discard"
+    description: "仅过滤低危403/404相关告警"
+
+  - name: filter_known_scanner_ua_low_only
+    condition: "re.search(r'(?i)(bot|crawl|scanner|spider|zgrab|nmap|nessus|acunetix)', str(alert.get('user_agent', ''))) and str(alert.get('severity', '')).lower() == 'low'"
+    action: "discard"
+    description: "仅过滤低危扫描器/爬虫UA"
+
+  - name: filter_cloud_monitor_ua_low_only
+    condition: "re.search(r'(?i)(uptimerobot|pingdom|newrelicpinger|datadog)', str(alert.get('user_agent', ''))) and str(alert.get('severity', '')).lower() == 'low'"
+    action: "discard"
+    description: "仅过滤低危云监控/健康检查UA"
+
+  - name: filter_library_ua_low_only
+    condition: "re.search(r'(?i)(python-requests|go-http-client|java|okhttp)', str(alert.get('user_agent', ''))) and str(alert.get('severity', '')).lower() == 'low'"
+    action: "discard"
+    description: "仅过滤低危程序库UA自动化请求"
+
+  # 3) Internal low-risk scan noise. Preserve key management/db ports.
+  - name: filter_internal_scan_common_only
+    condition: "str(alert.get('src_ip', '')).startswith('10.') and str(alert.get('dst_ip', '')).startswith('10.') and str(alert.get('severity', '')).lower() == 'low' and alert.get('dst_port') not in [22, 23, 3389, 1433, 1521, 3306, 5432]"
+    action: "discard"
+    description: "过滤内网低危对常见业务端口的扫描噪声，保留关键管理/数据库端口"
+
+  - name: filter_internal_icmp_echo_low_only
+    condition: "str(alert.get('alert_type', '')) == 'ICMP_ECHO_REQUEST' and str(alert.get('src_ip', '')).startswith('10.') and str(alert.get('dst_ip', '')).startswith('10.') and str(alert.get('severity', '')).lower() == 'low'"
+    action: "discard"
+    description: "过滤内网低危ICMP Echo扫描"
+
+  # 4) Context-aware hygiene rules.
+  - name: filter_scan_against_non_existent_tech_low_medium
+    condition: "alert.get('dst_asset_tags') and 'tech_stack:java' in alert.get('dst_asset_tags', []) and re.search(r'\\.php$', str(alert.get('url_path', ''))) and str(alert.get('severity', '')).lower() in ['low', 'medium']"
+    action: "discard"
+    description: "过滤技术栈不匹配且中低危的扫描告警"
+
+  - name: filter_test_env_activity_low_medium
+    condition: "(alert.get('src_env') == 'testing' or alert.get('dst_env') == 'testing') and str(alert.get('severity', '')).lower() in ['low', 'medium']"
+    action: "discard"
+    description: "过滤测试环境中的中低危告警"
+
+  - name: filter_authorized_scanner_to_asset_low_medium
+    condition: "alert.get('src_ip') in ['10.0.1.50'] and 'authorized_scanner:true' in alert.get('dst_asset_tags', []) and str(alert.get('severity', '')).lower() in ['low', 'medium']"
+    action: "discard"
+    description: "过滤授权扫描器对可扫描资产产生的中低危告警"

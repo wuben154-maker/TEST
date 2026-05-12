@@ -1,0 +1,27 @@
+# PostgreSQL for local development
+# Usage: docker-compose -f docker-compose.postgres.yml up -d
+# Then run: psql -h localhost -U postgres -d secmanus -f scripts/db/init_local_db.sql
+# (from a container or use: docker exec -i <postgres_container> psql -U postgres -d secmanus < scripts/db/init_local_db.sql)
+
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: secmanus
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/db/init_local_db.sql:/docker-entrypoint-initdb.d/init_local_db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres-data:

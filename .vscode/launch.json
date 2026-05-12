@@ -1,0 +1,144 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Chrome",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:8080",
+      "webRoot": "${workspaceFolder}/src",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack:///src/*": "${webRoot}/*"
+      }
+    },
+    {
+      "name": "Attach to Chrome",
+      "type": "chrome",
+      "request": "attach",
+      "port": 9222,
+      "webRoot": "${workspaceFolder}/src",
+      "sourceMaps": true
+    },
+    {
+      "name": "Debug React App",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:8080",
+      "webRoot": "${workspaceFolder}/src",
+      "sourceMaps": true,
+      "preLaunchTask": "npm: dev"
+    },
+    {
+      "name": "Python: FastAPI (Uvicorn)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "app.main:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000",
+        "--reload"
+      ],
+      "jinja": true,
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}/python-agent-service",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/python-agent-service"
+      },
+      "envFile": "${workspaceFolder}/python-agent-service/.env",
+      "python": "${workspaceFolder}/python-agent-service/venv/Scripts/python.exe",
+      "console": "integratedTerminal",
+      "stopOnEntry": false,
+      "showReturnValue": true,
+      "autoReload": {
+        "enable": true
+      },
+      "gevent": false,
+      "subProcess": true,
+      "logToFile": "${workspaceFolder}/.vscode/debugpy.log"
+    },
+    {
+      "name": "Python: FastAPI (Attach)",
+      "type": "debugpy",
+      "request": "attach",
+      "connect": {
+        "host": "localhost",
+        "port": 5678
+      },
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}/python-agent-service",
+          "remoteRoot": "${workspaceFolder}/python-agent-service"
+        }
+      ],
+      "justMyCode": false
+    },
+    {
+      "name": "Python: Current File",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/python-agent-service",
+      "python": "${workspaceFolder}/python-agent-service/venv/Scripts/python.exe",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/python-agent-service"
+      },
+      "envFile": "${workspaceFolder}/python-agent-service/.env",
+      "justMyCode": false
+    },
+    {
+      "name": "Python: FastAPI (No Reload)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "app.main:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000"
+      ],
+      "jinja": true,
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}/python-agent-service",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/python-agent-service"
+      },
+      "envFile": "${workspaceFolder}/python-agent-service/.env",
+      "python": "${workspaceFolder}/python-agent-service/venv/Scripts/python.exe",
+      "console": "integratedTerminal",
+      "stopOnEntry": false,
+      "showReturnValue": true
+    },
+    {
+      "name": "Python: Pytest",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "-v",
+        "--tb=short"
+      ],
+      "cwd": "${workspaceFolder}/python-agent-service",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/python-agent-service"
+      },
+      "envFile": "${workspaceFolder}/python-agent-service/.env",
+      "python": "${workspaceFolder}/python-agent-service/venv/Scripts/python.exe",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    }
+  ],
+  "compounds": [
+    {
+        "name": "Debug Full Stack",
+        "configurations": ["Debug React App", "Python: FastAPI (Uvicorn)"]
+    }
+]  
+}
+
+

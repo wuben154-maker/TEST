@@ -1,0 +1,43 @@
+{
+  "original_alert": {
+    "alert_id": "test-suspicious-ps-006",
+    "timestamp": "2025-11-30T20:57:14.826Z",
+    "alert_type": 3,
+    "environment": "Splunk",
+    "title": "Suspicious PowerShell Script Execution - Potential Deployment Malware",
+    "severity": "High",
+    "source": "security_trigger.py",
+    "source_host": "splunk-server.company.com",
+    "incident_id": "deploy-script-001-2025-09-13",
+    "affected_assets": [
+      {
+        "hostname": "EC2AMAZ-8VFCCM9"
+      }
+    ],
+    "users": [
+      {
+        "username": "EC2AMAZ-8VFCCM9\\harper.henderson"
+      }
+    ],
+    "processes": [
+      {
+        "process_name": "powershell.exe",
+        "process_path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "command_line": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -ExecutionPolicy Bypass -NoProfile -File C:\\temp\\deploy3.ps1",
+        "user": "EC2AMAZ-8VFCCM9\\harper.henderson",
+        "hostname": "EC2AMAZ-8VFCCM9",
+        "execution_time": "2025-12-30T20:54:14.826Z"
+      }
+    ]
+  },
+  "dz_metadata": {
+    "alert_original_source": "",
+    "alert_type": "3",
+    "create_time": "2025-12-30T20:54:14.826Z",
+    "origin_ticket_id": "test-suspicious-ps-004",
+    "origin_ticket_id_label": "alert_id",
+    "origin_ticket_url": "",
+    "start_time": "2025-12-30T20:54:14.826Z",
+    "title": "Suspicious PowerShell Script Execution - Potential Deployment Malware"
+  }
+}

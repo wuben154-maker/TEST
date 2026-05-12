@@ -1,0 +1,1341 @@
+{
+  "original_alert": {
+    "alert_id": "test-suspicious-ps-004",
+    "timestamp": "2025-12-30T20:57:14.826Z",
+    "alert_type": 3,
+    "environment": "Splunk",
+    "title": "Suspicious PowerShell Script Execution - Potential Deployment Malware",
+    "severity": "High",
+    "source": "security_trigger.py",
+    "source_host": "splunk-server.company.com",
+    "incident_id": "deploy-script-001-2025-10-13",
+    "affected_assets": [
+      {
+        "hostname": "EC2AMAZ-8VFCCM9"
+      }
+    ],
+    "users": [
+      {
+        "username": "EC2AMAZ-8VFCCM9\\harper.henderson"
+      }
+    ],
+    "processes": [
+      {
+        "process_name": "powershell.exe",
+        "process_path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "command_line": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -ExecutionPolicy Bypass -NoProfile -File C:\\temp\\deploy3.ps1",
+        "user": "EC2AMAZ-8VFCCM9\\harper.henderson",
+        "hostname": "EC2AMAZ-8VFCCM9",
+        "execution_time": "2025-12-30T20:54:14.826Z"
+      }
+    ]
+  },
+  "dz_metadata": {
+    "alert_original_source": "",
+    "alert_type": "3",
+    "create_time": "2025-12-30T20:54:14.826Z",
+    "origin_ticket_id": "test-suspicious-ps-004",
+    "origin_ticket_id_label": "alert_id",
+    "origin_ticket_url": "",
+    "start_time": "2025-12-30T20:54:14.826Z",
+    "title": "Suspicious PowerShell Script Execution - Potential Deployment Malware"
+  }
+}
+
+##########
+
+{
+  "TenantId": "52419015-3b61-4d36-8f4d-dc26ce67a55c",
+  "TimeGenerated": "2025-03-28T18:15:02.394675+00:00",
+  "IncidentName": "7d95d68e-a7bc-4801-ab15-38cb63977468",
+  "Title": "Failed login attempts to Azure Portal",
+  "Description": "Identifies failed login attempts in the Microsoft Entra ID SigninLogs to the Azure Portal.  Many failed logon attempts or some failed logon attempts from multiple IPs could indicate a potential brute force attack.\nThe following are excluded due to success and non-failure results:\nReferences: https://docs.microsoft.com/azure/active-directory/reports-monitoring/reference-sign-ins-error-codes\n0 - successful logon\n50125 - Sign-in was interrupted due to a password reset or password registration entry.\n50140 - This error occurred due to 'Keep me signed in' interrupt when the user was signing-in.",
+  "Severity": "Low",
+  "Status": "New",
+  "Classification": "",
+  "ClassificationComment": "",
+  "ClassificationReason": "",
+  "Owner": "{\"objectId\":null,\"email\":null,\"assignedTo\":null,\"userPrincipalName\":null}",
+  "ProviderName": "Azure Sentinel",
+  "ProviderIncidentId": "217",
+  "FirstActivityTime": "2025-03-21T18:10:00+00:00",
+  "LastActivityTime": "2025-03-28T18:10:00+00:00",
+  "FirstModifiedTime": null,
+  "LastModifiedTime": "2025-03-28T18:15:02.394675+00:00",
+  "CreatedTime": "2025-03-28T18:15:02.394675+00:00",
+  "ClosedTime": null,
+  "IncidentNumber": 217,
+  "RelatedAnalyticRuleIds": "[\"73728a98-4bbb-4874-ae31-ecee331281fb\"]",
+  "AlertIds": [
+    "84161a14-1ef2-b23c-c630-5148e235fbc0"
+  ],
+  "BookmarkIds": "[]",
+  "Comments": "[]",
+  "Tasks": "[]",
+  "Labels": "[]",
+  "IncidentUrl": "https://portal.azure.com/#asset/Microsoft_Azure_Security_Insights/Incident/subscriptions/589ab5d0-6152-4f14-a214-076610479e5f/resourceGroups/tiarc-rg-00/providers/Microsoft.OperationalInsights/workspaces/tiarc-laws-00/providers/Microsoft.SecurityInsights/Incidents/7d95d68e-a7bc-4801-ab15-38cb63977468",
+  "AdditionalData": {
+    "alertsCount": 1,
+    "bookmarksCount": 0,
+    "commentsCount": 0,
+    "alertProductNames": [
+      "Azure Sentinel"
+    ],
+    "tactics": [
+      "CredentialAccess"
+    ],
+    "techniques": [
+      "T1110"
+    ]
+  },
+  "ModifiedBy": "Incident created from alert",
+  "SourceSystem": "Azure",
+  "Type": "SecurityIncident"
+}
+
+###########
+
+{
+  "TenantId": "d5659a5f-056b-43e3-a7fd-17f73715ee9b",
+  "TimeGenerated": "2025-03-31T14:58:17.670000+00:00",
+  "IncidentName": "60506af0-da54-4df4-a439-1a278f7cdc08",
+  "Title": "New User Addition - API",
+  "Description": "",
+  "Severity": "Low",
+  "Status": "New",
+  "Classification": "",
+  "ClassificationComment": "",
+  "ClassificationReason": "",
+  "Owner": "{\"objectId\":null,\"email\":null,\"assignedTo\":null,\"userPrincipalName\":null}",
+  "ProviderName": "Microsoft XDR",
+  "ProviderIncidentId": "44",
+  "FirstActivityTime": "2025-03-31T14:51:56.019762+00:00",
+  "LastActivityTime": "2025-03-31T14:51:56.019762+00:00",
+  "FirstModifiedTime": null,
+  "LastModifiedTime": "2025-03-31T14:58:17.670000+00:00",
+  "CreatedTime": "2025-03-31T14:58:17.586666+00:00",
+  "ClosedTime": null,
+  "IncidentNumber": 39,
+  "RelatedAnalyticRuleIds": "[\"baf3f79b-c309-4920-b012-a2ce8908d958\"]",
+  "AlertIds": [
+    "5891d66f-9ee1-44f6-2adb-a029e1fa882e"
+  ],
+  "BookmarkIds": "[]",
+  "Comments": "[]",
+  "Tasks": "[]",
+  "Labels": "[]",
+  "IncidentUrl": "https://portal.azure.com/#asset/Microsoft_Azure_Security_Insights/Incident/subscriptions/4da96ba5-f314-453e-be57-8eb90ff071e9/resourceGroups/my-resource-group/providers/Microsoft.OperationalInsights/workspaces/log-analytics/providers/Microsoft.SecurityInsights/Incidents/60506af0-da54-4df4-a439-1a278f7cdc08",
+  "AdditionalData": {
+    "alertsCount": 1,
+    "bookmarksCount": 0,
+    "commentsCount": 0,
+    "alertProductNames": [
+      "Azure Sentinel"
+    ],
+    "tactics": [
+      "Persistence"
+    ],
+    "techniques": [],
+    "providerIncidentUrl": "https://security.microsoft.com/incidents/44?tid=673a0af3-04f6-48c0-8c9b-dd1fd3428029"
+  },
+  "ModifiedBy": "Incident created from alert",
+  "SourceSystem": "Azure",
+  "Type": "SecurityIncident"
+}
+
+######
+
+{
+  "TenantId": "d5659a5f-056b-43e3-a7fd-17f73715ee9b",
+  "TimeGenerated": "2025-03-28T20:42:20.553333+00:00",
+  "IncidentName": "92fa13e9-55bf-404e-ba66-5a546a007e80",
+  "Title": "'CVE' detected including Ransomware on one endpoint",
+  "Description": "",
+  "Severity": "High",
+  "Status": "New",
+  "Classification": "",
+  "ClassificationComment": "",
+  "ClassificationReason": "",
+  "Owner": "{\"objectId\":null,\"email\":null,\"assignedTo\":null,\"userPrincipalName\":null}",
+  "ProviderName": "Microsoft XDR",
+  "ProviderIncidentId": "34",
+  "FirstActivityTime": "2025-03-28T20:39:10.059122+00:00",
+  "LastActivityTime": "2025-03-28T20:39:13.915619+00:00",
+  "FirstModifiedTime": null,
+  "LastModifiedTime": "2025-03-28T20:42:20.553333+00:00",
+  "CreatedTime": "2025-03-28T20:40:04.783333+00:00",
+  "ClosedTime": null,
+  "IncidentNumber": 32,
+  "RelatedAnalyticRuleIds": "[]",
+  "AlertIds": [
+    "3c08939b-f421-9224-8ccb-ba4b1c345edc",
+    "fbfa06c8-cc9d-127f-4151-f66b0448cf09",
+    "bdd6bed7-881c-01b1-c51f-99ecd7b90c75"
+  ],
+  "BookmarkIds": "[]",
+  "Comments": "[]",
+  "Tasks": "[]",
+  "Labels": "[]",
+  "IncidentUrl": "https://portal.azure.com/#asset/Microsoft_Azure_Security_Insights/Incident/subscriptions/4da96ba5-f314-453e-be57-8eb90ff071e9/resourceGroups/my-resource-group/providers/Microsoft.OperationalInsights/workspaces/log-analytics/providers/Microsoft.SecurityInsights/Incidents/92fa13e9-55bf-404e-ba66-5a546a007e80",
+  "AdditionalData": {
+    "alertsCount": 3,
+    "bookmarksCount": 0,
+    "commentsCount": 0,
+    "alertProductNames": [
+      "Microsoft Defender Advanced Threat Protection"
+    ],
+    "tactics": [],
+    "techniques": [
+      "T1204"
+    ],
+    "providerIncidentUrl": "https://security.microsoft.com/incidents/34?tid=673a0af3-04f6-48c0-8c9b-dd1fd3428029"
+  },
+  "ModifiedBy": "Microsoft Defender XDR - alert correlation",
+  "SourceSystem": "Azure",
+  "Type": "SecurityIncident"
+}
+
+
+######
+
+{
+  "id": "fa39a5bca7-843e-4de9-da00-08dd7058d5a0",
+  "providerAlertId": "39a5bca7-843e-4de9-da00-08dd7058d5a0",
+  "incidentId": "40",
+  "status": "new",
+  "severity": "medium",
+  "classification": null,
+  "determination": null,
+  "serviceSource": "microsoftDefenderForOffice365",
+  "detectionSource": "microsoftDefenderForOffice365",
+  "productName": "Microsoft Defender for Office 365",
+  "detectorId": "3afafeaa-bc9c-4467-83ee-e678e3d262f2",
+  "tenantId": "673a0af3-04f6-48c0-8c9b-dd1fd3428029",
+  "title": "Malicious Email",
+  "description": "",
+  "recommendedActions": "",
+  "category": "InitialAccess",
+  "assignedTo": null,
+  "alertWebUrl": "https://security.microsoft.com/alerts/fa39a5bca7-843e-4de9-da00-08dd7058d5a0?tid=673a0af3-04f6-48c0-8c9b-dd1fd3428029",
+  "incidentWebUrl": "https://security.microsoft.com/incidents/40?tid=673a0af3-04f6-48c0-8c9b-dd1fd3428029",
+  "actorDisplayName": null,
+  "threatDisplayName": null,
+  "threatFamilyName": null,
+  "mitreTechniques": [],
+  "createdDateTime": "2025-03-31T13:37:09.9833333Z",
+  "lastUpdateDateTime": "2025-03-31T13:37:10.3333333Z",
+  "resolvedDateTime": null,
+  "firstActivityDateTime": "2025-03-31T13:34:16Z",
+  "lastActivityDateTime": "2025-03-31T13:36:16Z",
+  "systemTags": [],
+  "alertPolicyId": null,
+  "comments": [],
+  "evidence": [
+    {
+      "@odata.type": "#microsoft.graph.security.mailboxEvidence",
+      "createdDateTime": "2025-03-31T13:37:10.2733333Z",
+      "verdict": "unknown",
+      "remediationStatus": "none",
+      "remediationStatusDetails": null,
+      "roles": [],
+      "detailedRoles": [],
+      "tags": [],
+      "primaryAddress": "emily.eaton@corp1.dzone.live",
+      "displayName": "Emily Eaton",
+      "upn": "emily.eaton@corp1.dzone.live",
+      "userAccount": {
+        "accountName": "emily.eaton",
+        "domainName": null,
+        "userSid": "S-1-12-1-4147405692-1243291533-2015411847-1712203219",
+        "azureAdUserId": "f734637c-1f8d-4a1b-87be-2078d3250e66",
+        "userPrincipalName": "emily.eaton@corp1.dzone.live",
+        "displayName": null
+      }
+    },
+    {
+      "@odata.type": "#microsoft.graph.security.analyzedMessageEvidence",
+      "createdDateTime": "2025-03-31T13:37:10.2733333Z",
+      "verdict": "unknown",
+      "remediationStatus": "none",
+      "remediationStatusDetails": null,
+      "roles": [],
+      "detailedRoles": [],
+      "tags": [],
+      "networkMessageId": "3a11f7e4-8711-4301-2fff-08dd7058dbc4",
+      "internetMessageId": "<01000195ec69c104-d0894544-8f10-459f-b96c-8011f07d18ae-000000@email.amazonses.com>",
+      "subject": "Invoice for third-party services",
+      "language": null,
+      "senderIp": "54.240.8.93",
+      "recipientEmailAddress": "emily.eaton@corp1.dzone.live",
+      "antiSpamDirection": null,
+      "deliveryAction": null,
+      "deliveryLocation": null,
+      "urn": null,
+      "threats": [],
+      "threatDetectionMethods": [],
+      "urls": [],
+      "urlCount": 0,
+      "attachmentsCount": 0,
+      "receivedDateTime": "2025-03-31T13:35:16Z",
+      "p1Sender": {
+        "emailAddress": null,
+        "displayName": null,
+        "domainName": null
+      },
+      "p2Sender": {
+        "emailAddress": "chip.byteson@dzone-1.awsapps.com",
+        "displayName": null,
+        "domainName": null
+      }
+    },
+    {
+      "@odata.type": "#microsoft.graph.security.userEvidence",
+      "createdDateTime": "2025-03-31T13:37:10.2733333Z",
+      "verdict": "unknown",
+      "remediationStatus": "none",
+      "remediationStatusDetails": null,
+      "roles": [],
+      "detailedRoles": [],
+      "tags": [],
+      "stream": null,
+      "userAccount": {
+        "accountName": "emily.eaton",
+        "domainName": "",
+        "userSid": "S-1-12-1-4147405692-1243291533-2015411847-1712203219",
+        "azureAdUserId": "f734637c-1f8d-4a1b-87be-2078d3250e66",
+        "userPrincipalName": "emily.eaton@corp1.dzone.live",
+        "displayName": "Emily Eaton"
+      }
+    }
+  ],
+  "additionalData": {
+    "InvestigationState": 512,
+    "ExtendedLinksJson": "[{\"Href\":\"https://security.microsoft.com/viewalerts?id=39a5bca7-843e-4de9-da00-08dd7058d5a0\",\"Category\":null,\"Label\":\"alert\",\"Type\":\"webLink\"}]"
+  }
+}
+
+##########
+
+Received: from SJ0PR17MB4271.namprd17.prod.outlook.com (2603:10b6:a03:291::18)
+ by SA6PR17MB7400.namprd17.prod.outlook.com (2603:10b6:806:416::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.19; Thu, 5 Dec
+ 2024 21:05:54 +0000
+Received: from SJ0PR17MB4271.namprd17.prod.outlook.com
+ ([fe80::c3aa:9c0f:6711:550c]) by SJ0PR17MB4271.namprd17.prod.outlook.com
+ ([fe80::c3aa:9c0f:6711:550c%5]) with mapi id 15.20.8230.010; Mon, 13 Jan 2025
+ 21:05:54 +0000
+From: Emily Eaton <emily.eaton@thisisarealcompany.com>
+To: Toni Torres <toni.torres@thisisarealcompany.com>
+Subject: Here, have a 31car file
+Thread-Topic: Here, have a 31car file
+Thread-Index: AQHbR1lJnriQvdZJrkO+nON6HF2r1A==
+Date: Mon, 13 Jan 2025 21:05:54 +0000
+Message-ID:
+ <SJ0PR17MB427131B098DFA9B7AAB9CF0D9E302@SJ0PR17MB4271.namprd17.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=thisisarealcompany.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ0PR17MB4271:EE_|SA6PR17MB7400:EE_
+x-ms-office365-filtering-correlation-id: 4eb7a402-5d5b-4535-06c0-08dd15709b3f
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:9;SRV:;IPV:NLI;SFV:SPM;H:SJ0PR17MB4271.namprd17.prod.outlook.com;PTR:;CAT:AMP;SFS:(13230040)(366016)(8096899003)(41050700001);DIR:INT;
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|8096899003|41050700001;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?Z3IPZNY+MBUkhokVE3zUo3s9nmbwplvflVN1b9dxsdZa95p73o7qVcohvE?=
+ =?iso-8859-1?Q?wzKDqwrVYi9yeBQThpDEHHHwz339nARHGKkz4zIjkPtIBhOeFiXDM3CW1e?=
+ =?iso-8859-1?Q?zrC/l1NlhAZm/6sjujCNwewrEWkUs1fsIlgMj64LkHmRaYWVg8g7IPQY3z?=
+ =?iso-8859-1?Q?GdeJqyQyUq56vMkUfya91mfW7xq/PBJsfQNvnpIJuMJmGJbiqZTPkkxSC9?=
+ =?iso-8859-1?Q?rtHGjWQUZsi5XYXJuwtN6qRuoOrqujKqNcuiFkFWReKLR70EONImWMtqWB?=
+ =?iso-8859-1?Q?NvvNMvzcgxCv2ytnvuiR24DDf78O8w3iVVTSMe7BdgrzrQGluS9b6fWQ/v?=
+ =?iso-8859-1?Q?B+6ZInKjqCJex9NabDkM3E3TvLzJyHyAY4gC+YgyqvJwD0O7J08xmWivRn?=
+ =?iso-8859-1?Q?aNNb7HiDNoGwOnUUwIbAeLI4y1hCJl/DnK9PQAmC7iOXJpWsMmwX07/ri3?=
+ =?iso-8859-1?Q?p062KwI8NZNyWHQB9HkZTBQpap8bdLx2RfA6jjORovPq9Jz7ycYHDp/jI3?=
+ =?iso-8859-1?Q?nQT6yyPlFLAz96aEBhbuPhSUKF5oba9M/2rP++1TDq/yaoCf3CzaB6lEnd?=
+ =?iso-8859-1?Q?92o3XmV1PehsNRLaFGpxV3Xp+AhzP9DNrV8+NquGEjXdsZx6HhW7MAZVfY?=
+ =?iso-8859-1?Q?yjT7//WUsillXJUq7u4QBy+wjwhMw6lvYrMXOR1i7zm1Nm+NB3gnvL2xy/?=
+ =?iso-8859-1?Q?HZC17xXwJdijct3e21M1BEYcTnaJFTqO1Zs9+uPfiN9xMpIdquo8ePPU2w?=
+ =?iso-8859-1?Q?g5k3tvU3VbcuoX+AmgtlkWVCejCacIu0eaAn67FBdBf9Ndr7kHx/UGDX9L?=
+ =?iso-8859-1?Q?0p8BRDbBKQyvkck5YLYrosj0x749U4+CU/7LsozHZB3kst/zeliBhu5Nfc?=
+ =?iso-8859-1?Q?TbinnGp+/FmHfHMo0H+7m8Sd45M5zvuDVMCQXazcqA6drAXemcKTVHX5/+?=
+ =?iso-8859-1?Q?qz5ug+JxvCfKL49H0eUL8GKUl8RXrM4onn/nX3QBRurLFiDup5MjukRIq0?=
+ =?iso-8859-1?Q?tsmNkmVhgVtN+17Ofhjz8jtA8KCoLseNXOvHt9ZadcMZ6ZLmN4wVeyt4qb?=
+ =?iso-8859-1?Q?kQdqBoTrBfxvDFhLGzcwssk5p8DP+tZIttdmcXWjMiNhVKBmVMcVYaHRxR?=
+ =?iso-8859-1?Q?489YPoHnWEYT3vPMweZMBGT5UXv8TlRcg6eCDeHiyIJyl7v3f7BMqprmyL?=
+ =?iso-8859-1?Q?SAc7KCWmF7Z3XIN8c+Nyk3EtAI6rBondAnPj6F1pd7vt6o0FJ8ZxnHmCyz?=
+ =?iso-8859-1?Q?DoAik180hzSFUJ3xZ1v0fo56Be1nam574UJue09mnOR4L5i3fXblAus3/1?=
+ =?iso-8859-1?Q?tsuNqr9mWV9lZpqD44Mw6SF3CJe5U4uInmd/bxHjXcQ+e3X/qHBsZFXC9J?=
+ =?iso-8859-1?Q?RwoZ5514czORRZP3FqU6SSjuVLufzA8aVO1Gf0kqw5N3VtYTXSkqXgH79g?=
+ =?iso-8859-1?Q?J9pMH3HJUkE/qRlPPv6z4jlY1wbplSEakoDPc864ZfGD5EsI0AyOuWmJHB?=
+ =?iso-8859-1?Q?HuAXz3Vt/cW2lGU8sAMQwOewqseaQe99W8j7OIF7zbSA=3D=3D?=
+Content-Type: multipart/mixed;
+	boundary="_004_SJ0PR17MB427131B098DFA9B7AAB9CF0D9E302SJ0PR17MB4271namp_"
+MIME-Version: 1.0
+
+--_004_SJ0PR17MB427131B098DFA9B7AAB9CF0D9E302SJ0PR17MB4271namp_
+Content-Type: multipart/alternative;
+	boundary="_000_SJ0PR17MB427131B098DFA9B7AAB9CF0D9E302SJ0PR17MB4271namp_"
+
+--_000_SJ0PR17MB427131B098DFA9B7AAB9CF0D9E302SJ0PR17MB4271namp_
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+Attached is a file that should trip detection as an intentional false posit=
+ive. IT IS SAFE!
+
+--_000_SJ0PR17MB427131B098DFA9B7AAB9CF0D9E302SJ0PR17MB4271namp_
+Content-Type: text/html; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
+1">
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Attached is a file that should trip detection as an intentional false posit=
+ive. IT IS SAFE!</div>
+</body>
+</html>
+
+--_000_SJ0PR17MB427131B098DFA9B7AAB9CF0D9E302SJ0PR17MB4271namp_--
+
+--_004_SJ0PR17MB427131B098DFA9B7AAB9CF0D9E302SJ0PR17MB4271namp_
+Content-Type: text/plain; name="31car.txt"
+Content-Description: 31car.txt
+Content-Disposition: attachment; filename="31car.txt"; size=68;
+	creation-date="Mon, 13 Jan 2025 21:05:48 GMT";
+	modification-date="Mon, 13 Jan 2025 21:05:53 GMT"
+Content-Transfer-Encoding: base64
+
+WDVPIVAlQEFQWzRcUFpYNTQoUF4pN0NDKTd9JEVJQ0FSLVNUQU5EQVJELUFOVElWSVJVUy1URVNU
+LUZJTEUhJEgrSCo=
+
+--_004_SJ0PR17MB427131B098DFA9B7AAB9CF0D9E302SJ0PR17MB4271namp_--
+
+
+########################################################################################
+
+Received: from SJ0PR17MB4271.namprd17.prod.outlook.com (2603:10b6:a03:291::18)
+ by SA6PR17MB7400.namprd17.prod.outlook.com (2603:10b6:806:416::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.19; Thu, 5 Dec
+ 2024 21:05:54 +0000
+Received: from SJ0PR17MB4271.namprd17.prod.outlook.com
+ ([fe80::c3aa:9c0f:6711:550c]) by SJ0PR17MB4271.namprd17.prod.outlook.com
+ ([fe80::c3aa:9c0f:6711:550c%5]) with mapi id 15.20.8230.010; Mon, 13 Jan 2025
+ 21:05:54 +0000
+From: Emily Eaton <emily.eaton@thisisarealcompany.com>
+To: Toni Torres <toni.torres@thisisarealcompany.com>
+Subject: Here, have a 31car file
+Thread-Topic: Here, have a 31car file
+Thread-Index: AQHbR1lJnriQvdZJrkO+nON6HF2r1A==
+Date: Mon, 13 Jan 2025 21:05:54 +0000
+Message-ID:
+ <SJ0PR17MB427131B098DFA9B7AAB9CF0D9E302@SJ0PR17MB4271.namprd17.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=thisisarealcompany.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ0PR17MB4271:EE_|SA6PR17MB7400:EE_
+x-ms-office365-filtering-correlation-id: 4eb7a402-5d5b-4535-06c0-08dd15709b3f
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:9;SRV:;IPV:NLI;SFV:SPM;H:SJ0PR17MB4271.namprd17.prod.outlook.com;PTR:;CAT:AMP;SFS:(13230040)(366016)(8096899003)(41050700001);DIR:INT;
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|8096899003|41050700001;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?Z3IPZNY+MBUkhokVE3zUo3s9nmbwplvflVN1b9dxsdZa95p73o7qVcohvE?=
+ =?iso-8859-1?Q?wzKDqwrVYi9yeBQThpDEHHHwz339nARHGKkz4zIjkPtIBhOeFiXDM3CW1e?=
+ =?iso-8859-1?Q?zrC/l1NlhAZm/6sjujCNwewrEWkUs1fsIlgMj64LkHmRaYWVg8g7IPQY3z?=
+ =?iso-8859-1?Q?GdeJqyQyUq56vMkUfya91mfW7xq/PBJsfQNvnpIJuMJmGJbiqZTPkkxSC9?=
+ =?iso-8859-1?Q?rtHGjWQUZsi5XYXJuwtN6qRuoOrqujKqNcuiFkFWReKLR70EONImWMtqWB?=
+ =?iso-8859-1?Q?NvvNMvzcgxCv2ytnvuiR24DDf78O8w3iVVTSMe7BdgrzrQGluS9b6fWQ/v?=
+ =?iso-8859-1?Q?B+6ZInKjqCJex9NabDkM3E3TvLzJyHyAY4gC+YgyqvJwD0O7J08xmWivRn?=
+ =?iso-8859-1?Q?aNNb7HiDNoGwOnUUwIbAeLI4y1hCJl/DnK9PQAmC7iOXJpWsMmwX07/ri3?=
+ =?iso-8859-1?Q?p062KwI8NZNyWHQB9HkZTBQpap8bdLx2RfA6jjORovPq9Jz7ycYHDp/jI3?=
+ =?iso-8859-1?Q?nQT6yyPlFLAz96aEBhbuPhSUKF5oba9M/2rP++1TDq/yaoCf3CzaB6lEnd?=
+ =?iso-8859-1?Q?92o3XmV1PehsNRLaFGpxV3Xp+AhzP9DNrV8+NquGEjXdsZx6HhW7MAZVfY?=
+ =?iso-8859-1?Q?yjT7//WUsillXJUq7u4QBy+wjwhMw6lvYrMXOR1i7zm1Nm+NB3gnvL2xy/?=
+ =?iso-8859-1?Q?HZC17xXwJdijct3e21M1BEYcTnaJFTqO1Zs9+uPfiN9xMpIdquo8ePPU2w?=
+ =?iso-8859-1?Q?g5k3tvU3VbcuoX+AmgtlkWVCejCacIu0eaAn67FBdBf9Ndr7kHx/UGDX9L?=
+ =?iso-8859-1?Q?0p8BRDbBKQyvkck5YLYrosj0x749U4+CU/7LsozHZB3kst/zeliBhu5Nfc?=
+ =?iso-8859-1?Q?TbinnGp+/FmHfHMo0H+7m8Sd45M5zvuDVMCQXazcqA6drAXemcKTVHX5/+?=
+ =?iso-8859-1?Q?qz5ug+JxvCfKL49H0eUL8GKUl8RXrM4onn/nX3QBRurLFiDup5MjukRIq0?=
+ =?iso-8859-1?Q?tsmNkmVhgVtN+17Ofhjz8jtA8KCoLseNXOvHt9ZadcMZ6ZLmN4wVeyt4qb?=
+ =?iso-8859-1?Q?kQdqBoTrBfxvDFhLGzcwssk5p8DP+tZIttdmcXWjMiNhVKBmVMcVYaHRxR?=
+ =?iso-8859-1?Q?489YPoHnWEYT3vPMweZMBGT5UXv8TlRcg6eCDeHiyIJyl7v3f7BMqprmyL?=
+ =?iso-8859-1?Q?SAc7KCWmF7Z3XIN8c+Nyk3EtAI6rBondAnPj6F1pd7vt6o0FJ8ZxnHmCyz?=
+ =?iso-8859-1?Q?DoAik180hzSFUJ3xZ1v0fo56Be1nam574UJue09mnOR4L5i3fXblAus3/1?=
+ =?iso-8859-1?Q?tsuNqr9mWV9lZpqD44Mw6SF3CJe5U4uInmd/bxHjXcQ+e3X/qHBsZFXC9J?=
+ =?iso-8859-1?Q?RwoZ5514czORRZP3FqU6SSjuVLufzA8aVO1Gf0kqw5N3VtYTXSkqXgH79g?=
+ =?iso-8859-1?Q?J9pMH3HJUkE/qRlPPv6z4jlY1wbplSEakoDPc864ZfGD5EsI0AyOuWmJHB?=
+ =?iso-8859-1?Q?HuAXz3Vt/cW2lGU8sAMQwOewqseaQe99W8j7OIF7zbSA=3D=3D?=
+Content-Type: multipart/mixed;
+	boundary="_004_SJ0PR17MB427131B098DFA9B7AAB9CF0D9E302SJ0PR17MB4271namp_"
+MIME-Version: 1.0
+
+--_004_SJ0PR17MB427131B098DFA9B7AAB9CF0D9E302SJ0PR17MB4271namp_
+Content-Type: multipart/alternative;
+	boundary="_000_SJ0PR17MB427131B098DFA9B7AAB9CF0D9E302SJ0PR17MB4271namp_"
+
+--_000_SJ0PR17MB427131B098DFA9B7AAB9CF0D9E302SJ0PR17MB4271namp_
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+Attached is a file that should trip detection as an intentional false posit=
+ive. IT IS SAFE!
+
+--_000_SJ0PR17MB427131B098DFA9B7AAB9CF0D9E302SJ0PR17MB4271namp_
+Content-Type: text/html; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
+1">
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Attached is a file that should trip detection as an intentional false posit=
+ive. IT IS SAFE!</div>
+</body>
+</html>
+
+--_000_SJ0PR17MB427131B098DFA9B7AAB9CF0D9E302SJ0PR17MB4271namp_--
+
+--_004_SJ0PR17MB427131B098DFA9B7AAB9CF0D9E302SJ0PR17MB4271namp_
+Content-Type: text/plain; name="31car.txt"
+Content-Description: 31car.txt
+Content-Disposition: attachment; filename="31car.txt"; size=68;
+	creation-date="Mon, 13 Jan 2025 21:05:48 GMT";
+	modification-date="Mon, 13 Jan 2025 21:05:53 GMT"
+Content-Transfer-Encoding: base64
+
+WDVPIVAlQEFQWzRcUFpYNTQoUF4pN0NDKTd9JEVJQ0FSLVNUQU5EQVJELUFOVElWSVJVUy1URVNU
+LUZJTEUhJEgrSCo=
+
+--_004_SJ0PR17MB427131B098DFA9B7AAB9CF0D9E302SJ0PR17MB4271namp_--
+
+##########
+
+{
+  "AccountId": "524095063240",
+  "Arn": "arn:aws:guardduty:us-east-1:524095063240:detector/d94a78fafb40451cb4f665ce21ad4b42/finding/90caeea09312efe1ee339fa69e805515",
+  "CreatedAt": "2025-03-28T14:56:29.221Z",
+  "Description": "The EC2 instance i-0cb81bc7f587ab893 is querying a domain name that is associated with Bitcoin-related activity.",
+  "Id": "90caeea09312efe1ee339fa69e805515",
+  "Partition": "aws",
+  "Region": "us-east-1",
+  "Resource": {
+    "InstanceDetails": {
+      "AvailabilityZone": "us-east-1a",
+      "IamInstanceProfile": {
+        "Arn": "arn:aws:iam::524095063240:instance-profile/demOS-dzone-project-p7g9rdcy-stack-fdqpyd0k-ProfileInstancesWorkersPublic-NuKQDPPfgzck",
+        "Id": "AIPAXUBUAATED5M3O2QKA"
+      },
+      "ImageDescription": "Amazon Linux AMI 2023.0.20250321 arm64 ECS HVM EBS",
+      "ImageId": "ami-0619c785c7351ec5d",
+      "InstanceId": "i-0cb81bc7f587ab893",
+      "InstanceState": "running",
+      "InstanceType": "t4g.micro",
+      "LaunchTime": "2025-03-27T17:20:47.000Z",
+      "NetworkInterfaces": [
+        {
+          "Ipv6Addresses": [
+            "2600:1f10:472d:350a:c3f3:6938:283d:3f7d"
+          ],
+          "NetworkInterfaceId": "eni-0c5719af871558301",
+          "PrivateDnsName": "i-0cb81bc7f587ab893.ec2.internal",
+          "PrivateIpAddress": "10.4.1.213",
+          "PrivateIpAddresses": [
+            {
+              "PrivateDnsName": "i-0cb81bc7f587ab893.ec2.internal",
+              "PrivateIpAddress": "10.4.1.213"
+            }
+          ],
+          "PublicDnsName": "ec2-52-90-115-168.compute-1.amazonaws.com",
+          "PublicIp": "52.90.115.168",
+          "SecurityGroups": [
+            {
+              "GroupId": "sg-037a7f85379f218a7",
+              "GroupName": "dzone-p7g9rdcy-fdqpyd0k.App10"
+            }
+          ],
+          "SubnetId": "subnet-0f14f339f5bac2c09",
+          "VpcId": "vpc-076a6b1f93addd1c6"
+        }
+      ],
+      "ProductCodes": [],
+      "Tags": [
+        {
+          "Key": "demOS:domain",
+          "Value": "dzone.live"
+        },
+        {
+          "Key": "StateOff",
+          "Value": "stopped"
+        },
+        {
+          "Key": "demOS:stack:id",
+          "Value": "fdqpyd0k"
+        },
+        {
+          "Key": "demOS:stack:name",
+          "Value": "demOS-dzone-project-p7g9rdcy"
+        },
+        {
+          "Key": "aws:cloudformation:stack-name",
+          "Value": "demOS-dzone-project-p7g9rdcy-stack-fdqpyd0k"
+        },
+        {
+          "Key": "Name",
+          "Value": "app1"
+        },
+        {
+          "Key": "demOS:project:id",
+          "Value": "p7g9rdcy"
+        },
+        {
+          "Key": "demOS:bundle",
+          "Value": "dropzone-cloud-demo/2.0"
+        },
+        {
+          "Key": "aws:cloudformation:logical-id",
+          "Value": "InstanceApp1"
+        },
+        {
+          "Key": "aws:cloudformation:stack-id",
+          "Value": "arn:aws:cloudformation:us-east-1:524095063240:stack/demOS-dzone-project-p7g9rdcy-stack-fdqpyd0k/14208790-0b2f-11f0-984e-12435e8aeb05"
+        },
+        {
+          "Key": "Group",
+          "Value": "workerspublic"
+        },
+        {
+          "Key": "demOS:namespace",
+          "Value": "dzone"
+        },
+        {
+          "Key": "demOS:project:stack:height",
+          "Value": "one"
+        },
+        {
+          "Key": "demOS:host:label",
+          "Value": "App1"
+        },
+        {
+          "Key": "demOS:host:type",
+          "Value": "EcsWorker"
+        },
+        {
+          "Key": "StateOn",
+          "Value": "running"
+        },
+        {
+          "Key": "demOS:project:scope",
+          "Value": "admin"
+        }
+      ]
+    },
+    "ResourceType": "Instance"
+  },
+  "SchemaVersion": "2.0",
+  "Service": {
+    "Action": {
+      "ActionType": "DNS_REQUEST",
+      "DnsRequestAction": {
+        "Domain": "stratum.slushpool.com",
+        "Protocol": "UDP",
+        "Blocked": false,
+        "DomainWithSuffix": "slushpool.com"
+      }
+    },
+    "Evidence": {
+      "ThreatIntelligenceDetails": [
+        {
+          "ThreatListName": "Amazon",
+          "ThreatNames": [
+            "Bitcoin Related"
+          ]
+        }
+      ]
+    },
+    "Archived": false,
+    "Count": 2,
+    "DetectorId": "d94a78fafb40451cb4f665ce21ad4b42",
+    "EventFirstSeen": "2025-03-28T14:53:17.000Z",
+    "EventLastSeen": "2025-03-28T14:53:17.000Z",
+    "ResourceRole": "TARGET",
+    "ServiceName": "guardduty",
+    "AdditionalInfo": {
+      "Value": "{\"threatListName\":\"Amazon\",\"threatName\":\"Bitcoin Related\"}",
+      "Type": "default"
+    }
+  },
+  "Severity": 8,
+  "Title": "The EC2 instance i-0cb81bc7f587ab893 queried a Bitcoin-related domain name.",
+  "Type": "CryptoCurrency:EC2/BitcoinTool.B!DNS",
+  "UpdatedAt": "2025-03-28T14:56:34.530Z"
+}
+
+
+###########
+
+{
+  "AccountId": "524095063240",
+  "Arn": "arn:aws:guardduty:us-east-1:524095063240:detector/c481ccbc23b4467d862bd3970e671954/finding/1acac8653be3c0be7b403da289f022cd",
+  "CreatedAt": "2025-03-13T18:35:42.658Z",
+  "Description": "A malware scan on your S3 object arn:aws:s3:::dzone-1qxo5q2k-dca44olo-app1p-us-east-1/svchost.exe has detected a security risk Generic.Trojan.Mimikatz.Marte.!s!.A.CE947EEC.",
+  "Id": "1acac8653be3c0be7b403da289f022cd",
+  "Partition": "aws",
+  "Region": "us-east-1",
+  "Resource": {
+    "S3BucketDetails": [
+      {
+        "Arn": "arn:aws:s3:::dzone-1qxo5q2k-dca44olo-app1p-us-east-1",
+        "Name": "dzone-1qxo5q2k-dca44olo-app1p-us-east-1",
+        "Type": "Destination",
+        "CreatedAt": "2024-11-26T20:34:35+00:00",
+        "Owner": {
+          "Id": "812c165f824ac08202e6a8556188bd0f37be2f335570a64f8bfca682cfc8fb57"
+        },
+        "DefaultServerSideEncryption": {
+          "EncryptionType": "AES256"
+        },
+        "PublicAccess": {
+          "PermissionConfiguration": {
+            "BucketLevelPermissions": {
+              "AccessControlList": {
+                "AllowsPublicReadAccess": false,
+                "AllowsPublicWriteAccess": false
+              },
+              "BucketPolicy": {
+                "AllowsPublicReadAccess": true,
+                "AllowsPublicWriteAccess": false
+              },
+              "BlockPublicAccess": {
+                "IgnorePublicAcls": false,
+                "RestrictPublicBuckets": false,
+                "BlockPublicAcls": false,
+                "BlockPublicPolicy": false
+              }
+            },
+            "AccountLevelPermissions": {
+              "BlockPublicAccess": {
+                "IgnorePublicAcls": false,
+                "RestrictPublicBuckets": false,
+                "BlockPublicAcls": false,
+                "BlockPublicPolicy": false
+              }
+            }
+          },
+          "EffectivePermission": "PUBLIC"
+        },
+        "S3ObjectDetails": [
+          {
+            "ObjectArn": "arn:aws:s3:::dzone-1qxo5q2k-dca44olo-app1p-us-east-1/svchost.exe",
+            "Key": "svchost.exe",
+            "ETag": "e930b05efe23891d19bc354a4209be3e",
+            "Hash": "92804faaab2175dc501d73e814663058c78c0a042675a8937266357bcfb96c50"
+          }
+        ]
+      }
+    ],
+    "ResourceType": "S3Object"
+  },
+  "SchemaVersion": "2.0",
+  "Service": {
+    "Archived": false,
+    "Count": 1,
+    "DetectorId": "c481ccbc23b4467d862bd3970e671954",
+    "EventFirstSeen": "2025-03-13T18:35:42.658Z",
+    "EventLastSeen": "2025-03-13T18:35:42.658Z",
+    "ServiceName": "guardduty",
+    "AdditionalInfo": {
+      "Value": "{}",
+      "Type": "default"
+    },
+    "FeatureName": "S3MalwareProtection",
+    "MalwareScanDetails": {
+      "Threats": [
+        {
+          "Name": "Generic.Trojan.Mimikatz.Marte.!s!.A.CE947EEC",
+          "Source": "Bitdefender"
+        }
+      ]
+    }
+  },
+  "Severity": 8,
+  "Title": "A malware scan on your S3 object svchost.exe has detected a security risk Generic.Trojan.Mimikatz.Marte.!s!.A.CE947EEC.",
+  "Type": "Object:S3/MaliciousFile",
+  "UpdatedAt": "2025-03-13T18:35:42.658Z"
+}
+
+
+############
+
+{
+  "AccountId": "524095063240",
+  "Arn": "arn:aws:guardduty:us-east-1:524095063240:detector/02b0935d0ec54eb194ba84470e122aa0/finding/4ecaae473a5b0a5d40c7712a3abb4179",
+  "CreatedAt": "2025-03-03T15:09:54.742Z",
+  "Description": "The API ListBuckets, commonly used in reconnaissance attacks, was invoked from an IP address 3.95.202.60 on the custom threat list MyThreatIntelSet. Unauthorized actors perform such activity to gather information and discover resources like databases, S3 buckets etc., in order to further tailor the attack.",
+  "Id": "4ecaae473a5b0a5d40c7712a3abb4179",
+  "Partition": "aws",
+  "Region": "us-east-1",
+  "Resource": {
+    "AccessKeyDetails": {
+      "AccessKeyId": "ASIAXUBUAATEJO7VHPJX",
+      "PrincipalId": "AROAXUBUAATEKYTJME23X:4dfd0b4d9a3d4ba98df5084c0d05e9bb",
+      "UserName": "demOS-dzone-project-1qxo5q2k-stack-d-RoleEcsTaskApp-BPLKJFmfRc2Y",
+      "UserType": "AssumedRole"
+    },
+    "ResourceType": "AccessKey"
+  },
+  "SchemaVersion": "2.0",
+  "Service": {
+    "Action": {
+      "ActionType": "AWS_API_CALL",
+      "AwsApiCallAction": {
+        "Api": "ListBuckets",
+        "CallerType": "Remote IP",
+        "RemoteIpDetails": {
+          "City": {
+            "CityName": "Ashburn"
+          },
+          "Country": {
+            "CountryName": "United States"
+          },
+          "GeoLocation": {
+            "Lat": 39.0469,
+            "Lon": -77.4903
+          },
+          "IpAddressV4": "3.95.202.60",
+          "Organization": {
+            "Asn": "14618",
+            "AsnOrg": "AMAZON-AES",
+            "Isp": "Amazon.com",
+            "Org": "Amazon.com"
+          }
+        },
+        "ServiceName": "s3.amazonaws.com",
+        "AffectedResources": {}
+      }
+    },
+    "Evidence": {
+      "ThreatIntelligenceDetails": [
+        {
+          "ThreatListName": "MyThreatIntelSet",
+          "ThreatNames": [
+            "Customer Threat Intel"
+          ]
+        }
+      ]
+    },
+    "Archived": false,
+    "Count": 5,
+    "DetectorId": "02b0935d0ec54eb194ba84470e122aa0",
+    "EventFirstSeen": "2025-03-03T14:57:09.000Z",
+    "EventLastSeen": "2025-03-03T14:57:14.000Z",
+    "ResourceRole": "TARGET",
+    "ServiceName": "guardduty",
+    "AdditionalInfo": {
+      "Value": "{\"threatListName\":\"MyThreatIntelSet\",\"threatName\":\"Customer Threat Intel\",\"apiCalls\":[{\"name\":\"DescribeParameters\",\"count\":8,\"firstSeen\":1741013833,\"lastSeen\":1741013834},{\"name\":\"ListBuckets\",\"count\":1,\"firstSeen\":1741013829,\"lastSeen\":1741013829}]}",
+      "Type": "default"
+    }
+  },
+  "Severity": 5,
+  "Title": "The reconnaissance API ListBuckets was invoked from an IP address on a custom threat list.",
+  "Type": "Recon:IAMUser/MaliciousIPCaller.Custom",
+  "UpdatedAt": "2025-03-03T15:09:54.742Z"
+}
+
+
+
+###########
+
+{
+  "AccountId": "524095063240",
+  "Arn": "arn:aws:guardduty:us-east-1:524095063240:detector/d94a78fafb40451cb4f665ce21ad4b42/finding/0ccaeea0afeb456e4642f45c8639f65d",
+  "CreatedAt": "2025-03-28T14:56:43.990Z",
+  "Description": "The EC2 instance i-07bbb2a8eddb9db28 is communicating with the IP address 44.202.91.125 on the custom threat list MyThreatIntelSet.",
+  "Id": "0ccaeea0afeb456e4642f45c8639f65d",
+  "Partition": "aws",
+  "Region": "us-east-1",
+  "Resource": {
+    "InstanceDetails": {
+      "AvailabilityZone": "us-east-1a",
+      "ImageDescription": "Microsoft Windows Server 2022 Full Locale English with TPM 2.0 and Secure Boot support, AMI provided by Amazon",
+      "ImageId": "ami-0eedf83796da84692",
+      "InstanceId": "i-07bbb2a8eddb9db28",
+      "InstanceState": "running",
+      "InstanceType": "t3a.small",
+      "LaunchTime": "2025-03-27T17:20:47.000Z",
+      "NetworkInterfaces": [
+        {
+          "Ipv6Addresses": [
+            "2600:1f10:472d:3506:604:530a:8ad1:2581"
+          ],
+          "NetworkInterfaceId": "eni-0af0ce4c41520deba",
+          "PrivateDnsName": "i-07bbb2a8eddb9db28.ec2.internal",
+          "PrivateIpAddress": "10.3.100.154",
+          "PrivateIpAddresses": [
+            {
+              "PrivateDnsName": "i-07bbb2a8eddb9db28.ec2.internal",
+              "PrivateIpAddress": "10.3.100.154"
+            }
+          ],
+          "SecurityGroups": [
+            {
+              "GroupId": "sg-081ebd7cd42877d9b",
+              "GroupName": "dzone-p7g9rdcy-fdqpyd0k.Desktop10"
+            }
+          ],
+          "SubnetId": "subnet-062421eed2964760e",
+          "VpcId": "vpc-076a6b1f93addd1c6"
+        }
+      ],
+      "Platform": "windows",
+      "ProductCodes": [],
+      "Tags": [
+        {
+          "Key": "aws:cloudformation:stack-name",
+          "Value": "demOS-dzone-project-p7g9rdcy-stack-fdqpyd0k"
+        },
+        {
+          "Key": "demOS:project:stack:height",
+          "Value": "one"
+        },
+        {
+          "Key": "aws:cloudformation:stack-id",
+          "Value": "arn:aws:cloudformation:us-east-1:524095063240:stack/demOS-dzone-project-p7g9rdcy-stack-fdqpyd0k/14208790-0b2f-11f0-984e-12435e8aeb05"
+        },
+        {
+          "Key": "demOS:namespace",
+          "Value": "dzone"
+        },
+        {
+          "Key": "demOS:bundle",
+          "Value": "dropzone-cloud-demo/2.0"
+        },
+        {
+          "Key": "demOS:project:id",
+          "Value": "p7g9rdcy"
+        },
+        {
+          "Key": "aws:cloudformation:logical-id",
+          "Value": "InstanceDesktop1"
+        },
+        {
+          "Key": "StateOff",
+          "Value": "stopped"
+        },
+        {
+          "Key": "demOS:domain",
+          "Value": "dzone.live"
+        },
+        {
+          "Key": "Name",
+          "Value": "desktop1"
+        },
+        {
+          "Key": "demOS:stack:name",
+          "Value": "demOS-dzone-project-p7g9rdcy"
+        },
+        {
+          "Key": "StateOn",
+          "Value": "running"
+        },
+        {
+          "Key": "demOS:stack:id",
+          "Value": "fdqpyd0k"
+        },
+        {
+          "Key": "demOS:host:type",
+          "Value": "Windows"
+        },
+        {
+          "Key": "demOS:host:label",
+          "Value": "Desktop1"
+        },
+        {
+          "Key": "demOS:project:scope",
+          "Value": "admin"
+        },
+        {
+          "Key": "Group",
+          "Value": "singletons"
+        }
+      ]
+    },
+    "ResourceType": "Instance"
+  },
+  "SchemaVersion": "2.0",
+  "Service": {
+    "Action": {
+      "ActionType": "NETWORK_CONNECTION",
+      "NetworkConnectionAction": {
+        "Blocked": false,
+        "ConnectionDirection": "OUTBOUND",
+        "LocalPortDetails": {
+          "Port": 50823,
+          "PortName": "Unknown"
+        },
+        "Protocol": "TCP",
+        "LocalIpDetails": {
+          "IpAddressV4": "10.3.100.154"
+        },
+        "RemoteIpDetails": {
+          "City": {
+            "CityName": "Ashburn"
+          },
+          "Country": {
+            "CountryName": "United States"
+          },
+          "GeoLocation": {
+            "Lat": 39.0469,
+            "Lon": -77.4903
+          },
+          "IpAddressV4": "44.202.91.125",
+          "Organization": {
+            "Asn": "14618",
+            "AsnOrg": "AMAZON-AES",
+            "Isp": "Amazon.com",
+            "Org": "Amazon.com"
+          }
+        },
+        "RemotePortDetails": {
+          "Port": 443,
+          "PortName": "HTTPS"
+        }
+      }
+    },
+    "Evidence": {
+      "ThreatIntelligenceDetails": [
+        {
+          "ThreatListName": "MyThreatIntelSet",
+          "ThreatNames": [
+            "Customer Threat Intel"
+          ]
+        }
+      ]
+    },
+    "Archived": false,
+    "Count": 1,
+    "DetectorId": "d94a78fafb40451cb4f665ce21ad4b42",
+    "EventFirstSeen": "2025-03-28T14:56:15.000Z",
+    "EventLastSeen": "2025-03-28T14:56:23.000Z",
+    "ResourceRole": "TARGET",
+    "ServiceName": "guardduty",
+    "AdditionalInfo": {
+      "Value": "{\"threatListName\":\"MyThreatIntelSet\",\"threatName\":\"Customer Threat Intel\"}",
+      "Type": "default"
+    }
+  },
+  "Severity": 5,
+  "Title": "The EC2 instance i-07bbb2a8eddb9db28 is communicating with an IP address on a custom threat list.",
+  "Type": "UnauthorizedAccess:EC2/MaliciousIPCaller.Custom",
+  "UpdatedAt": "2025-03-28T14:56:43.990Z"
+}
+
+
+##########
+
+{
+  "AccountId": "524095063240",
+  "Arn": "arn:aws:guardduty:us-east-1:524095063240:detector/c481ccbc23b4467d862bd3970e671954/finding/82cac862c2a4847a7a0e9e704fd5a4b8",
+  "CreatedAt": "2025-03-13T18:30:18.697Z",
+  "Description": "A resource of type ECSCluster has executed suspicious tool nmap of category Network Scanner Tool.",
+  "Id": "82cac862c2a4847a7a0e9e704fd5a4b8",
+  "Partition": "aws",
+  "Region": "us-east-1",
+  "Resource": {
+    "InstanceDetails": {
+      "AvailabilityZone": "us-east-1a",
+      "IamInstanceProfile": {
+        "Arn": "arn:aws:iam::524095063240:instance-profile/demOS-dzone-project-1qxo5q2k-stack-dca44olo-ProfileInstancesWorkersPublic-viOpX3wjnwTI",
+        "Id": "AIPAXUBUAATELHTF766LB"
+      },
+      "ImageDescription": "Amazon Linux AMI 2023.0.20241115 arm64 ECS HVM EBS",
+      "ImageId": "ami-0c70709858a4ff58c",
+      "InstanceId": "i-02e0c37f482b54167",
+      "InstanceState": "running",
+      "InstanceType": "t4g.micro",
+      "LaunchTime": "2025-03-13T17:46:32.000Z",
+      "NetworkInterfaces": [
+        {
+          "Ipv6Addresses": [
+            "2600:1f18:5aba:450a:356:7133:2221:392d"
+          ],
+          "NetworkInterfaceId": "eni-0ff291422293fe147",
+          "PrivateDnsName": "i-02e0c37f482b54167.ec2.internal",
+          "PrivateIpAddress": "10.4.1.182",
+          "PrivateIpAddresses": [
+            {
+              "PrivateDnsName": "i-02e0c37f482b54167.ec2.internal",
+              "PrivateIpAddress": "10.4.1.182"
+            }
+          ],
+          "PublicDnsName": "ec2-3-82-93-34.compute-1.amazonaws.com",
+          "PublicIp": "3.82.93.34",
+          "SecurityGroups": [
+            {
+              "GroupId": "sg-014923ae844000473",
+              "GroupName": "dzone-1qxo5q2k-dca44olo.App10"
+            }
+          ],
+          "SubnetId": "subnet-099a2dd2943695114",
+          "VpcId": "vpc-0e289f9bf2b01087b"
+        }
+      ],
+      "ProductCodes": [],
+      "Tags": [
+        {
+          "Key": "StateOff",
+          "Value": "stopped"
+        },
+        {
+          "Key": "demOS:bundle",
+          "Value": "aws-demo-regional/1.1"
+        },
+        {
+          "Key": "demOS:domain",
+          "Value": "dzone.live"
+        },
+        {
+          "Key": "aws:cloudformation:stack-id",
+          "Value": "arn:aws:cloudformation:us-east-1:524095063240:stack/demOS-dzone-project-1qxo5q2k-stack-dca44olo/c6dd97f0-ac35-11ef-89df-0e9b767e4af5"
+        },
+        {
+          "Key": "aws:cloudformation:stack-name",
+          "Value": "demOS-dzone-project-1qxo5q2k-stack-dca44olo"
+        },
+        {
+          "Key": "demOS:host:type",
+          "Value": "EcsWorker"
+        },
+        {
+          "Key": "StateOn",
+          "Value": "running"
+        },
+        {
+          "Key": "demOS:bundle:version",
+          "Value": "1.0"
+        },
+        {
+          "Key": "demOS:namespace",
+          "Value": "dzone"
+        },
+        {
+          "Key": "demOS:stack:id",
+          "Value": "dca44olo"
+        },
+        {
+          "Key": "aws:cloudformation:logical-id",
+          "Value": "InstanceApp1"
+        },
+        {
+          "Key": "demOS:version",
+          "Value": "0.1.0"
+        },
+        {
+          "Key": "demOS:project:scope",
+          "Value": "user"
+        },
+        {
+          "Key": "Name",
+          "Value": "app1"
+        },
+        {
+          "Key": "demOS:host:label",
+          "Value": "App1"
+        },
+        {
+          "Key": "demOS:bundle:label",
+          "Value": "aws-demo-regional"
+        },
+        {
+          "Key": "demOS:project:id",
+          "Value": "1qxo5q2k"
+        },
+        {
+          "Key": "demOS:project:stack:height",
+          "Value": "one"
+        },
+        {
+          "Key": "Group",
+          "Value": "workerspublic"
+        },
+        {
+          "Key": "demOS:stack:name",
+          "Value": "demOS-dzone-project-1qxo5q2k"
+        }
+      ]
+    },
+    "ResourceType": "ECSCluster",
+    "EcsClusterDetails": {
+      "Name": "dzone-1qxo5q2k-dca44olo",
+      "Arn": "arn:aws:ecs:us-east-1:524095063240:cluster/dzone-1qxo5q2k-dca44olo",
+      "Status": "ACTIVE",
+      "Tags": [
+        {
+          "Key": "demOS:bundle",
+          "Value": "aws-demo-regional/1.1"
+        },
+        {
+          "Key": "demOS:project:id",
+          "Value": "1qxo5q2k"
+        },
+        {
+          "Key": "aws:cloudformation:stack-name",
+          "Value": "demOS-dzone-project-1qxo5q2k-stack-dca44olo"
+        },
+        {
+          "Key": "demOS:bundle:label",
+          "Value": "aws-demo-regional"
+        },
+        {
+          "Key": "aws:cloudformation:stack-id",
+          "Value": "arn:aws:cloudformation:us-east-1:524095063240:stack/demOS-dzone-project-1qxo5q2k-stack-dca44olo/c6dd97f0-ac35-11ef-89df-0e9b767e4af5"
+        },
+        {
+          "Key": "demOS:project:stack:height",
+          "Value": "one"
+        },
+        {
+          "Key": "demOS:bundle:version",
+          "Value": "1.0"
+        },
+        {
+          "Key": "Name",
+          "Value": "dzone-1qxo5q2k-dca44olo"
+        },
+        {
+          "Key": "demOS:domain",
+          "Value": "dzone.live"
+        },
+        {
+          "Key": "demOS:namespace",
+          "Value": "dzone"
+        },
+        {
+          "Key": "demOS:stack:name",
+          "Value": "demOS-dzone-project-1qxo5q2k"
+        },
+        {
+          "Key": "demOS:project:scope",
+          "Value": "user"
+        },
+        {
+          "Key": "demOS:version",
+          "Value": "0.1.0"
+        },
+        {
+          "Key": "demOS:stack:id",
+          "Value": "dca44olo"
+        },
+        {
+          "Key": "aws:cloudformation:logical-id",
+          "Value": "Cluster"
+        }
+      ],
+      "TaskDetails": {
+        "Arn": "arn:aws:ecs:us-east-1:524095063240:task/dzone-1qxo5q2k-dca44olo/5033423d193d41c0ac8df75086aedd65",
+        "DefinitionArn": "arn:aws:ecs:us-east-1:524095063240:task-definition/demOS-dzone-project-1qxo5q2k-stack-dca44olo-EcsTaskDefApp-GY3kMYYFYNEW:1",
+        "Version": "3",
+        "TaskCreatedAt": "2025-03-13T17:48:28.494000+00:00",
+        "StartedBy": "ecs-svc/0156266328862854571",
+        "Containers": [
+          {
+            "ContainerRuntime": "docker",
+            "Id": "aa806be1245bd35db93b17fc270b816bca3e74d51263cbb519a43c0bfb6584e7",
+            "Name": "kazemock",
+            "Image": "524095063240.dkr.ecr.us-east-1.amazonaws.com/dzone/aws-demo-regional/kazemock:1.1",
+            "ImagePrefix": "524095063240.dkr.ecr.us-east-1.amazonaws.com/dzone/aws-demo-regional"
+          }
+        ]
+      }
+    }
+  },
+  "SchemaVersion": "2.0",
+  "Service": {
+    "Archived": false,
+    "Count": 1,
+    "DetectorId": "c481ccbc23b4467d862bd3970e671954",
+    "EventFirstSeen": "2025-03-13T18:25:11.621Z",
+    "EventLastSeen": "2025-03-13T18:25:11.621Z",
+    "ServiceName": "guardduty",
+    "AdditionalInfo": {
+      "Value": "{}",
+      "Type": "default"
+    },
+    "FeatureName": "RuntimeMonitoring",
+    "RuntimeDetails": {
+      "Process": {
+        "Name": "nmap",
+        "ExecutablePath": "/usr/bin/nmap",
+        "ExecutableSha256": "d35b48d481ce8b5ba122d058f5d05489b816584232474ec62a615c4ef90258f1",
+        "NamespacePid": 3095,
+        "Pwd": "/app",
+        "Pid": 12558,
+        "StartTime": "2025-03-13T18:25:11.611000+00:00",
+        "Uuid": "3c9357fc-5fb3-e7b8-3671-eb38fe497a97",
+        "ParentUuid": "9fd08430-d107-850a-7c2b-064ed313430c",
+        "User": "root",
+        "UserId": 0,
+        "Euid": 0,
+        "Lineage": [
+          {
+            "StartTime": "2025-03-13T18:25:11.609000+00:00",
+            "NamespacePid": 3094,
+            "UserId": 0,
+            "Name": "sh",
+            "Pid": 12557,
+            "Uuid": "9fd08430-d107-850a-7c2b-064ed313430c",
+            "ExecutablePath": "/usr/bin/dash",
+            "Euid": 0,
+            "ParentUuid": "94d055ad-68bf-d24d-e434-40acdb3c4e23"
+          },
+          {
+            "StartTime": "2025-03-13T17:48:40.139000+00:00",
+            "NamespacePid": 1,
+            "UserId": 0,
+            "Name": "flask",
+            "Pid": 3130,
+            "Uuid": "94d055ad-68bf-d24d-e434-40acdb3c4e23",
+            "ExecutablePath": "/usr/bin/python3.11",
+            "Euid": 0,
+            "ParentUuid": "0d045104-ed64-0932-aa91-26d00e3b2d3f"
+          }
+        ]
+      },
+      "Context": {
+        "ToolName": "nmap",
+        "ToolCategory": "Network Scanner Tool"
+      }
+    }
+  },
+  "Severity": 8,
+  "Title": "A resource of type ECSCluster has executed suspicious tool.",
+  "Type": "Execution:Runtime/SuspiciousTool",
+  "UpdatedAt": "2025-03-13T18:30:18.697Z"
+}
+
+
+

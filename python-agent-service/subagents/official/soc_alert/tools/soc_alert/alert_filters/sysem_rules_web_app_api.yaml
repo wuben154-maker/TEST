@@ -1,0 +1,119 @@
+# 1. 已被WAF拦截请求
+- name: filter_waf_blocked_request
+  condition: "alert.get('waf_action') == 'block'"
+  action: "discard"
+  description: "过滤已被WAF成功拦截的攻击请求"
+
+# 2. 404扫描类请求（低危）
+- name: filter_404_scan_low
+  condition: "alert.get('status_code') == 404 and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤404扫描类低风险请求"
+
+# 3. 403访问拒绝（低危）
+- name: filter_403_denied_low
+  condition: "alert.get('status_code') == 403 and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤403访问拒绝告警"
+
+# 4. 静态资源访问
+- name: filter_static_resource_access
+  condition: "alert.get('url', '').endswith(('.js', '.css', '.png', '.jpg', '.ico'))"
+  action: "discard"
+  description: "过滤静态资源访问请求"
+
+# 5. 健康检查接口
+- name: filter_health_check
+  condition: "alert.get('url') in ['/health', '/status', '/ping']"
+  action: "discard"
+  description: "过滤健康检查接口访问"
+
+# 6. 白名单IP访问
+- name: filter_whitelisted_ip
+  condition: "alert.get('src_ip') in alert.get('trusted_ips', [])"
+  action: "discard"
+  description: "过滤白名单IP访问"
+
+# 7. 内网访问Web服务
+- name: filter_internal_web_access
+  condition: "alert.get('src_ip', '').startswith(('10.', '172.', '192.168.')) and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤内网低风险访问"
+
+# 8. 常见爬虫访问
+- name: filter_known_crawler
+  condition: "any(bot in alert.get('user_agent', '').lower() for bot in ['googlebot', 'bingbot', 'baiduspider'])"
+  action: "discard"
+  description: "过滤搜索引擎爬虫访问"
+
+# 9. API正常GET请求
+- name: filter_api_get_request
+  condition: "alert.get('method') == 'GET' and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤低风险GET请求"
+
+# 10. 无参数请求
+- name: filter_no_query_params
+  condition: "not alert.get('query_string') and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤无参数请求"
+
+# 11. 常见登录页访问
+- name: filter_login_page_access
+  condition: "alert.get('url') in ['/login', '/signin'] and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤登录页面访问"
+
+# 12. 正常API调用（白名单Key）
+- name: filter_api_key_whitelist
+  condition: "alert.get('api_key') in alert.get('trusted_api_keys', [])"
+  action: "discard"
+  description: "过滤可信API Key调用"
+
+# 13. 成功响应（200 且低风险）
+- name: filter_200_ok_low
+  condition: "alert.get('status_code') == 200 and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤正常成功响应"
+
+# 14. OPTIONS / CORS 预检请求
+- name: filter_options_request
+  condition: "alert.get('method') == 'OPTIONS'"
+  action: "discard"
+  description: "过滤跨域预检请求"
+
+# 15. HEAD请求
+- name: filter_head_request
+  condition: "alert.get('method') == 'HEAD'"
+  action: "discard"
+  description: "过滤HEAD请求"
+
+# 16. 常见扫描器低危探测
+- name: filter_low_risk_scanner
+  condition: "alert.get('tool') in ['nmap', 'nikto'] and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤低风险扫描工具探测"
+
+# 17. CDN节点访问
+- name: filter_cdn_source
+  condition: "alert.get('src_ip') in alert.get('cdn_ip_list', [])"
+  action: "discard"
+  description: "过滤CDN来源流量"
+
+# 18. 重复请求（去重）
+- name: filter_duplicate_requests
+  condition: "alert.get('is_duplicate') == True"
+  action: "discard"
+  description: "过滤重复请求告警"
+
+# 19. 请求体为空
+- name: filter_empty_body
+  condition: "not alert.get('body') and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤空请求体"
+
+# 20. 已认证用户正常访问
+- name: filter_authenticated_user
+  condition: "alert.get('authenticated') == True and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤已认证用户低风险访问"

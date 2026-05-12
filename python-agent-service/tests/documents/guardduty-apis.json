@@ -1,0 +1,1692 @@
+{
+  "service": "Amazon GuardDuty",
+  "api_version": "2017-11-28",
+  "source_pdf": "/Users/poirotpanda/work/Documents/AtWork/research/guardduty-api.pdf",
+  "total_actions": 84,
+  "apis": [
+    {
+      "action": "AcceptAdministratorInvitation",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/administrator",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "AcceptInvitation",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/master",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "ArchiveFindings",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/findings/archive",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "CreateDetector",
+      "http_method": "POST",
+      "path": "/detector",
+      "uri_parameters": [],
+      "request_body_fields": [],
+      "response_fields": [
+        "detectorId",
+        "unprocessedDataSources",
+        "malwareProtection",
+        "scanEc2InstanceWithFindings",
+        "ebsVolumes",
+        "reason",
+        "status",
+        "serviceRole"
+      ]
+    },
+    {
+      "action": "CreateFilter",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/filter",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "name"
+      ]
+    },
+    {
+      "action": "CreateIPSet",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/ipset",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "ipSetId"
+      ]
+    },
+    {
+      "action": "CreateMalwareProtectionPlan",
+      "http_method": "POST",
+      "path": "/malware-protection-plan",
+      "uri_parameters": [],
+      "request_body_fields": [],
+      "response_fields": [
+        "malwareProtectionPlanId"
+      ]
+    },
+    {
+      "action": "CreateMembers",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/member",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "unprocessedAccounts",
+        "accountId",
+        "result"
+      ]
+    },
+    {
+      "action": "CreatePublishingDestination",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/publishingDestination",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "destinationId"
+      ]
+    },
+    {
+      "action": "CreateSampleFindings",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/findings/create",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "CreateThreatEntitySet",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/threatentityset",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "threatEntitySetId"
+      ]
+    },
+    {
+      "action": "CreateThreatIntelSet",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/threatintelset",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "threatIntelSetId"
+      ]
+    },
+    {
+      "action": "CreateTrustedEntitySet",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/trustedentityset",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "trustedEntitySetId"
+      ]
+    },
+    {
+      "action": "DeclineInvitations",
+      "http_method": "POST",
+      "path": "/invitation/decline",
+      "uri_parameters": [],
+      "request_body_fields": [],
+      "response_fields": [
+        "unprocessedAccounts",
+        "accountId",
+        "result"
+      ]
+    },
+    {
+      "action": "DeleteDetector",
+      "http_method": "DELETE",
+      "path": "/detector/{detectorId}",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "DeleteFilter",
+      "http_method": "DELETE",
+      "path": "/detector/{detectorId}/filter/filterName",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "DeleteInvitations",
+      "http_method": "POST",
+      "path": "/invitation/delete",
+      "uri_parameters": [],
+      "request_body_fields": [],
+      "response_fields": [
+        "unprocessedAccounts",
+        "accountId",
+        "result"
+      ]
+    },
+    {
+      "action": "DeleteIPSet",
+      "http_method": "DELETE",
+      "path": "/detector/{detectorId}/ipset/{ipSetId}",
+      "uri_parameters": [
+        "detectorId",
+        "ipSetId"
+      ],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "DeleteMalwareProtectionPlan",
+      "http_method": "DELETE",
+      "path": "/malware-protection-plan/{malwareProtectionPlanId}",
+      "uri_parameters": [
+        "malwareProtectionPlanId"
+      ],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "DeleteMembers",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/member/delete",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "unprocessedAccounts",
+        "accountId",
+        "result"
+      ]
+    },
+    {
+      "action": "DeletePublishingDestination",
+      "http_method": "DELETE",
+      "path": "/detector/{detectorId}/publishingDestination/{destinationId}",
+      "uri_parameters": [
+        "detectorId",
+        "destinationId"
+      ],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "DeleteThreatEntitySet",
+      "http_method": "DELETE",
+      "path": "/detector/{detectorId}/threatentityset/{threatEntitySetId}",
+      "uri_parameters": [
+        "detectorId",
+        "threatEntitySetId"
+      ],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "DeleteThreatIntelSet",
+      "http_method": "DELETE",
+      "path": "/detector/{detectorId}/threatintelset/{threatIntelSetId}",
+      "uri_parameters": [
+        "detectorId",
+        "threatIntelSetId"
+      ],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "DeleteTrustedEntitySet",
+      "http_method": "DELETE",
+      "path": "/detector/{detectorId}/trustedentityset/{trustedEntitySetId}",
+      "uri_parameters": [
+        "detectorId",
+        "trustedEntitySetId"
+      ],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "DescribeMalwareScans",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/malware-scans",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "nextToken",
+        "scans",
+        "accountId",
+        "adminDetectorId",
+        "attachedVolumes",
+        "deviceName",
+        "encryptionType",
+        "kmsKeyArn",
+        "snapshotArn",
+        "volumeArn",
+        "volumeSizeInGB",
+        "volumeType",
+        "detectorId",
+        "failureReason",
+        "fileCount",
+        "resourceDetails",
+        "instanceArn",
+        "scanEndTime",
+        "scanId",
+        "scanResultDetails",
+        "scanResult",
+        "scanStartTime",
+        "scanStatus",
+        "scanType",
+        "totalBytes",
+        "triggerDetails",
+        "description",
+        "guardDutyFindingId",
+        "triggerType"
+      ]
+    },
+    {
+      "action": "DescribePublishingDestination",
+      "http_method": "GET",
+      "path": "/detector/{detectorId}/publishingDestination/{destinationId}",
+      "uri_parameters": [
+        "detectorId",
+        "destinationId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "destinationId",
+        "destinationProperties",
+        "destinationArn",
+        "kmsKeyArn",
+        "destinationType",
+        "publishingFailureStartTimestamp",
+        "status",
+        "tags",
+        "string"
+      ]
+    },
+    {
+      "action": "DisableOrganizationAdminAccount",
+      "http_method": "POST",
+      "path": "/admin/disable",
+      "uri_parameters": [],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "DisassociateFromAdministratorAccount",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/administrator/disassociate",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "DisassociateFromMasterAccount",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/master/disassociate",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "DisassociateMembers",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/member/disassociate",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "unprocessedAccounts",
+        "accountId",
+        "result"
+      ]
+    },
+    {
+      "action": "EnableOrganizationAdminAccount",
+      "http_method": "POST",
+      "path": "/admin/enable",
+      "uri_parameters": [],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "GetAdministratorAccount",
+      "http_method": "GET",
+      "path": "/detector/{detectorId}/administrator",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "administrator",
+        "accountId",
+        "invitationId",
+        "invitedAt",
+        "relationshipStatus"
+      ]
+    },
+    {
+      "action": "GetCoverageStatistics",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/coverage/statistics",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "coverageStatistics",
+        "countByCoverageStatus",
+        "string",
+        "countByResourceType"
+      ]
+    },
+    {
+      "action": "GetDetector",
+      "http_method": "GET",
+      "path": "/detector/{detectorId}",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "createdAt",
+        "dataSources",
+        "cloudTrail",
+        "status",
+        "dnsLogs",
+        "flowLogs",
+        "kubernetes",
+        "auditLogs",
+        "malwareProtection",
+        "scanEc2InstanceWithFindings",
+        "ebsVolumes",
+        "reason",
+        "serviceRole",
+        "s3Logs",
+        "features",
+        "additionalConfiguration",
+        "name",
+        "updatedAt",
+        "findingPublishingFrequency",
+        "tags",
+        "string"
+      ]
+    },
+    {
+      "action": "GetFilter",
+      "http_method": "GET",
+      "path": "/detector/{detectorId}/filter/filterName",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "action",
+        "description",
+        "findingCriteria",
+        "criterion",
+        "string",
+        "eq",
+        "equals",
+        "greaterThan",
+        "greaterThanOrEqual",
+        "gt",
+        "gte",
+        "lessThan",
+        "lessThanOrEqual",
+        "lt",
+        "lte",
+        "matches",
+        "neq",
+        "notEquals",
+        "notMatches",
+        "name",
+        "rank",
+        "tags"
+      ]
+    },
+    {
+      "action": "GetFindings",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/findings/get",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "findings",
+        "accountId",
+        "arn",
+        "associatedAttackSequenceArn",
+        "confidence",
+        "createdAt",
+        "description",
+        "id",
+        "partition",
+        "region",
+        "resource",
+        "accessKeyDetails",
+        "accessKeyId",
+        "principalId",
+        "userName",
+        "userType",
+        "containerDetails",
+        "containerRuntime",
+        "image",
+        "imagePrefix",
+        "name",
+        "securityContext",
+        "allowPrivilegeEscalation",
+        "privileged",
+        "volumeMounts",
+        "mountPath",
+        "ebsSnapshotDetails",
+        "snapshotArn",
+        "ebsVolumeDetails",
+        "scannedVolumeDetails",
+        "deviceName",
+        "encryptionType",
+        "kmsKeyArn",
+        "volumeArn",
+        "volumeSizeInGB",
+        "volumeType",
+        "skippedVolumeDetails",
+        "ec2ImageDetails",
+        "imageArn",
+        "ecsClusterDetails",
+        "activeServicesCount",
+        "registeredContainerInstancesCount",
+        "runningTasksCount",
+        "status",
+        "tags",
+        "key",
+        "value",
+        "taskDetails",
+        "containers",
+        "definitionArn",
+        "group",
+        "launchType",
+        "startedAt",
+        "startedBy",
+        "version",
+        "volumes",
+        "hostPath",
+        "path",
+        "eksClusterDetails",
+        "vpcId",
+        "instanceDetails",
+        "availabilityZone",
+        "iamInstanceProfile",
+        "imageDescription",
+        "imageId",
+        "instanceId",
+        "instanceState",
+        "instanceType",
+        "launchTime",
+        "networkInterfaces",
+        "ipv6Addresses",
+        "networkInterfaceId",
+        "privateDnsName",
+        "privateIpAddress",
+        "privateIpAddresses",
+        "publicDnsName",
+        "publicIp",
+        "securityGroups",
+        "groupId",
+        "groupName",
+        "subnetId",
+        "outpostArn",
+        "platform",
+        "productCodes",
+        "productCodeId",
+        "productCodeType",
+        "kubernetesDetails",
+        "kubernetesUserDetails",
+        "groups",
+        "impersonatedUser",
+        "username",
+        "sessionName",
+        "uid",
+        "kubernetesWorkloadDetails",
+        "hostIPC",
+        "hostNetwork",
+        "hostPID",
+        "namespace",
+        "serviceAccountName",
+        "type",
+        "lambdaDetails",
+        "functionArn",
+        "functionName",
+        "functionVersion",
+        "lastModifiedAt",
+        "revisionId",
+        "role",
+        "vpcConfig",
+        "subnetIds",
+        "rdsDbInstanceDetails",
+        "dbClusterIdentifier",
+        "dbInstanceArn",
+        "dbInstanceIdentifier",
+        "dbiResourceId",
+        "engine",
+        "engineVersion",
+        "rdsDbUserDetails",
+        "application",
+        "authMethod",
+        "database",
+        "ssl",
+        "user",
+        "rdsLimitlessDbDetails",
+        "dbShardGroupArn",
+        "dbShardGroupIdentifier",
+        "dbShardGroupResourceId",
+        "recoveryPointDetails",
+        "backupVaultName",
+        "recoveryPointArn",
+        "resourceType",
+        "s3BucketDetails",
+        "defaultServerSideEncryption",
+        "kmsMasterKeyArn",
+        "owner",
+        "publicAccess",
+        "effectivePermission",
+        "permissionConfiguration",
+        "accountLevelPermissions",
+        "blockPublicAccess",
+        "blockPublicAcls",
+        "blockPublicPolicy",
+        "ignorePublicAcls",
+        "restrictPublicBuckets",
+        "bucketLevelPermissions",
+        "accessControlList",
+        "allowsPublicReadAccess",
+        "allowsPublicWriteAccess",
+        "bucketPolicy",
+        "s3ObjectDetails",
+        "eTag",
+        "hash",
+        "objectArn",
+        "versionId",
+        "schemaVersion",
+        "service",
+        "action",
+        "actionType",
+        "awsApiCallAction",
+        "affectedResources",
+        "string",
+        "api",
+        "callerType",
+        "domainDetails",
+        "domain",
+        "errorCode",
+        "remoteAccountDetails",
+        "affiliated",
+        "remoteIpDetails",
+        "city",
+        "cityName",
+        "country",
+        "countryCode",
+        "countryName",
+        "geoLocation",
+        "lat",
+        "lon",
+        "ipAddressV4",
+        "ipAddressV6",
+        "organization",
+        "asn",
+        "asnOrg",
+        "isp",
+        "org",
+        "serviceName",
+        "userAgent",
+        "dnsRequestAction",
+        "blocked",
+        "domainWithSuffix",
+        "protocol",
+        "vpcOwnerAccountId",
+        "kubernetesApiCallAction",
+        "parameters",
+        "requestUri",
+        "resourceName",
+        "sourceIPs",
+        "statusCode",
+        "subresource",
+        "verb",
+        "kubernetesPermissionCheckedDetails",
+        "allowed",
+        "kubernetesRoleBindingDetails",
+        "kind",
+        "roleRefKind",
+        "roleRefName",
+        "kubernetesRoleDetails",
+        "networkConnectionAction",
+        "connectionDirection",
+        "localIpDetails",
+        "localNetworkInterface",
+        "localPortDetails",
+        "port",
+        "portName",
+        "remotePortDetails",
+        "portProbeAction",
+        "portProbeDetails",
+        "rdsLoginAttemptAction",
+        "LoginAttributes",
+        "failedLoginAttempts",
+        "successfulLoginAttempts",
+        "additionalInfo",
+        "archived",
+        "count",
+        "detection",
+        "anomaly",
+        "profiles",
+        "observations",
+        "text",
+        "profileSubtype",
+        "profileType",
+        "unusual",
+        "behavior",
+        "sequence",
+        "actors",
+        "process",
+        "sha256",
+        "session",
+        "createdTime",
+        "issuer",
+        "mfaStatus",
+        "account",
+        "credentialUid",
+        "additionalSequenceTypes",
+        "endpoints",
+        "autonomousSystem",
+        "number",
+        "connection",
+        "direction",
+        "ip",
+        "location",
+        "resources",
+        "cloudPartition",
+        "data",
+        "accessKey",
+        "autoscalingAutoScalingGroup",
+        "ec2InstanceUids",
+        "cloudformationStack",
+        "container",
+        "imageUid",
+        "ec2Image",
+        "ec2Instance",
+        "ec2NetworkInterfaceUids",
+        "IamInstanceProfile",
+        "ec2LaunchTemplate",
+        "ec2NetworkInterface",
+        "subNetId",
+        "ec2Vpc",
+        "ecsCluster",
+        "ecsTask",
+        "containerUids",
+        "taskDefinitionArn",
+        "eksCluster",
+        "kubernetesWorkload",
+        "s3Bucket",
+        "accountPublicAccess",
+        "publicAclAccess",
+        "publicAclIgnoreBehavior",
+        "publicBucketRestrictBehavior",
+        "publicPolicyAccess",
+        "bucketPublicAccess",
+        "encryptionKeyArn",
+        "ownerId",
+        "publicReadAccess",
+        "publicWriteAccess",
+        "s3ObjectUids",
+        "s3Object",
+        "sequenceIndicators",
+        "title",
+        "values",
+        "signals",
+        "actorIds",
+        "endpointIds",
+        "firstSeenAt",
+        "lastSeenAt",
+        "resourceUids",
+        "severity",
+        "signalIndicators",
+        "updatedAt",
+        "detectorId",
+        "ebsVolumeScanDetails",
+        "scanCompletedAt",
+        "scanDetections",
+        "highestSeverityThreatDetails",
+        "threatName",
+        "scannedItemCount",
+        "files",
+        "totalGb",
+        "threatDetectedByName",
+        "itemCount",
+        "shortened",
+        "threatNames",
+        "filePaths",
+        "fileName",
+        "filePath",
+        "uniqueThreatNameCount",
+        "threatsDetectedItemCount",
+        "scanId",
+        "scanStartedAt",
+        "scanType",
+        "sources",
+        "triggerFindingId",
+        "eventFirstSeen",
+        "eventLastSeen",
+        "evidence",
+        "threatIntelligenceDetails",
+        "threatFileSha256",
+        "threatListName",
+        "featureName",
+        "malwareScanDetails",
+        "scanCategory",
+        "scanConfiguration",
+        "incrementalScanDetails",
+        "baselineResourceArn",
+        "triggerType",
+        "threats",
+        "itemDetails",
+        "itemPath",
+        "resourceArn",
+        "itemPaths",
+        "nestedItemPath",
+        "source",
+        "uniqueThreatCount",
+        "resourceRole",
+        "runtimeDetails",
+        "context",
+        "addressFamily",
+        "commandLineExample",
+        "fileSystemType",
+        "flags",
+        "ianaProtocolNumber",
+        "ldPreloadValue",
+        "libraryPath",
+        "memoryRegions",
+        "modifiedAt",
+        "modifyingProcess",
+        "euid",
+        "executablePath",
+        "executableSha256",
+        "lineage",
+        "namespacePid",
+        "parentUuid",
+        "pid",
+        "startTime",
+        "userId",
+        "uuid",
+        "pwd",
+        "moduleFilePath",
+        "moduleName",
+        "moduleSha256",
+        "mountSource",
+        "mountTarget",
+        "releaseAgentPath",
+        "runcBinaryPath",
+        "scriptPath",
+        "shellHistoryFilePath",
+        "socketPath",
+        "targetProcess",
+        "threatFilePath",
+        "toolCategory",
+        "toolName",
+        "userFeedback"
+      ]
+    },
+    {
+      "action": "GetFindingsStatistics",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/findings/statistics",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "findingStatistics",
+        "countBySeverity",
+        "string",
+        "groupedByAccount",
+        "accountId",
+        "lastGeneratedAt",
+        "totalFindings",
+        "groupedByDate",
+        "date",
+        "severity",
+        "groupedByFindingType",
+        "findingType",
+        "groupedByResource",
+        "resourceId",
+        "resourceType",
+        "groupedBySeverity",
+        "nextToken"
+      ]
+    },
+    {
+      "action": "GetInvitationsCount",
+      "http_method": "GET",
+      "path": "/invitation/count",
+      "uri_parameters": [],
+      "request_body_fields": [],
+      "response_fields": [
+        "invitationsCount"
+      ]
+    },
+    {
+      "action": "GetIPSet",
+      "http_method": "GET",
+      "path": "/detector/{detectorId}/ipset/{ipSetId}",
+      "uri_parameters": [
+        "detectorId",
+        "ipSetId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "expectedBucketOwner",
+        "format",
+        "location",
+        "name",
+        "status",
+        "tags",
+        "string"
+      ]
+    },
+    {
+      "action": "GetMalwareProtectionPlan",
+      "http_method": "GET",
+      "path": "/malware-protection-plan/{malwareProtectionPlanId}",
+      "uri_parameters": [
+        "malwareProtectionPlanId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "actions",
+        "tagging",
+        "status",
+        "arn",
+        "createdAt",
+        "protectedResource",
+        "s3Bucket",
+        "bucketName",
+        "objectPrefixes",
+        "role",
+        "statusReasons",
+        "code",
+        "message",
+        "tags",
+        "string"
+      ]
+    },
+    {
+      "action": "GetMalwareScan",
+      "http_method": "GET",
+      "path": "/malware-scan/{scanId}",
+      "uri_parameters": [
+        "scanId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "adminDetectorId",
+        "detectorId",
+        "failedResourcesCount",
+        "resourceArn",
+        "resourceType",
+        "scanCategory",
+        "scanCompletedAt",
+        "scanConfiguration",
+        "incrementalScanDetails",
+        "baselineResourceArn",
+        "recoveryPoint",
+        "backupVaultName",
+        "role",
+        "triggerDetails",
+        "description",
+        "guardDutyFindingId",
+        "triggerType",
+        "scanId",
+        "scannedResources",
+        "resourceDetails",
+        "ebsSnapshot",
+        "deviceName",
+        "ebsVolume",
+        "encryptionType",
+        "kmsKeyArn",
+        "snapshotArn",
+        "volumeArn",
+        "volumeSizeInGB",
+        "volumeType",
+        "scannedResourceArn",
+        "scannedResourceStatus",
+        "scannedResourceType",
+        "scanStatusReason",
+        "scannedResourcesCount",
+        "scanResultDetails",
+        "failedFileCount",
+        "scanResultStatus",
+        "skippedFileCount",
+        "threatFoundFileCount",
+        "threats",
+        "count",
+        "hash",
+        "itemDetails",
+        "additionalInfo",
+        "versionId",
+        "itemPath",
+        "name",
+        "source",
+        "totalBytes",
+        "totalFileCount",
+        "uniqueThreatCount",
+        "scanStartedAt",
+        "scanStatus",
+        "scanType",
+        "skippedResourcesCount"
+      ]
+    },
+    {
+      "action": "GetMalwareScanSettings",
+      "http_method": "GET",
+      "path": "/detector/{detectorId}/malware-scan-settings",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "ebsSnapshotPreservation",
+        "scanResourceCriteria",
+        "exclude",
+        "string",
+        "mapEquals",
+        "key",
+        "value",
+        "include"
+      ]
+    },
+    {
+      "action": "GetMasterAccount",
+      "http_method": "GET",
+      "path": "/detector/{detectorId}/master",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "master",
+        "accountId",
+        "invitationId",
+        "invitedAt",
+        "relationshipStatus"
+      ]
+    },
+    {
+      "action": "GetMemberDetectors",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/member/detector/get",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "members",
+        "accountId",
+        "dataSources",
+        "cloudTrail",
+        "status",
+        "dnsLogs",
+        "flowLogs",
+        "kubernetes",
+        "auditLogs",
+        "malwareProtection",
+        "scanEc2InstanceWithFindings",
+        "ebsVolumes",
+        "reason",
+        "serviceRole",
+        "s3Logs",
+        "features",
+        "additionalConfiguration",
+        "name",
+        "updatedAt",
+        "unprocessedAccounts",
+        "result"
+      ]
+    },
+    {
+      "action": "GetMembers",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/member/get",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "members",
+        "accountId",
+        "administratorId",
+        "detectorId",
+        "email",
+        "invitedAt",
+        "masterId",
+        "relationshipStatus",
+        "updatedAt",
+        "unprocessedAccounts",
+        "result"
+      ]
+    },
+    {
+      "action": "GetOrganizationStatistics",
+      "http_method": "GET",
+      "path": "/organization/statistics",
+      "uri_parameters": [],
+      "request_body_fields": [],
+      "response_fields": [
+        "organizationDetails",
+        "organizationStatistics",
+        "activeAccountsCount",
+        "countByFeature",
+        "additionalConfiguration",
+        "enabledAccountsCount",
+        "name",
+        "memberAccountsCount",
+        "totalAccountsCount",
+        "updatedAt"
+      ]
+    },
+    {
+      "action": "GetRemainingFreeTrialDays",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/freeTrial/daysRemaining",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "accounts",
+        "accountId",
+        "dataSources",
+        "cloudTrail",
+        "freeTrialDaysRemaining",
+        "dnsLogs",
+        "flowLogs",
+        "kubernetes",
+        "auditLogs",
+        "malwareProtection",
+        "scanEc2InstanceWithFindings",
+        "s3Logs",
+        "features",
+        "name",
+        "unprocessedAccounts",
+        "result"
+      ]
+    },
+    {
+      "action": "GetThreatEntitySet",
+      "http_method": "GET",
+      "path": "/detector/{detectorId}/threatentityset/{threatEntitySetId}",
+      "uri_parameters": [
+        "detectorId",
+        "threatEntitySetId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "createdAt",
+        "errorDetails",
+        "expectedBucketOwner",
+        "format",
+        "location",
+        "name",
+        "status",
+        "tags",
+        "string",
+        "updatedAt"
+      ]
+    },
+    {
+      "action": "GetThreatIntelSet",
+      "http_method": "GET",
+      "path": "/detector/{detectorId}/threatintelset/{threatIntelSetId}",
+      "uri_parameters": [
+        "detectorId",
+        "threatIntelSetId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "expectedBucketOwner",
+        "format",
+        "location",
+        "name",
+        "status",
+        "tags",
+        "string"
+      ]
+    },
+    {
+      "action": "GetTrustedEntitySet",
+      "http_method": "GET",
+      "path": "/detector/{detectorId}/trustedentityset/{trustedEntitySetId}",
+      "uri_parameters": [
+        "detectorId",
+        "trustedEntitySetId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "createdAt",
+        "errorDetails",
+        "expectedBucketOwner",
+        "format",
+        "location",
+        "name",
+        "status",
+        "tags",
+        "string",
+        "updatedAt"
+      ]
+    },
+    {
+      "action": "GetUsageStatistics",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/usage/statistics",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "nextToken",
+        "usageStatistics",
+        "sumByAccount",
+        "accountId",
+        "total",
+        "amount",
+        "unit",
+        "sumByDataSource",
+        "dataSource",
+        "sumByFeature",
+        "feature",
+        "sumByResource",
+        "resource",
+        "topAccountsByFeature",
+        "accounts",
+        "topResources"
+      ]
+    },
+    {
+      "action": "InviteMembers",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/member/invite",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "unprocessedAccounts",
+        "accountId",
+        "result"
+      ]
+    },
+    {
+      "action": "ListCoverage",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/coverage",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "nextToken",
+        "resources",
+        "accountId",
+        "coverageStatus",
+        "detectorId",
+        "issue",
+        "resourceDetails",
+        "ec2InstanceDetails",
+        "agentDetails",
+        "version",
+        "clusterArn",
+        "instanceId",
+        "instanceType",
+        "managementType",
+        "ecsClusterDetails",
+        "clusterName",
+        "containerInstanceDetails",
+        "compatibleContainerInstances",
+        "coveredContainerInstances",
+        "fargateDetails",
+        "issues",
+        "eksClusterDetails",
+        "addonDetails",
+        "addonStatus",
+        "addonVersion",
+        "compatibleNodes",
+        "coveredNodes",
+        "resourceType",
+        "resourceId",
+        "updatedAt"
+      ]
+    },
+    {
+      "action": "ListDetectors",
+      "http_method": "GET",
+      "path": "/detector?maxResults=MaxResults&nextToken=NextToken",
+      "uri_parameters": [],
+      "request_body_fields": [],
+      "response_fields": [
+        "detectorIds",
+        "nextToken"
+      ]
+    },
+    {
+      "action": "ListFilters",
+      "http_method": "GET",
+      "path": "/detector/{detectorId}/filter?maxResults=MaxResults&nextToken=NextToken",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "filterNames",
+        "nextToken"
+      ]
+    },
+    {
+      "action": "ListFindings",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/findings",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "findingIds",
+        "nextToken"
+      ]
+    },
+    {
+      "action": "ListInvitations",
+      "http_method": "GET",
+      "path": "/invitation?maxResults=MaxResults&nextToken=NextToken",
+      "uri_parameters": [],
+      "request_body_fields": [],
+      "response_fields": [
+        "invitations",
+        "accountId",
+        "invitationId",
+        "invitedAt",
+        "relationshipStatus",
+        "nextToken"
+      ]
+    },
+    {
+      "action": "ListIPSets",
+      "http_method": "GET",
+      "path": "/detector/{detectorId}/ipset?maxResults=MaxResults&nextToken=NextToken",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "ipSetIds",
+        "nextToken"
+      ]
+    },
+    {
+      "action": "ListMalwareProtectionPlans",
+      "http_method": "GET",
+      "path": "/malware-protection-plan?nextToken=NextToken",
+      "uri_parameters": [],
+      "request_body_fields": [],
+      "response_fields": [
+        "malwareProtectionPlans",
+        "malwareProtectionPlanId",
+        "nextToken"
+      ]
+    },
+    {
+      "action": "ListMalwareScans",
+      "http_method": "POST",
+      "path": "/malware-scan?maxResults=MaxResults&nextToken=NextToken",
+      "uri_parameters": [],
+      "request_body_fields": [],
+      "response_fields": [
+        "nextToken",
+        "scans",
+        "resourceArn",
+        "resourceType",
+        "scanCompletedAt",
+        "scanId",
+        "scanResultStatus",
+        "scanStartedAt",
+        "scanStatus",
+        "scanType"
+      ]
+    },
+    {
+      "action": "ListMembers",
+      "http_method": "GET",
+      "path": "/detector/{detectorId}/member?",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "members",
+        "accountId",
+        "administratorId",
+        "detectorId",
+        "email",
+        "invitedAt",
+        "masterId",
+        "relationshipStatus",
+        "updatedAt",
+        "nextToken"
+      ]
+    },
+    {
+      "action": "ListOrganizationAdminAccounts",
+      "http_method": "GET",
+      "path": "/admin?maxResults=MaxResults&nextToken=NextToken",
+      "uri_parameters": [],
+      "request_body_fields": [],
+      "response_fields": [
+        "adminAccounts",
+        "adminAccountId",
+        "adminStatus",
+        "nextToken"
+      ]
+    },
+    {
+      "action": "ListPublishingDestinations",
+      "http_method": "GET",
+      "path": "/detector/{detectorId}/publishingDestination?",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "destinations",
+        "destinationId",
+        "destinationType",
+        "status",
+        "nextToken"
+      ]
+    },
+    {
+      "action": "ListTagsForResource",
+      "http_method": "GET",
+      "path": "/tags/resourceArn",
+      "uri_parameters": [],
+      "request_body_fields": [],
+      "response_fields": [
+        "tags",
+        "string"
+      ]
+    },
+    {
+      "action": "ListThreatEntitySets",
+      "http_method": "GET",
+      "path": "/detector/{detectorId}/threatentityset?maxResults=MaxResults&nextToken=NextToken",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "nextToken",
+        "threatEntitySetIds"
+      ]
+    },
+    {
+      "action": "ListThreatIntelSets",
+      "http_method": "GET",
+      "path": "/detector/{detectorId}/threatintelset?maxResults=MaxResults&nextToken=NextToken",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "nextToken",
+        "threatIntelSetIds"
+      ]
+    },
+    {
+      "action": "ListTrustedEntitySets",
+      "http_method": "GET",
+      "path": "/detector/{detectorId}/trustedentityset?maxResults=MaxResults&nextToken=NextToken",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "nextToken",
+        "trustedEntitySetIds"
+      ]
+    },
+    {
+      "action": "StartMalwareScan",
+      "http_method": "POST",
+      "path": "/malware-scan/start",
+      "uri_parameters": [],
+      "request_body_fields": [],
+      "response_fields": [
+        "scanId"
+      ]
+    },
+    {
+      "action": "StartMonitoringMembers",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/member/start",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "unprocessedAccounts",
+        "accountId",
+        "result"
+      ]
+    },
+    {
+      "action": "StopMonitoringMembers",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/member/stop",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "unprocessedAccounts",
+        "accountId",
+        "result"
+      ]
+    },
+    {
+      "action": "TagResource",
+      "http_method": "POST",
+      "path": "/tags/resourceArn",
+      "uri_parameters": [],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "UnarchiveFindings",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/findings/unarchive",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "UntagResource",
+      "http_method": "DELETE",
+      "path": "/tags/resourceArn?tagKeys=TagKeys",
+      "uri_parameters": [],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "UpdateDetector",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "UpdateFilter",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/filter/filterName",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "name"
+      ]
+    },
+    {
+      "action": "UpdateFindingsFeedback",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/findings/feedback",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "UpdateIPSet",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/ipset/{ipSetId}",
+      "uri_parameters": [
+        "detectorId",
+        "ipSetId"
+      ],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "UpdateMalwareProtectionPlan",
+      "http_method": "PATCH",
+      "path": "/malware-protection-plan/{malwareProtectionPlanId}",
+      "uri_parameters": [
+        "malwareProtectionPlanId"
+      ],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "UpdateMalwareScanSettings",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/malware-scan-settings",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "UpdateMemberDetectors",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/member/detector/update",
+      "uri_parameters": [
+        "detectorId"
+      ],
+      "request_body_fields": [],
+      "response_fields": [
+        "unprocessedAccounts",
+        "accountId",
+        "result"
+      ]
+    },
+    {
+      "action": "UpdatePublishingDestination",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/publishingDestination/{destinationId}",
+      "uri_parameters": [
+        "detectorId",
+        "destinationId"
+      ],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "UpdateThreatEntitySet",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/threatentityset/{threatEntitySetId}",
+      "uri_parameters": [
+        "detectorId",
+        "threatEntitySetId"
+      ],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "UpdateThreatIntelSet",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/threatintelset/{threatIntelSetId}",
+      "uri_parameters": [
+        "detectorId",
+        "threatIntelSetId"
+      ],
+      "request_body_fields": [],
+      "response_fields": []
+    },
+    {
+      "action": "UpdateTrustedEntitySet",
+      "http_method": "POST",
+      "path": "/detector/{detectorId}/trustedentityset/{trustedEntitySetId}",
+      "uri_parameters": [
+        "detectorId",
+        "trustedEntitySetId"
+      ],
+      "request_body_fields": [],
+      "response_fields": []
+    }
+  ]
+}

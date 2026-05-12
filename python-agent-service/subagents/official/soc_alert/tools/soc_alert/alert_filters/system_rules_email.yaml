@@ -1,0 +1,119 @@
+# 1. 已被网关拦截的恶意邮件
+- name: filter_blocked_malicious_email
+  condition: "alert.get('action') == 'blocked'"
+  action: "discard"
+  description: "过滤已被邮件网关拦截的恶意邮件"
+
+# 2. 被隔离邮件（未投递）
+- name: filter_quarantined_email
+  condition: "alert.get('delivery_status') == 'quarantined'"
+  action: "discard"
+  description: "过滤已隔离未进入用户邮箱的邮件"
+
+# 3. 垃圾邮件分类（低风险）
+- name: filter_spam_low_risk
+  condition: "alert.get('spam_score', 0) > 5 and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤低风险垃圾邮件"
+
+# 4. 内部邮件通信
+- name: filter_internal_email
+  condition: "alert.get('sender_domain') == alert.get('recipient_domain')"
+  action: "discard"
+  description: "过滤公司内部邮件"
+
+# 5. 已知白名单发件人
+- name: filter_whitelisted_sender
+  condition: "alert.get('sender_email') in alert.get('trusted_senders', [])"
+  action: "discard"
+  description: "过滤白名单发件人"
+
+# 6. 已知合作伙伴域名
+- name: filter_partner_domain
+  condition: "alert.get('sender_domain') in alert.get('partner_domains', [])"
+  action: "discard"
+  description: "过滤合作伙伴域名邮件"
+
+# 7. 自动化通知邮件
+- name: filter_notification_email
+  condition: "alert.get('subject', '').lower().find('notification') != -1 or alert.get('sender_email', '').startswith('noreply')"
+  action: "discard"
+  description: "过滤系统通知类邮件"
+
+# 8. 无附件无链接邮件
+- name: filter_no_attachment_no_link
+  condition: "not alert.get('has_attachment') and not alert.get('has_url')"
+  action: "discard"
+  description: "过滤无附件无链接邮件"
+
+# 9. 附件类型安全
+- name: filter_safe_attachment_type
+  condition: "alert.get('attachment_type') in ['jpg', 'png', 'txt', 'pdf'] and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤低风险附件类型"
+
+# 10. URL在白名单
+- name: filter_whitelisted_url
+  condition: "any(url in alert.get('url_whitelist', []) for url in alert.get('urls', []))"
+  action: "discard"
+  description: "过滤白名单URL"
+
+# 11. 邮件已被用户未点击
+- name: filter_no_user_interaction
+  condition: "alert.get('user_clicked') == False and alert.get('user_opened') == False"
+  action: "discard"
+  description: "过滤用户未产生行为的邮件"
+
+# 12. 批量群发邮件（营销类）
+- name: filter_bulk_email
+  condition: "alert.get('recipient_count', 0) > 50 and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤群发营销邮件"
+
+# 13. DKIM/SPF通过
+- name: filter_auth_pass
+  condition: "alert.get('dkim') == 'pass' and alert.get('spf') == 'pass' and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤认证通过邮件"
+
+# 14. 邮件主题常见模板
+- name: filter_common_subjects
+  condition: "alert.get('subject') in alert.get('common_subjects', [])"
+  action: "discard"
+  description: "过滤常见模板邮件"
+
+# 15. 内部系统告警邮件
+- name: filter_internal_alert_mail
+  condition: "alert.get('sender_email') in alert.get('internal_alert_accounts', [])"
+  action: "discard"
+  description: "过滤内部系统发送的告警邮件"
+
+# 16. 已知扫描/测试邮件
+- name: filter_security_test_email
+  condition: "alert.get('subject', '').lower().find('phishing simulation') != -1"
+  action: "discard"
+  description: "过滤钓鱼演练邮件"
+
+# 17. 已撤回或删除邮件
+- name: filter_removed_email
+  condition: "alert.get('delivery_status') in ['deleted', 'recalled']"
+  action: "discard"
+  description: "过滤已删除或撤回邮件"
+
+# 18. 常见邮件客户端行为
+- name: filter_mail_client_auto_load
+  condition: "alert.get('event_type') == 'image_load' and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤邮件客户端自动加载资源"
+
+# 19. 邮件大小异常但为低风险
+- name: filter_large_but_low_risk
+  condition: "alert.get('email_size', 0) > 10000000 and alert.get('severity') == 'low'"
+  action: "discard"
+  description: "过滤大邮件但无恶意特征"
+
+# 20. 已知安全网关二次扫描
+- name: filter_gateway_rescan
+  condition: "alert.get('event_type') == 'rescan'"
+  action: "discard"
+  description: "过滤网关重复扫描告警"

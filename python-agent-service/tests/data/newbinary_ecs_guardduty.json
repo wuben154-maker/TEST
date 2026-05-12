@@ -1,0 +1,204 @@
+{
+  "AccountId": "524095063240",
+  "Arn": "arn:aws:guardduty:us-east-1:524095063240:detector/d94a78fafb40451cb4f665ce21ad4b42/finding/8ecaee9ed75c4ff2ba035d122abc1723",
+  "CreatedAt": "2025-03-28T14:52:41.728Z",
+  "Description": "A process has executed a newly created binary.",
+  "Id": "8ecaee9ed75c4ff2ba035d122abc1723",
+  "Partition": "aws",
+  "Region": "us-east-1",
+  "Resource": {
+    "InstanceDetails": {
+      "AvailabilityZone": "us-east-1a",
+      "IamInstanceProfile": {
+        "Arn": "arn:aws:iam::524095063240:instance-profile/demOS-dzone-project-p7g9rdcy-stack-fdqpyd0k-ProfileInstancesWorkersPublic-NuKQDPPfgzck",
+        "Id": "AIPAXUBUAATED5M3O2QKA"
+      },
+      "ImageDescription": "Amazon Linux AMI 2023.0.20250321 arm64 ECS HVM EBS",
+      "ImageId": "ami-0619c785c7351ec5d",
+      "InstanceId": "i-0cb81bc7f587ab893",
+      "InstanceState": "running",
+      "InstanceType": "t4g.micro",
+      "LaunchTime": "2025-03-27T17:20:47.000Z",
+      "NetworkInterfaces": [
+        {
+          "Ipv6Addresses": [
+            "2600:1f10:472d:350a:c3f3:6938:283d:3f7d"
+          ],
+          "NetworkInterfaceId": "eni-0c5719af871558301",
+          "PrivateDnsName": "i-0cb81bc7f587ab893.ec2.internal",
+          "PrivateIpAddress": "10.4.1.213",
+          "PrivateIpAddresses": [
+            {
+              "PrivateDnsName": "i-0cb81bc7f587ab893.ec2.internal",
+              "PrivateIpAddress": "10.4.1.213"
+            }
+          ],
+          "PublicDnsName": "ec2-52-90-115-168.compute-1.amazonaws.com",
+          "PublicIp": "52.90.115.168",
+          "SecurityGroups": [
+            {
+              "GroupId": "sg-037a7f85379f218a7",
+              "GroupName": "dzone-p7g9rdcy-fdqpyd0k.App10"
+            }
+          ],
+          "SubnetId": "subnet-0f14f339f5bac2c09",
+          "VpcId": "vpc-076a6b1f93addd1c6"
+        }
+      ],
+      "ProductCodes": [],
+      "Tags": [
+        {
+          "Key": "demOS:domain",
+          "Value": "dzone.live"
+        },
+        {
+          "Key": "StateOff",
+          "Value": "stopped"
+        },
+        {
+          "Key": "demOS:stack:id",
+          "Value": "fdqpyd0k"
+        },
+        {
+          "Key": "demOS:stack:name",
+          "Value": "demOS-dzone-project-p7g9rdcy"
+        },
+        {
+          "Key": "aws:cloudformation:stack-name",
+          "Value": "demOS-dzone-project-p7g9rdcy-stack-fdqpyd0k"
+        },
+        {
+          "Key": "Name",
+          "Value": "app1"
+        },
+        {
+          "Key": "demOS:project:id",
+          "Value": "p7g9rdcy"
+        },
+        {
+          "Key": "demOS:bundle",
+          "Value": "dropzone-cloud-demo/2.0"
+        },
+        {
+          "Key": "aws:cloudformation:logical-id",
+          "Value": "InstanceApp1"
+        },
+        {
+          "Key": "aws:cloudformation:stack-id",
+          "Value": "arn:aws:cloudformation:us-east-1:524095063240:stack/demOS-dzone-project-p7g9rdcy-stack-fdqpyd0k/14208790-0b2f-11f0-984e-12435e8aeb05"
+        },
+        {
+          "Key": "Group",
+          "Value": "workerspublic"
+        },
+        {
+          "Key": "demOS:namespace",
+          "Value": "dzone"
+        },
+        {
+          "Key": "demOS:project:stack:height",
+          "Value": "one"
+        },
+        {
+          "Key": "demOS:host:label",
+          "Value": "App1"
+        },
+        {
+          "Key": "demOS:host:type",
+          "Value": "EcsWorker"
+        },
+        {
+          "Key": "StateOn",
+          "Value": "running"
+        },
+        {
+          "Key": "demOS:project:scope",
+          "Value": "admin"
+        }
+      ]
+    },
+    "ResourceType": "ECSCluster",
+    "EcsClusterDetails": {
+      "Name": "dzone-p7g9rdcy-fdqpyd0k",
+      "Arn": "arn:aws:ecs:us-east-1:524095063240:cluster/dzone-p7g9rdcy-fdqpyd0k",
+      "Tags": [],
+      "TaskDetails": {
+        "Arn": "arn:aws:ecs:us-east-1:524095063240:task/dzone-p7g9rdcy-fdqpyd0k/8b85addd48294c3caf9b67cb5c3290fc",
+        "DefinitionArn": "arn:aws:ecs:us-east-1:524095063240:task-definition/demOS-dzone-project-p7g9rdcy-stack-fdqpyd0k-EcsTaskDefApp-eQiU82vR2ES1:1",
+        "Version": "3",
+        "TaskCreatedAt": "2025-03-27T17:22:31.481000+00:00",
+        "StartedBy": "ecs-svc/6785497325255673907",
+        "Containers": [
+          {
+            "ContainerRuntime": "docker",
+            "Id": "158bc5702c8a9586e7adae7866316f1cf9a841876ac466de89e28c86f82c5f12",
+            "Name": "kazemock",
+            "Image": "524095063240.dkr.ecr.us-east-1.amazonaws.com/dzone/dropzone-cloud-demo/kazemock:2.0"
+          }
+        ]
+      }
+    }
+  },
+  "SchemaVersion": "2.0",
+  "Service": {
+    "Archived": false,
+    "Count": 1,
+    "DetectorId": "d94a78fafb40451cb4f665ce21ad4b42",
+    "EventFirstSeen": "2025-03-28T14:50:01.186Z",
+    "EventLastSeen": "2025-03-28T14:50:01.186Z",
+    "ServiceName": "guardduty",
+    "AdditionalInfo": {
+      "Value": "{}",
+      "Type": "default"
+    },
+    "FeatureName": "RuntimeMonitoring",
+    "RuntimeDetails": {
+      "Process": {
+        "Name": "dbus-uuidgen",
+        "ExecutablePath": "/usr/bin/dbus-uuidgen",
+        "ExecutableSha256": "afaf5299eb313d2059aeb320881f6ceb15301fabb3c97f3f8a6775808330fb18",
+        "NamespacePid": 21327,
+        "Pwd": "/",
+        "Pid": 229792,
+        "StartTime": "2025-03-28T14:50:02.010000+00:00",
+        "Uuid": "8754f27c-de05-5b5d-1793-95e5cf10f207",
+        "ParentUuid": "b6297919-c4f5-13d1-b720-1c19f500eac3",
+        "User": "",
+        "UserId": 0,
+        "Euid": 0,
+        "Lineage": [
+          {
+            "NamespacePid": 21299,
+            "UserId": 0,
+            "Name": "dbus.postinst",
+            "Pid": 229764,
+            "Uuid": "b6297919-c4f5-13d1-b720-1c19f500eac3",
+            "ExecutablePath": "/usr/bin/dash",
+            "Euid": 0
+          }
+        ]
+      },
+      "Context": {
+        "ModifyingProcess": {
+          "Name": "dpkg",
+          "ExecutablePath": "/usr/bin/dpkg",
+          "ExecutableSha256": "40811f5046eee79aa9c3d23326972f798d7cddd0995158c3142d18b9f1547ab6",
+          "NamespacePid": 21197,
+          "Pwd": "/",
+          "Pid": 229658,
+          "StartTime": "2025-03-28T14:50:00.913000+00:00",
+          "Uuid": "ec5ff169-f50b-4e8f-bb26-379ac8b7405a",
+          "ParentUuid": "4f54ba0c-f049-f5fd-eccb-ad7ca76acccf",
+          "User": "root",
+          "UserId": 0,
+          "Euid": 0
+        },
+        "ModifiedAt": "2025-03-28T14:50:01.186000+00:00"
+      }
+    }
+  },
+  "Severity": 5,
+  "Title": "A container has executed a newly created binary file.",
+  "Type": "Execution:Runtime/NewBinaryExecuted",
+  "UpdatedAt": "2025-03-28T14:52:41.728Z"
+}
