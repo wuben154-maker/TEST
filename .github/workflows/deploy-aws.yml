@@ -303,6 +303,7 @@ jobs:
           python - <<'PY'
           import json
           import os
+          import shlex
           import subprocess
           import time
           from pathlib import Path
@@ -318,13 +319,26 @@ jobs:
           def is_todo(value):
               return value is None or str(value).startswith("TODO")
 
-          def host_health(url, timeout, retries):
+          def host_health_via_ssh(host, local_port, path, timeout, retries):
+              rel = f"/{path}" if path else "/"
+              check_url = f"http://127.0.0.1:{local_port}{rel}"
+              inner = f"curl -fsS --max-time {timeout} {shlex.quote(check_url)}"
               for attempt in range(1, retries + 1):
-                  result = subprocess.run(["curl", "-fsS", "--max-time", str(timeout), url])
+                  result = subprocess.run(
+                      [
+                          "ssh",
+                          "-i",
+                          str(Path.home() / ".ssh/aws-cicd"),
+                          "-o",
+                          "StrictHostKeyChecking=no",
+                          host,
+                          inner,
+                      ]
+                  )
                   if result.returncode == 0:
-                      return {"status": "success", "url": url, "attempt": attempt}
+                      return {"status": "success", "url": check_url, "via": "ssh-loopback", "attempt": attempt}
                   time.sleep(5)
-              return {"status": "failed", "url": url, "attempts": retries}
+              return {"status": "failed", "url": check_url, "via": "ssh-loopback", "attempts": retries}
 
           env_name = "${{ inputs.environment }}"
           mode = "${{ inputs.deployment_mode }}"
@@ -430,15 +444,22 @@ jobs:
                       }
 
               for host in hosts:
-                  hostname = host.split("@", 1)[1]
                   for name, _image in selected:
                       if name not in ("frontend", "backend"):
                           continue
                       svc = (project.get("services") or {}).get(name) or {}
                       configured_url = health_cfg.get(f"{name}_url")
                       path = (health_cfg.get(f"{name}_path") or svc.get("health_path") or "/").lstrip("/")
-                      url = configured_url if not is_todo(configured_url) else f"http://{hostname}:{port_cfg.get(f'{name}_host_port') or svc.get('container_port') or 80}/{path}"
-                      result = host_health(url, health_cfg.get("timeout_seconds", 10), health_cfg.get("retries", 12))
+                      local_port = port_cfg.get(f"{name}_host_port") or svc.get("container_port") or 80
+                      result = host_health_via_ssh(
+                          host,
+                          local_port,
+                          path,
+                          health_cfg.get("timeout_seconds", 10),
+                          health_cfg.get("retries", 12),
+                      )
+                      if not is_todo(configured_url):
+                          result = {**result, "public_health_url": configured_url}
                       evidence["verification"][f"{host}:{name}"] = result
                       if result["status"] == "failed":
                           raise RuntimeError(f"HTTP health check failed for {host}:{name}")
