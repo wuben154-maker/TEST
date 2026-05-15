@@ -1,0 +1,147 @@
+project: example-service
+environment: production
+
+# Optional: selects `.cicd/env/<cicdEnvironment>.yaml` when a CloudWatch `logSource` uses
+# `${from-cicd-env}` or `logGroupNames: []`. Omit to default to `prod`. Separate from
+# `environment` (display / issues); use `staging` here if your CI/CD file is `.cicd/env/staging.yaml`.
+# cicdEnvironment: prod
+
+# Mature routing: test-map drives required/optional commands (see ops-check/test-map.example.yaml).
+testMapPath: ops-check/test-map.example.yaml
+
+# Optional: override categories from test-map.testPolicy (otherwise use test-map file).
+# testPolicy:
+#   required:
+#     - lint
+#     - related-unit
+#     - related-e2e
+#   optional:
+#     - full-e2e
+#   passRule: all-required-pass
+
+# Bounded Fix Agent overlay (CLI or chat API). Cursor: CURSOR_API_KEY / CURSOR_AGENT_*.
+# Claude CLI: ANTHROPIC_API_KEY.
+# Classification LLM + ModelScope chat Fix Agent (fix-agent.modelscope.example.yaml): same OPENAI_API_KEY + OPENAI_MODEL (see lib/llm-client.mjs, route-advisor.mjs, fix-chat-api.mjs).
+fixAgent:
+  enabled: false
+  simulateRunner: true
+  timeoutMinutes: 30
+  configPath: ops-check/fix-agent.example.yaml # Claude: fix-agent.claude-code.example.yaml · ModelScope chat fix: fix-agent.modelscope.example.yaml (copy one → fix-agent.yaml)
+
+logSources:
+  - id: app-local-file
+    type: file
+    paths:
+      - /var/log/example-service/*.log
+    encoding: utf8
+    format: text
+    timestampField: timestamp
+    messageField: message
+    serviceField: service
+    service: example-service
+    allowedRoots:
+      - /var/log/example-service
+    limit: 200
+  # CI/CD：`docker run` 配合 `--log-driver awslogs`、`--log-opt awslogs-group=...` 时，
+  # 这里的 logGroupNames 必须与 awslogs-group 完全一致（惯例 `/ecs/<project>-<environment>`）。
+  # 写法 A — 显式值（与旧版行为一致，不从仓库读取）：
+  - id: app-cloudwatch-ecs
+    type: cloudwatch
+    service: example-service
+    region: ap-southeast-1
+    logGroupNames:
+      - /ecs/example-service-production
+    filterPattern: ""
+    serviceField: service
+    queryWindowMinutes: 10
+    limit: 200
+  # 写法 B — 与 CI/CD 对齐：`log_group` 可留空，ops-check 按 deploy-aws 约定推导为 /ecs/<repository.name>-<cicdEnvironment>（需 .cicd/project.yaml）
+  # - id: app-cloudwatch-from-cicd
+  #   type: cloudwatch
+  #   service: example-service
+  #   region: "${from-cicd-env}"
+  #   logGroupNames:
+  #     - "${from-cicd-env}"
+  #   # 或 logGroupNames: []（.cicd/env 中 log_group 留空时仍可得约定 Log Group）
+  #   filterPattern: ""
+  #   serviceField: service
+  #   queryWindowMinutes: 10
+  #   limit: 200
+  # Optional generic JSON log API (URL and headers from environment variables only — never commit secrets):
+  # - id: remote-json-logs
+  #   type: http-json
+  #   urlEnv: OPS_CHECK_JSON_LOG_URL
+  #   method: GET
+  #   headersEnv:
+  #     Authorization: OPS_CHECK_LOG_AUTH_HEADER
+  #   serviceField: service
+  #   messageField: message
+  #   timestampField: timestamp
+  #   queryWindowMinutes: 10
+  #   limit: 200
+  #   service: example-service
+
+runtime:
+  mode: github-actions
+  pollIntervalMinutes: 10
+  dryRun: true
+  stateFile: .ops-check/state.json
+  allowedLogRoots:
+    - /var/log/example-service
+
+classification:
+  minOccurrencesForHigh: 5
+  recoveryPollsToClose: 3
+  recurrenceEscalation: true
+
+autofix:
+  enabled: false
+  maxPrsPerRun: 1
+  maxLlmCallsPerRun: 3
+  # maxLlmCallsPerDay: 100         # cross-run daily cap (UTC)
+  # llmVerdictTtl: 24h              # cache TTL for LLM classifications
+  maxIssueActionsPerRun: 20
+  maxFeishuPerRun: 20
+  maxGithubRetries: 2
+  forbiddenPaths:
+    - "**/.env*"
+    - "**/secrets/**"
+    - "**/migrations/**"
+    - "**/auth/**"
+    - "**/billing/**"
+    - "**/iam/**"
+  verificationCommands:
+    - npm test
+    - npm run lint
+
+issues:
+  labels:
+    - ops-check
+    - automated
+
+notifications:
+  feishuWebhookEnv: FEISHU_WEBHOOK_URL
+  escalationWebhookEnv: FEISHU_ESCALATION_WEBHOOK_URL
+  escalatePrAfterMinutes: 60
+
+owners:
+  default:
+    reviewers:
+      - name: "Owner"
+        feishu_user_id: "ou_xxx"
+  services:
+    api:
+      reviewers:
+        - name: "API Owner"
+          feishu_user_id: "ou_api"
+
+defaults:
+  logLimit: 200
+  queryWindowMinutes: 10
+
+# Optional LLM routing advisor (default off). See SKILL.md — can only downgrade automated routes.
+# routingAdvisor:
+#   enabled: false
+#   minConfidence: 0.6
+#   maxCallsPerRun: 5
+#   # verdictTtl: 6h

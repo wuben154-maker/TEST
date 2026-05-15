@@ -388,15 +388,37 @@ jobs:
                       ], text=True).strip()
                       rollback["hosts"][host][name] = {"container": container, "previous_image": previous}
 
+                      project_name = (project.get("repository") or {}).get("name") or "app"
+
+                      # 读取 CloudWatch 日志配置（可选，未配置时 log_opts 为空字符串，docker run 行为不变）
+                      cloudwatch_cfg = {}
+                      try:
+                          logging_section = cfg.get("logging", {})
+                          cloudwatch_cfg = logging_section.get("cloudwatch", {}) if isinstance(logging_section, dict) else {}
+                      except Exception:
+                          cloudwatch_cfg = {}
+
+                      log_opts = ""
+                      if cloudwatch_cfg.get("enabled"):
+                          cw_region = cloudwatch_cfg.get("region") or region
+                          cw_group = cloudwatch_cfg.get("log_group") or f"/ecs/{project_name}-{env_name}"
+                          cw_prefix = cloudwatch_cfg.get("stream_prefix") or container
+                          log_opts = (
+                              f"--log-driver awslogs "
+                              f"--log-opt awslogs-region={cw_region} "
+                              f"--log-opt awslogs-group={cw_group} "
+                              f"--log-opt awslogs-stream-prefix={cw_prefix} "
+                          )
+
                       script = (
                           f"set -euo pipefail; "
                           f"aws ecr get-login-password --region {region} | docker login --username AWS --password-stdin {image['repository'].split('/')[0]}; "
                           f"docker pull {image['image_uri']}; "
                           f"docker rm -f {container} >/dev/null 2>&1 || true; "
-                          f"docker run -d --restart unless-stopped --name {container} -p {host_port}:{container_port} {image['image_uri']}"
+                          f"docker run -d --restart unless-stopped --name {container} -p {host_port}:{container_port} {log_opts}{image['image_uri']}"
                       )
                       ssh(host, script)
-                      deployed.append((host, name, container, previous, host_port, container_port))
+                      deployed.append((host, name, container, previous, host_port, container_port, log_opts))
                       evidence["hosts"][host][name] = {
                           "container": container,
                           "image_uri": image["image_uri"],
@@ -423,9 +445,9 @@ jobs:
           except Exception as exc:
               evidence["verification_result"] = "failed"
               evidence["failure"] = str(exc)
-              for host, name, container, previous, host_port, container_port in reversed(deployed):
+              for host, name, container, previous, host_port, container_port, log_opts in reversed(deployed):
                   if previous:
-                      ssh(host, f"docker rm -f {container} >/dev/null 2>&1 || true; docker run -d --restart unless-stopped --name {container} -p {host_port}:{container_port} {previous}")
+                      ssh(host, f"docker rm -f {container} >/dev/null 2>&1 || true; docker run -d --restart unless-stopped --name {container} -p {host_port}:{container_port} {log_opts}{previous}")
                       rollback["hosts"][host][name]["rollback_status"] = "restored_previous_image"
                   else:
                       ssh(host, f"docker rm -f {container} >/dev/null 2>&1 || true")

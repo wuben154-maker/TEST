@@ -1,0 +1,522 @@
+# yaml-language-server: $schema=./rules.schema.json
+rules:
+  - name: python-nonetype-attribute
+    enabled: true
+    owner: "platform-ops"
+    since: "2026-05-12"
+    lastReviewedAt: "2026-05-12"
+    description: Python AttributeError NoneType attribute access on non-critical paths
+    pattern: "AttributeError: 'NoneType' object has no attribute '(?!execute|commit|rollback|cursor|connection|session|transaction|close)[A-Za-z_][A-Za-z0-9_]*'"
+    severity: low
+    autofix: true
+    domain: "app"
+    targetRoute: "template_patch"
+    templateId: "py-none-guard-v1"
+    maxAutofixAttempts: 2
+    excludePath:
+      - value: "**/billing/**"
+      - value: "**/auth/**"
+      - value: "**/migrations/**"
+      - value: "**/db/**"
+    tags:
+      - value: "lang:python"
+      - value: "kind:nullref"
+    refs:
+      - value: "TBD: link to introducing PR or incident"
+    minOccurrences: 2
+    window: "10m"
+    cooldown: "1h"
+    fingerprintTemplate: "{{service}}|{{rule}}|{{stackTop}}"
+    stripPatterns:
+      - value: "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?"
+      - value: "trace[_-]?id[:=]\s*\S+"
+      - value: "req(?:uest)?[_-]?id[:=]\s*\S+"
+      - value: "\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b"
+    examples:
+      - value: "AttributeError: 'NoneType' object has no attribute 'get'"
+    negativeExamples:
+      - value: "AttributeError: 'NoneType' object has no attribute 'execute'"
+      - value: "AttributeError: 'NoneType' object has no attribute 'cursor'"
+
+  - name: react-undefined-property-read
+    enabled: true
+    owner: "platform-ops"
+    since: "2026-05-12"
+    lastReviewedAt: "2026-05-12"
+    description: React/JS undefined property read in presentation layer (modern V8 error format)
+    pattern: "Cannot read propert(?:y|ies) of undefined \(reading '(?!token|password|secret|auth|user|account|payment|balance)[A-Za-z_$][A-Za-z0-9_$]*'\)"
+    severity: low
+    autofix: true
+    domain: "app"
+    targetRoute: "template_patch"
+    templateId: "js-optional-chain-v1"
+    maxAutofixAttempts: 2
+    tags:
+      - value: "lang:js"
+      - value: "kind:nullref"
+      - value: "layer:ui"
+    refs:
+      - value: "TBD: link to introducing PR or incident"
+    minOccurrences: 5
+    window: "10m"
+    cooldown: "1h"
+    fingerprintTemplate: "{{service}}|{{rule}}|{{stackTop}}"
+    stripPatterns:
+      - value: "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?"
+      - value: "trace[_-]?id[:=]\s*\S+"
+      - value: "req(?:uest)?[_-]?id[:=]\s*\S+"
+      - value: "\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b"
+    examples:
+      - value: "TypeError: Cannot read properties of undefined (reading 'map')"
+      - value: "TypeError: Cannot read properties of undefined (reading 'length')"
+    negativeExamples:
+      - value: "TypeError: Cannot read properties of undefined (reading 'token')"
+      - value: "TypeError: Cannot read properties of undefined (reading 'password')"
+      - value: "TypeError: Cannot read properties of undefined (reading 'user')"
+
+  - name: missing-secret-config
+    enabled: true
+    owner: "platform-ops"
+    since: "2026-05-12"
+    lastReviewedAt: "2026-05-12"
+    description: KeyError or missing-config referring to secret/credential/password material
+    pattern: "(KeyError|missing config|configuration key).{0,120}(secret|credential|password|api[_-]?key|token)"
+    severity: critical
+    autofix: false
+    domain: "secrets"
+    targetRoute: "issue_only"
+    tags:
+      - value: "kind:config"
+      - value: "risk:secret"
+    refs:
+      - value: "TBD: link to introducing PR or incident"
+    minOccurrences: 1
+    window: "1m"
+    cooldown: "15m"
+    fingerprintTemplate: "{{service}}|{{rule}}|{{stackTop}}"
+    stripPatterns:
+      - value: "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?"
+      - value: "trace[_-]?id[:=]\s*\S+"
+      - value: "req(?:uest)?[_-]?id[:=]\s*\S+"
+      - value: "\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b"
+    examples:
+      - value: "KeyError: 'STRIPE_SECRET_KEY'"
+      - value: "missing config: database.password"
+    negativeExamples:
+      - value: "KeyError: 'FEATURE_DASHBOARD_V2'"
+
+  - name: missing-app-config
+    enabled: true
+    owner: "platform-ops"
+    since: "2026-05-12"
+    lastReviewedAt: "2026-05-12"
+    description: Non-secret application configuration key missing (feature flags, limits, urls)
+    pattern: "(KeyError: '(?![^']*SECRET)(?![^']*PASSWORD)(?![^']*CREDENTIAL)(?![^']*TOKEN)(?![^']*API_KEY)[A-Z][A-Z0-9_]+'|missing config: [a-zA-Z0-9_.-]+|configuration key [a-zA-Z0-9_.-]+ not found)"
+    severity: medium
+    autofix: false
+    domain: "app"
+    targetRoute: "issue_only"
+    tags:
+      - value: "kind:config"
+    refs:
+      - value: "TBD: link to introducing PR or incident"
+    minOccurrences: 2
+    window: "10m"
+    cooldown: "1h"
+    fingerprintTemplate: "{{service}}|{{rule}}|{{stackTop}}"
+    stripPatterns:
+      - value: "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?"
+      - value: "trace[_-]?id[:=]\s*\S+"
+      - value: "req(?:uest)?[_-]?id[:=]\s*\S+"
+      - value: "\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b"
+    examples:
+      - value: "KeyError: 'FEATURE_DASHBOARD_V2'"
+      - value: "missing config: cache.ttl_seconds"
+    negativeExamples:
+      - value: "KeyError: 'STRIPE_SECRET_KEY'"
+
+  - name: auth-failure
+    enabled: true
+    owner: "platform-ops"
+    since: "2026-05-12"
+    lastReviewedAt: "2026-05-12"
+    description: Authentication or authorization failures
+    pattern: "\b(?:status[_ :=]?\s*(?:401|403)|HTTP/\d\.\d\"\s*(?:401|403)|Unauthorized|Forbidden|Invalid (?:token|signature|JWT)|JWT (?:expired|verification failed|malformed)|401 Unauthorized|403 Forbidden)\b"
+    excludePattern: "(/healthz|/readyz|/probe|/robots\.txt|User-Agent: .*(?:bot|crawler|monitor))"
+    severity: critical
+    autofix: false
+    domain: "auth"
+    targetRoute: "issue_only"
+    tags:
+      - value: "domain:auth"
+      - value: "kind:http"
+    refs:
+      - value: "TBD: link to introducing PR or incident"
+    minOccurrences: 10
+    window: "5m"
+    cooldown: "1h"
+    fingerprintTemplate: "{{service}}|{{rule}}|{{stackTop}}"
+    stripPatterns:
+      - value: "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?"
+      - value: "trace[_-]?id[:=]\s*\S+"
+      - value: "req(?:uest)?[_-]?id[:=]\s*\S+"
+      - value: "\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b"
+    examples:
+      - value: 'HTTP/1.1" 401 -'
+      - value: "Unauthorized access to /api/users"
+      - value: "JWT verification failed: signature mismatch"
+      - value: "status: 403, error: Forbidden"
+    negativeExamples:
+      - value: "request_id=401abcdef done"
+      - value: "build version 1.0.403"
+      - value: "JWT validated successfully for user 42"
+      - value: "port=4031"
+
+  - name: payment-error
+    enabled: true
+    owner: "platform-ops"
+    since: "2026-05-12"
+    lastReviewedAt: "2026-05-12"
+    description: Payment or billing processing errors
+    pattern: "(?:payment (?:failed|declined|error)|stripe\.error\.(?:CardError|StripeAPIError|InvalidRequestError|RateLimitError)|charge (?:failed|declined)|insufficient (?:funds|balance)|card_declined|expired_card|processing_error|payment_intent_failed|webhook signature verification failed|(?:alipay|wechat[_-]?pay)[_-]?(?:error|failed))"
+    severity: critical
+    autofix: false
+    domain: "billing"
+    targetRoute: "issue_only"
+    tags:
+      - value: "domain:billing"
+    refs:
+      - value: "TBD: link to introducing PR or incident"
+    minOccurrences: 1
+    window: "1m"
+    cooldown: "15m"
+    fingerprintTemplate: "{{service}}|{{rule}}|{{stackTop}}"
+    stripPatterns:
+      - value: "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?"
+      - value: "trace[_-]?id[:=]\s*\S+"
+      - value: "req(?:uest)?[_-]?id[:=]\s*\S+"
+      - value: "\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b"
+    examples:
+      - value: "stripe.error.CardError: Your card was declined."
+      - value: "payment_intent_failed: requires_payment_method"
+      - value: "alipay_error: trade closed"
+      - value: "webhook signature verification failed"
+    negativeExamples:
+      - value: "payment processed successfully"
+
+  - name: database-migration-failure
+    enabled: true
+    owner: "platform-ops"
+    since: "2026-05-12"
+    lastReviewedAt: "2026-05-12"
+    description: Database migration failures
+    pattern: "(?:migration (?:failed|aborted|rolled back)|(?:Alembic|Flyway|Liquibase|django\.db\.migrations).{0,80}(?:error|failed|exception|abort|rollback)|schema migration (?:failed|error)|relation .+ does not exist after migration)"
+    severity: high
+    autofix: false
+    domain: "migrations"
+    targetRoute: "issue_only"
+    tags:
+      - value: "domain:migrations"
+      - value: "kind:db"
+    refs:
+      - value: "TBD: link to introducing PR or incident"
+    minOccurrences: 1
+    window: "1m"
+    cooldown: "1h"
+    fingerprintTemplate: "{{service}}|{{rule}}|{{stackTop}}"
+    stripPatterns:
+      - value: "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?"
+      - value: "trace[_-]?id[:=]\s*\S+"
+      - value: "req(?:uest)?[_-]?id[:=]\s*\S+"
+      - value: "\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b"
+    examples:
+      - value: "Alembic: error executing migration 0042_add_index"
+      - value: "Flyway migration V12__add_users.sql failed: column already exists"
+      - value: "migration aborted: relation 'orders' does not exist"
+    negativeExamples:
+      - value: "INFO [alembic.runtime.migration] Running upgrade 0041 -> 0042"
+      - value: "Flyway: Successfully validated 12 migrations"
+
+  - name: network-timeout
+    enabled: true
+    owner: "platform-ops"
+    since: "2026-05-12"
+    lastReviewedAt: "2026-05-12"
+    description: Network connection timeout, refused, or unreachable
+    pattern: "(?:\bETIMEDOUT\b|\bECONNREFUSED\b|\bECONNRESET\b|\bENOTFOUND\b|\bEAI_AGAIN\b|socket hang up|Read timed out|Connect timed out|connection refused|connection reset by peer|upstream timed out)"
+    excludePattern: "(/healthz|/readyz)"
+    severity: high
+    autofix: false
+    domain: "app"
+    targetRoute: "issue_only"
+    tags:
+      - value: "kind:network"
+      - value: "kind:transient"
+    refs:
+      - value: "TBD"
+    minOccurrences: 5
+    window: "5m"
+    cooldown: "15m"
+    fingerprintTemplate: "{{service}}|{{rule}}|{{stackTop}}"
+    stripPatterns:
+      - value: "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?"
+      - value: "trace[_-]?id[:=]\s*\S+"
+      - value: "req(?:uest)?[_-]?id[:=]\s*\S+"
+      - value: "\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b"
+    examples:
+      - value: "Error: connect ETIMEDOUT 10.0.0.5:5432"
+      - value: "psycopg2.OperationalError: connection refused"
+      - value: "upstream timed out (110: Connection timed out) while reading response"
+    negativeExamples:
+      - value: "GET /healthz 200"
+      - value: "Connection established to 10.0.0.5:5432"
+
+  - name: db-runtime-error
+    enabled: true
+    owner: "platform-ops"
+    since: "2026-05-12"
+    lastReviewedAt: "2026-05-12"
+    description: Database runtime errors (deadlock, lock timeout, pool exhausted, integrity)
+    pattern: "(?:\bdeadlock detected\b|Lock wait timeout exceeded|connection pool (?:exhausted|timeout)|psycopg2\.OperationalError|sqlalchemy\.exc\.(?:OperationalError|IntegrityError)|UniqueViolation|duplicate key value violates unique constraint|could not serialize access due to concurrent update)"
+    severity: high
+    autofix: false
+    domain: "app"
+    targetRoute: "issue_only"
+    tags:
+      - value: "kind:db"
+    refs:
+      - value: "TBD"
+    minOccurrences: 3
+    window: "5m"
+    cooldown: "15m"
+    fingerprintTemplate: "{{service}}|{{rule}}|{{stackTop}}"
+    stripPatterns:
+      - value: "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?"
+      - value: "trace[_-]?id[:=]\s*\S+"
+      - value: "req(?:uest)?[_-]?id[:=]\s*\S+"
+      - value: "\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b"
+    examples:
+      - value: "psycopg2.OperationalError: deadlock detected"
+      - value: "sqlalchemy.exc.IntegrityError: duplicate key value violates unique constraint"
+      - value: "Lock wait timeout exceeded; try restarting transaction"
+    negativeExamples:
+      - value: "INFO: connection pool initialized with 10 connections"
+
+  - name: resource-exhaustion
+    enabled: true
+    owner: "platform-ops"
+    since: "2026-05-12"
+    lastReviewedAt: "2026-05-12"
+    description: Out-of-memory, disk full, or file-descriptor exhaustion
+    pattern: "(?:\bOOMKilled\b|\bOutOfMemoryError\b|MemoryError|Cannot allocate memory|\bENOMEM\b|\bENOSPC\b|no space left on device|\bEMFILE\b|Too many open files|JavaScript heap out of memory)"
+    severity: critical
+    autofix: false
+    domain: "infra"
+    targetRoute: "notify_only"
+    tags:
+      - value: "kind:resource"
+      - value: "action:rollback-candidate"
+    refs:
+      - value: "TBD"
+    minOccurrences: 1
+    window: "1m"
+    cooldown: "30m"
+    fingerprintTemplate: "{{service}}|{{rule}}|{{stackTop}}"
+    stripPatterns:
+      - value: "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?"
+      - value: "trace[_-]?id[:=]\s*\S+"
+      - value: "req(?:uest)?[_-]?id[:=]\s*\S+"
+      - value: "\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b"
+    examples:
+      - value: "Container killed: OOMKilled"
+      - value: "java.lang.OutOfMemoryError: Java heap space"
+      - value: "ENOSPC: no space left on device, write"
+    negativeExamples:
+      - value: "INFO: memory usage 60%"
+
+  - name: rate-limited
+    enabled: true
+    owner: "platform-ops"
+    since: "2026-05-12"
+    lastReviewedAt: "2026-05-12"
+    description: Inbound or upstream rate limit / circuit breaker
+    pattern: "(?:\b429\b\s*(?:Too Many Requests)?|Rate limit (?:exceeded|hit)|circuit breaker (?:open|tripped)|quota exceeded|RetryAfter)"
+    excludePattern: "(version|build)\s*\d+\.\d+\.\d*429"
+    severity: medium
+    autofix: false
+    domain: "app"
+    targetRoute: "notify_only"
+    tags:
+      - value: "kind:http"
+      - value: "kind:transient"
+    refs:
+      - value: "TBD"
+    minOccurrences: 10
+    window: "5m"
+    cooldown: "15m"
+    fingerprintTemplate: "{{service}}|{{rule}}|{{stackTop}}"
+    stripPatterns:
+      - value: "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?"
+      - value: "trace[_-]?id[:=]\s*\S+"
+      - value: "req(?:uest)?[_-]?id[:=]\s*\S+"
+      - value: "\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b"
+    examples:
+      - value: "HTTP 429 Too Many Requests"
+      - value: "circuit breaker open for upstream user-service"
+      - value: "Rate limit exceeded: retry after 60s"
+    negativeExamples:
+      - value: "build version 1.0.4290"
+
+  - name: upstream-5xx
+    enabled: true
+    owner: "platform-ops"
+    since: "2026-05-12"
+    lastReviewedAt: "2026-05-12"
+    description: Upstream 5xx errors from dependencies
+    pattern: "(?:HTTP/\d\.\d\"\s*5\d{2}\b|\bstatus[_ :=]?\s*5\d{2}\b|Internal Server Error|Bad Gateway|Service Unavailable|Gateway Timeout)"
+    severity: high
+    autofix: false
+    domain: "app"
+    targetRoute: "issue_only"
+    tags:
+      - value: "kind:http"
+    refs:
+      - value: "TBD"
+    minOccurrences: 5
+    window: "5m"
+    cooldown: "15m"
+    fingerprintTemplate: "{{service}}|{{rule}}|{{stackTop}}"
+    stripPatterns:
+      - value: "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?"
+      - value: "trace[_-]?id[:=]\s*\S+"
+      - value: "req(?:uest)?[_-]?id[:=]\s*\S+"
+      - value: "\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b"
+    examples:
+      - value: 'HTTP/1.1" 502 -'
+      - value: "Service Unavailable: upstream connect error"
+      - value: "status: 503, message: backend overloaded"
+    negativeExamples:
+      - value: 'HTTP/1.1" 200 OK'
+      - value: "build 5031.2.0"
+
+  - name: async-unhandled
+    enabled: true
+    owner: "platform-ops"
+    since: "2026-05-12"
+    lastReviewedAt: "2026-05-12"
+    description: Unhandled async errors (Promise rejections, asyncio task exceptions)
+    pattern: "(?:UnhandledPromiseRejection(?:Warning)?|unhandledRejection|Task exception was never retrieved|asyncio\.exceptions\.\w+|Possible Unhandled Promise Rejection)"
+    severity: medium
+    autofix: false
+    domain: "app"
+    targetRoute: "issue_only"
+    tags:
+      - value: "kind:async"
+    refs:
+      - value: "TBD"
+    minOccurrences: 3
+    window: "10m"
+    cooldown: "30m"
+    fingerprintTemplate: "{{service}}|{{rule}}|{{stackTop}}"
+    stripPatterns:
+      - value: "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?"
+      - value: "trace[_-]?id[:=]\s*\S+"
+      - value: "req(?:uest)?[_-]?id[:=]\s*\S+"
+      - value: "\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b"
+    examples:
+      - value: "UnhandledPromiseRejectionWarning: TypeError: x is undefined"
+      - value: "Task exception was never retrieved future: <Task finished ...>"
+    negativeExamples:
+      - value: "INFO: async task completed"
+
+  - name: json-parse-error
+    enabled: true
+    owner: "platform-ops"
+    since: "2026-05-12"
+    lastReviewedAt: "2026-05-12"
+    description: JSON parse / unexpected token errors at API boundary
+    pattern: "(?:JSONDecodeError|json\.decoder\.JSONDecodeError|Unexpected token .{0,40} in JSON|SyntaxError: Unexpected end of JSON input|Expecting value: line \d+ column \d+)"
+    severity: medium
+    autofix: false
+    domain: "app"
+    targetRoute: "issue_only"
+    tags:
+      - value: "kind:parse"
+    refs:
+      - value: "TBD"
+    minOccurrences: 3
+    window: "10m"
+    cooldown: "30m"
+    fingerprintTemplate: "{{service}}|{{rule}}|{{stackTop}}"
+    stripPatterns:
+      - value: "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?"
+      - value: "trace[_-]?id[:=]\s*\S+"
+      - value: "req(?:uest)?[_-]?id[:=]\s*\S+"
+      - value: "\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b"
+    examples:
+      - value: "json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
+      - value: "SyntaxError: Unexpected token < in JSON at position 0"
+    negativeExamples:
+      - value: "INFO: parsed 1024 JSON records"
+
+  - name: deprecation-warning
+    enabled: true
+    owner: "platform-ops"
+    since: "2026-05-12"
+    lastReviewedAt: "2026-05-12"
+    description: Deprecation warnings from frameworks or runtime
+    pattern: "(?:DeprecationWarning|DEP\d{4}|is deprecated and will be removed|\[deprecated\])"
+    severity: low
+    autofix: false
+    domain: "app"
+    targetRoute: "silent"
+    tags:
+      - value: "kind:warning"
+      - value: "kind:deprecation"
+    refs:
+      - value: "TBD"
+    minOccurrences: 20
+    window: "1h"
+    cooldown: "24h"
+    fingerprintTemplate: "{{service}}|{{rule}}|{{msgTpl}}"
+    stripPatterns:
+      - value: "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?"
+      - value: "trace[_-]?id[:=]\s*\S+"
+      - value: "req(?:uest)?[_-]?id[:=]\s*\S+"
+      - value: "\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b"
+    examples:
+      - value: "DeprecationWarning: Buffer() is deprecated"
+      - value: "[deprecated] crypto.createCipher is deprecated, use crypto.createCipheriv"
+    negativeExamples:
+      - value: "INFO: feature deprecated_api disabled"
+
+  - name: slow-query-warning
+    enabled: true
+    owner: "platform-ops"
+    since: "2026-05-12"
+    lastReviewedAt: "2026-05-12"
+    description: Slow query / long task warnings
+    pattern: "(?:slow query|query took \d+(?:\.\d+)?s|Slow SQL|long running task|request took \d+(?:\.\d+)?ms.*threshold)"
+    severity: low
+    autofix: false
+    domain: "app"
+    targetRoute: "notify_only"
+    tags:
+      - value: "kind:warning"
+      - value: "kind:performance"
+    refs:
+      - value: "TBD"
+    minOccurrences: 10
+    window: "10m"
+    cooldown: "1h"
+    fingerprintTemplate: "{{service}}|{{rule}}|{{msgTpl}}"
+    stripPatterns:
+      - value: "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?"
+      - value: "trace[_-]?id[:=]\s*\S+"
+      - value: "req(?:uest)?[_-]?id[:=]\s*\S+"
+      - value: "\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b"
+    examples:
+      - value: "WARN: slow query: SELECT * FROM orders took 2.3s"
+      - value: "request took 5200ms exceeded threshold"
+    negativeExamples:
+      - value: "INFO: query took 5ms"

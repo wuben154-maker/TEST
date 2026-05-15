@@ -1,0 +1,62 @@
+project: planner-fixture-noreq
+environment: staging
+
+testMapPath: ops-check/test-map.planner-norequired.yaml
+
+fixAgent:
+  enabled: true
+  simulateRunner: true
+  timeoutMinutes: 30
+  configPath: ops-check/fix-agent.example.yaml
+
+defaults:
+  queryWindowMinutes: 527040
+  logLimit: 200
+
+runtime:
+  mode: github-actions
+  dryRun: true
+  stateFile: .ops-check/planner-noreq-state.json
+  allowedLogRoots:
+    - .
+    - ops-check/fixtures
+
+logSources:
+  - id: fixture-jsonl-noreq
+    type: file
+    format: jsonl
+    paths:
+      - ops-check/fixtures/planner-sample-noreq.jsonl
+    allowedRoots:
+      - .
+    serviceField: service
+    service: planner-fixture-noreq
+    limit: 200
+
+classification:
+  minOccurrencesForHigh: 99
+  recoveryPollsToClose: 99
+  recurrenceEscalation: true
+
+autofix:
+  enabled: true
+  maxPrsPerRun: 1
+  maxGithubRetries: 2
+  maxIssueActionsPerRun: 10
+  maxFeishuPerRun: 10
+  forbiddenPaths:
+    - "**/.env*"
+    - "**/secrets/**"
+    - "**/migrations/**"
+    - "**/auth/**"
+    - "**/billing/**"
+    - "**/iam/**"
+
+issues:
+  labels:
+    - ops-check
+    - automated
+
+notifications:
+  feishuWebhookEnv: FEISHU_WEBHOOK_URL
+  escalationWebhookEnv: FEISHU_ESCALATION_WEBHOOK_URL

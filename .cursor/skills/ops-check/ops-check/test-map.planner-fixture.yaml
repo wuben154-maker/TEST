@@ -1,0 +1,27 @@
+# Planner fixture: stack paths under ops-check/fixtures/* with non-empty required tests.
+defaults:
+  lint:
+    - node -e "process.exit(0)"
+  unit:
+    - node -e "process.exit(0)"
+
+modules:
+  fixture-low-risk:
+    paths:
+      - ops-check/fixtures/low-risk.tsx
+    risk: low
+    e2e:
+      - node -e "process.exit(0)"
+
+  fixture-medium:
+    paths:
+      - ops-check/fixtures/medium-agent.tsx
+    risk: medium
+
+testPolicy:
+  required:
+    - lint
+    - related-unit
+    - related-e2e
+  optional: []
+  passRule: all-required-pass

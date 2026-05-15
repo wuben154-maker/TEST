@@ -45,7 +45,7 @@ Optional:
 
 ## Non-Negotiable Rules
 
-- Keep one CI/CD entrypoint: `.cursor/skills/CI_CD/SKILL.md`.
+- Keep one CI/CD entrypoint: `.cursor/skills/aws-cicd/SKILL.md`.
 - Inspect the target repo before asking the user for configuration.
 - Only ask for secrets and cloud resource identifiers that cannot be safely inferred.
 - Never write real secret values to repository files.
@@ -65,7 +65,7 @@ Optional:
 3. Inspect repository structure, commands, Dockerfiles, ports, health checks, database migrations, and existing automation.
 4. Produce an auto-detection summary and write detected values into `.cicd/project.yaml`.
 5. Stop and ask before overwriting an existing CI/CD system.
-6. Render templates from `.cursor/skills/CI_CD/templates/`.
+6. Render templates from `.cursor/skills/aws-cicd/templates/`.
 7. Install target repo files on `install_branch`.
 8. Report required GitHub Secrets, GitHub Variables, and AWS secret store entries.
 9. Ask before committing, pushing, or opening a PR.

@@ -28,3 +28,30 @@ Application runtime values should live in AWS Secrets Manager or SSM Parameter S
 - OAuth credentials
 
 Reference these values by name or ARN in `.cicd/env/<environment>.yaml`.
+
+## CloudWatch Logs 写入权限（EC2 实例角色）
+
+当 `.cicd/env/<env>.yaml` 中 `logging.cloudwatch.enabled` 为 `true` 时，
+Docker 的 awslogs 日志驱动会直接调用 AWS CloudWatch Logs API 推送日志，
+因此 EC2 实例的 IAM 角色需要以下权限：
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ],
+            "Resource": "arn:aws:logs:<region>:<account>:log-group:/ecs/<project>*:*"
+        }
+    ]
+}
+```
+
+建议将 Resource 收窄到具体的 log group 前缀，不要使用 `"*"`。
+
+此权限由 EC2 实例角色承担，不需要在 GitHub Actions 中配置额外的 Secret。

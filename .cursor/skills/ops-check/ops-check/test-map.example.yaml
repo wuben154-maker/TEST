@@ -1,0 +1,61 @@
+# Copy to ops-check/test-map.yaml in consumer repos (path via config.testMapPath).
+# Paths are globs matched against suspected stack paths relative to repo root.
+
+defaults:
+  unit:
+    - npm test
+  lint:
+    - npm run lint
+  smoke:
+    - npm run e2e -- smoke
+
+modules:
+  auth:
+    paths:
+      - src/auth/**
+      - app/auth/**
+    risk: critical
+    autoFix: false
+    e2e:
+      - npm run e2e -- auth
+
+  dashboard:
+    paths:
+      - src/dashboard/**
+      - app/dashboard/**
+    risk: medium
+    unit:
+      - npm test -- dashboard
+    e2e:
+      - npm run e2e -- dashboard
+
+  public-ui:
+    paths:
+      - src/components/**
+    risk: low
+    unit:
+      - npm test -- components
+    e2e:
+      - npm run e2e -- public-ui
+
+testPolicy:
+  required:
+    - lint
+    - related-unit
+    - related-e2e
+  optional:
+    - full-e2e
+  passRule: all-required-pass
+
+e2eDiscovery:
+  # Used by ops-check diagnose / validate-test-map hints
+  playwrightConfigGlobs:
+    - playwright.config.*
+    - **/playwright.config.*
+  cypressConfigGlobs:
+    - cypress.config.*
+    - **/cypress.config.*
+  specGlobs:
+    - e2e/**/*.spec.*
+    - tests/e2e/**/*.spec.*
+    - cypress/e2e/**/*.cy.*

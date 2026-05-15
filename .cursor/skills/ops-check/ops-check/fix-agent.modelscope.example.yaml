@@ -1,0 +1,23 @@
+# Copy to ops-check/fix-agent.yaml — Fix Agent via ModelScope inference (OpenAI-compatible chat completions).
+#
+# Prerequisites:
+#   - Same token as classification LLM: apiKeyEnv defaults to OPENAI_API_KEY (lib/llm-client.mjs + route-advisor.mjs).
+#   - fixAgent.enabled: true and simulateRunner: false in ops-check/config.yaml
+#
+# When chatApi is present, Cursor / Claude CLI fields are ignored.
+
+fixAgent:
+  provider: modelscope-chat
+  chatApi:
+    baseUrl: https://api-inference.modelscope.cn/v1
+    apiKeyEnv: OPENAI_API_KEY
+    model: deepseek-ai/DeepSeek-V4-Pro # omit this key to use OPENAI_MODEL only (same as classification LLM)
+    temperature: 0
+    maxTokens: 8192
+    timeoutMs: 180000
+    maxContextBytesPerFile: 100000
+    maxContextFiles: 10
+    maxChangedFiles: 8
+  timeoutMinutes: 30
+  maxDiffLines: 400
+  maxChangedFiles: 8

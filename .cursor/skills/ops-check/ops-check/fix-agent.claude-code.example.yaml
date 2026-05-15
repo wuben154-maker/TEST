@@ -1,0 +1,28 @@
+# Copy to ops-check/fix-agent.yaml and set config.fixAgent.configPath (same as Cursor overlay flow).
+#
+# Requires Claude Code CLI on PATH (`claude -v`). Auth: `claude auth login` or ANTHROPIC_API_KEY / subscription token flow per Claude docs.
+# Headless reference: https://code.claude.com/docs/en/cli-reference
+#
+# Tune safely:
+#   - Replace --permission-mode dontAsk with plan or acceptEdits if you want stricter prompts (may block unattended runs).
+#   - Raise --max-turns only if fixes routinely need more tool rounds.
+
+fixAgent:
+  provider: claude-code
+  mode: cli
+  command: claude
+  args:
+    - --bare
+    - --permission-mode
+    - dontAsk
+    - --max-turns
+    - "35"
+    - --tools
+    - "Read,Edit,Bash"
+    - -p
+    - >-
+      Ops-check autonomous fix: open and read the JSON file at {{fixRequestPath}}.
+      Apply the smallest correct code change for this incident using errorSummary, stackTop, suspectedFiles,
+      and logEvidence from that JSON. You may only modify files under allowedEditPaths globs; do not touch
+      paths matching forbiddenEditPaths or domains listed in forbiddenDomains.
+      The repository root is the current working directory (git worktree). After edits, stop — CI runs tests separately.

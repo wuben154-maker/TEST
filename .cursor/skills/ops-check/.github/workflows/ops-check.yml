@@ -1,0 +1,82 @@
+# ops-check automation — hosted job always runs; self-hosted hybrid is opt-in via repo Variable.
+# Secrets: AWS_* (Access Key path: AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY; AWS_REGION overrides via Secret or Repository Variable `AWS_REGION`, else falls back to ap-southeast-1 in env), FEISHU_*, GITHUB_TOKEN — never commit.
+# Fix Agent / classification LLM (ModelScope-compatible): OPENAI_API_KEY for chat API + llm-client/route-advisor.
+# Optional: CURSOR_API_KEY, ANTHROPIC_API_KEY, CURSOR_AGENT_* per overlay; CLI only when not using chat-only Fix Agent.
+
+name: ops-check
+
+concurrency:
+  group: ops-check-${{ github.workflow }}-${{ github.repository }}-${{ github.ref }}
+  cancel-in-progress: false
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Run with --dry-run (no Issues/PRs/Feishu/state writes)"
+        type: boolean
+        required: false
+        default: false
+
+jobs:
+  cloud-logs:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Run ops-check
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION || vars.AWS_REGION || 'ap-southeast-1' }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FEISHU_WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          FEISHU_ESCALATION_WEBHOOK_URL: ${{ secrets.FEISHU_ESCALATION_WEBHOOK_URL }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          ARGS=""
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ] && [ "${{ inputs.dry_run }}" = "true" ]; then
+            ARGS="--dry-run"
+          fi
+          node ops-check/ops-check.mjs run $ARGS
+
+  # Enable by setting Repository variable ENABLE_OPS_CHECK_SELF_HOSTED = true (requires matching labels).
+  hybrid-local-and-cloud-logs:
+    if: ${{ vars.ENABLE_OPS_CHECK_SELF_HOSTED == 'true' }}
+    runs-on: [self-hosted, ops-check]
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Run ops-check (self-hosted)
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION || vars.AWS_REGION || 'ap-southeast-1' }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FEISHU_WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          FEISHU_ESCALATION_WEBHOOK_URL: ${{ secrets.FEISHU_ESCALATION_WEBHOOK_URL }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          ARGS=""
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ] && [ "${{ inputs.dry_run }}" = "true" ]; then
+            ARGS="--dry-run"
+          fi
+          node ops-check/ops-check.mjs run $ARGS

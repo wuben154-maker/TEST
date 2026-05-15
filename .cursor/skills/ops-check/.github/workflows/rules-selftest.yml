@@ -1,0 +1,20 @@
+name: rules-selftest
+
+on:
+  pull_request:
+    paths:
+      - "ops-check/rules.yaml"
+      - "ops-check/lib/rules-selftest.mjs"
+      - "ops-check/rules-selftest.test.mjs"
+  push:
+    branches: [main]
+
+jobs:
+  selftest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: node --test ops-check/rules-selftest.test.mjs
