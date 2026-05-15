@@ -1,0 +1,27 @@
+# Copy to ops-check/fix-agent.yaml and reference from main config.fixAgent.configPath if needed.
+# Alternative CLI: Claude Code → fix-agent.claude-code.example.yaml
+# Chat Fix Agent (ModelScope inference API): fix-agent.modelscope.example.yaml → lib/fix-chat-api.mjs
+#
+# Cursor auth (pick one path; lib/fix-runner.mjs treats these as “runner can run”):
+#   - Recommended: set CURSOR_API_KEY from Dashboard → Integrations → API Keys (same shell / CI env
+#     as `node ops-check/ops-check.mjs`), and install Cursor CLI so `command` exists on PATH.
+#   - Alternate: set BOTH env vars named in api.endpointEnv + api.tokenEnv (e.g. CURSOR_AGENT_*),
+#     if your deployment uses URL+token style credentials.
+# Classification LLMs use lib/llm-client.mjs + lib/route-advisor.mjs (separate URL/model env).
+
+fixAgent:
+  provider: cursor
+  mode: api-or-cli
+  command: cursor-agent
+  args:
+    - run
+    - --input
+    - "{{fixRequestPath}}"
+  inputMode: file
+  timeoutMinutes: 30
+  maxDiffLines: 400
+  maxChangedFiles: 8
+  outputMode: working-tree
+  api:
+    endpointEnv: CURSOR_AGENT_API_URL
+    tokenEnv: CURSOR_AGENT_API_TOKEN

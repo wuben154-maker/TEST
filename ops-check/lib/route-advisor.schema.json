@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "AdvisorInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["svc", "frame", "ruleName", "sev", "candidate", "tplId", "paths"],
+      "properties": {
+        "svc": { "type": "string", "maxLength": 64 },
+        "frame": { "type": "string", "maxLength": 120 },
+        "ruleName": { "type": ["string", "null"], "maxLength": 64 },
+        "sev": { "type": "string", "enum": ["low", "medium"] },
+        "candidate": { "type": "string", "enum": ["template_patch", "fix_agent_request"] },
+        "tplId": { "type": ["string", "null"], "maxLength": 64 },
+        "paths": {
+          "type": "array",
+          "maxItems": 10,
+          "items": { "type": "string", "maxLength": 120 }
+        }
+      }
+    },
+    "AdvisorOutput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["veto", "code", "confidence", "rationale"],
+      "properties": {
+        "veto": { "type": "boolean" },
+        "code": {
+          "type": "string",
+          "enum": [
+            "path_looks_sensitive",
+            "template_mismatch",
+            "risky_diff_shape",
+            "low_confidence",
+            "ok",
+            "fail_closed"
+          ]
+        },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "rationale": { "type": "string", "maxLength": 200 }
+      }
+    }
+  }
+}

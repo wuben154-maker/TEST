@@ -1,0 +1,72 @@
+project: TEST
+environment: dev
+
+cicdEnvironment: dev
+
+testMapPath: ops-check/test-map.example.yaml
+
+fixAgent:
+  enabled: ture
+
+logSources:
+  - id: app-cloudwatch-from-cicd
+    type: cloudwatch
+    service: python-agent-service
+    region: "${from-cicd-env}"
+    logGroupNames:
+      - "${from-cicd-env}"
+    filterPattern: ""
+    serviceField: service
+    queryWindowMinutes: 30
+    limit: 200
+
+runtime:
+  mode: github-actions
+  pollIntervalMinutes: 10
+  dryRun: false
+  stateFile: .ops-check/state.json
+
+classification:
+  minOccurrencesForHigh: 5
+  recoveryPollsToClose: 3
+  recurrenceEscalation: true
+
+autofix:
+  enabled: true
+  maxPrsPerRun: 1
+  maxLlmCallsPerRun: 3
+  maxIssueActionsPerRun: 20
+  maxFeishuPerRun: 20
+  maxGithubRetries: 2
+  forbiddenPaths:
+    - "**/.env*"
+    - "**/secrets/**"
+    - "**/migrations/**"
+    - "**/auth/**"
+    - "**/billing/**"
+    - "**/iam/**"
+  verificationCommands:
+    - npm test
+
+issues:
+  labels:
+    - ops-check
+    - automated
+
+notifications:
+  feishuWebhookEnv: FEISHU_WEBHOOK_URL
+  escalationWebhookEnv: FEISHU_ESCALATION_WEBHOOK_URL
+  escalatePrAfterMinutes: 60
+
+owners:
+  default:
+    reviewers:
+      - name: TODO_OWNER
+        feishu_user_id: TODO_FEISHU_USER
+
+defaults:
+  logLimit: 200
+  queryWindowMinutes: 30
+
+routingAdvisor:
+  enabled: false

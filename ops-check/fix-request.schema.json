@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://watchtower/local/ops-check/fix-request.schema.json",
+  "title": "ops-check Fix Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "fingerprint",
+    "project",
+    "environment",
+    "severity",
+    "fixRoute",
+    "service",
+    "errorSummary",
+    "logEvidence",
+    "stackTop",
+    "suspectedFiles",
+    "allowedEditPaths",
+    "forbiddenEditPaths",
+    "forbiddenDomains",
+    "testPlan",
+    "acceptanceCriteria"
+  ],
+  "properties": {
+    "fingerprint": { "type": "string", "minLength": 8 },
+    "project": { "type": "string" },
+    "environment": { "type": "string" },
+    "severity": { "enum": ["low", "medium", "high", "critical"] },
+    "fixRoute": {
+      "enum": [
+        "template_patch",
+        "fix_agent_request",
+        "issue_only",
+        "notify_only",
+        "silent",
+        "ignore_or_recover"
+      ]
+    },
+    "service": { "type": "string" },
+    "errorSummary": { "type": "string" },
+    "logEvidence": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "stackTop": { "type": "string" },
+    "suspectedFiles": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "allowedEditPaths": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "forbiddenEditPaths": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "forbiddenDomains": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["auth", "billing", "secrets", "migrations", "infra", "permissions"]
+      }
+    },
+    "testPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unit", "integration", "e2e", "smoke", "full"],
+      "properties": {
+        "required": {
+          "type": "array",
+          "description": "Shell commands; all must exit 0 for reviewable PR",
+          "items": { "type": "string" }
+        },
+        "optional": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "unit": { "type": "array", "items": { "type": "string" } },
+        "integration": { "type": "array", "items": { "type": "string" } },
+        "e2e": { "type": "array", "items": { "type": "string" } },
+        "smoke": { "type": "array", "items": { "type": "string" } },
+        "full": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "acceptanceCriteria": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

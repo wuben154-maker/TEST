@@ -1,0 +1,155 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "dev | staging | prod"
+        required: true
+        default: staging
+        type: choice
+        options: [dev, staging, prod]
+      service_scope:
+        description: "frontend-only | backend-only | worker-only | all"
+        required: true
+        default: all
+      release_id:
+        description: "Immutable release id. Defaults to commit SHA when omitted."
+        required: false
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Install YAML parser
+        run: python -m pip install --disable-pip-version-check pyyaml
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_RELEASE_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION || 'us-east-1' }}
+      - uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push selected images
+        shell: bash
+        run: |
+          RELEASE_ID="${{ inputs.release_id }}"
+          if [ -z "$RELEASE_ID" ]; then
+            RELEASE_ID="${GITHUB_SHA}"
+          fi
+          export RELEASE_ID
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+          import time
+          from pathlib import Path
+
+          import yaml
+
+          project = yaml.safe_load(open(".cicd/project.yaml", encoding="utf-8")) or {}
+          env_name = os.environ["DEPLOY_ENVIRONMENT"]
+          env_path = Path(f".cicd/env/{env_name}.yaml")
+          if not env_path.exists():
+              env_path = Path(f".cicd/env/{env_name}.yaml.example")
+          if not env_path.exists():
+              raise SystemExit(f"Missing environment config for {env_name}")
+
+          env_cfg = yaml.safe_load(env_path.read_text(encoding="utf-8")) or {}
+          scope = os.environ["SERVICE_SCOPE"]
+          release_id = os.environ["RELEASE_ID"]
+          aws_cfg = env_cfg.get("aws") or {}
+          account_id = aws_cfg.get("account_id")
+          region = aws_cfg.get("region") or os.environ.get("AWS_REGION") or "us-east-1"
+          if not account_id or str(account_id).startswith("TODO"):
+              raise SystemExit("Missing aws.account_id in environment config")
+          ecr_registry = f"{account_id}.dkr.ecr.{region}.amazonaws.com"
+          ecr_cfg = env_cfg.get("ecr") or {}
+          repo_by_service = {
+              "frontend": ecr_cfg.get("frontend_repository") or os.environ.get("ECR_REPOSITORY_FRONTEND", ""),
+              "backend": ecr_cfg.get("backend_repository") or os.environ.get("ECR_REPOSITORY_BACKEND", ""),
+              "worker": ecr_cfg.get("worker_repository") or os.environ.get("ECR_REPOSITORY_WORKER", ""),
+          }
+
+          selected = []
+          for name, svc in (project.get("services") or {}).items():
+              if svc.get("enabled") is not True:
+                  continue
+              if scope != "all" and scope != f"{name}-only":
+                  continue
+              selected.append((name, svc))
+
+          if not selected:
+              raise SystemExit(f"No enabled services selected by scope {scope}")
+
+          metadata = {
+              "schema_version": 1,
+              "release_id": release_id,
+              "environment": env_name,
+              "service_scope": scope,
+              "commit_sha": os.environ["GITHUB_SHA"],
+              "actor": os.environ["GITHUB_ACTOR"],
+              "run_id": os.environ["GITHUB_RUN_ID"],
+              "run_url": f"{os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}",
+              "created_at": int(time.time()),
+              "images": {},
+          }
+
+          for name, svc in selected:
+              repository = repo_by_service.get(name)
+              if not repository or str(repository).startswith("TODO"):
+                  raise SystemExit(f"Missing ECR repository variable for {name}")
+              repository_uri = repository if ".amazonaws.com/" in repository else f"{ecr_registry}/{repository}"
+
+              context = svc.get("build_context") or svc.get("path") or "."
+              dockerfile = svc.get("dockerfile") or f"{context}/Dockerfile"
+              image = f"{repository_uri}:{release_id}"
+              subprocess.run(["docker", "build", "-f", dockerfile, "-t", image, context], check=True)
+              subprocess.run(["docker", "push", image], check=True)
+
+              repository_name = repository_uri.split("/", 1)[1]
+              digest = subprocess.check_output(
+                  ["aws", "ecr", "describe-images", "--repository-name", repository_name,
+                   "--image-ids", f"imageTag={release_id}", "--query", "imageDetails[0].imageDigest",
+                   "--output", "text"],
+                  text=True,
+              ).strip()
+
+              metadata["images"][name] = {
+                  "repository": repository_uri,
+                  "repository_name": repository_name,
+                  "tag": release_id,
+                  "image_tag": image,
+                  "digest": digest,
+                  "image_uri": f"{repository_uri}@{digest}",
+                  "dockerfile": dockerfile,
+                  "build_context": context,
+              }
+
+          open("promotion-metadata.json", "w", encoding="utf-8").write(json.dumps(metadata, indent=2))
+          PY
+        env:
+          DEPLOY_ENVIRONMENT: ${{ inputs.environment }}
+          SERVICE_SCOPE: ${{ inputs.service_scope }}
+          RELEASE_ID: ${{ inputs.release_id || github.sha }}
+          ECR_REPOSITORY_FRONTEND: ${{ vars.ECR_REPOSITORY_FRONTEND }}
+          ECR_REPOSITORY_BACKEND: ${{ vars.ECR_REPOSITORY_BACKEND }}
+          ECR_REPOSITORY_WORKER: ${{ vars.ECR_REPOSITORY_WORKER }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: promotion-metadata
+          path: promotion-metadata.json
+      - name: Summarize release
+        run: |
+          echo "## Release metadata" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          cat promotion-metadata.json >> "$GITHUB_STEP_SUMMARY"

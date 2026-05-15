@@ -1,0 +1,15 @@
+
+# Empty defaults/commands: low finding has template eligibility but missing required tier.
+modules:
+  fixture-low-noreq:
+    paths:
+      - ops-check/fixtures/low-no-required.tsx
+    risk: low
+
+testPolicy:
+  required:
+    - lint
+    - related-unit
+    - related-e2e
+  optional: []
+  passRule: all-required-pass

@@ -1,0 +1,107 @@
+version: 1
+generated_by: aws-cicd
+generated_at: "2026-05-15"
+
+repository:
+  owner: wuben154-maker
+  name: TEST
+  default_branch: main
+  current_branch: main
+  remote_url: https://github.com/wuben154-maker/TEST.git
+
+project:
+  layout: split-frontend-backend
+  workspace_manager: npm
+  package_manager: npm
+  deployment_target_default: ecs
+  deployment_mode_default: single-node
+
+services:
+  frontend:
+    enabled: true
+    path: .
+    role: frontend
+    runtime: node
+    package_manager: npm
+    dockerfile: TODO_FRONTEND_DOCKERFILE
+    build_context: .
+    container_name: vite_react_shadcn_ts
+    container_port: 8080
+    health_path: /
+    commands:
+      install: npm ci
+      lint: npm run lint
+      typecheck: npx tsc -p tsconfig.app.json --noEmit
+      test: npm test
+      build: npm run build
+      start: npm run dev
+  backend:
+    enabled: true
+    path: python-agent-service
+    role: backend
+    runtime: python
+    package_manager: pip
+    dockerfile: Dockerfile
+    build_context: .
+    container_name: python-agent-service
+    container_port: 9090
+    health_path: /health
+    commands:
+      install: python -m pip install -r requirements.txt
+      lint: TODO_BACKEND_LINT
+      typecheck: TODO_PYTHON_TYPECHECK
+      test: pytest
+      build: python -m compileall app
+      start: python -m uvicorn app.main:app --host 0.0.0.0 --port 9090
+  worker:
+    enabled: false
+    path: TODO_WORKER_PATH
+    role: worker
+    runtime: TODO_WORKER_RUNTIME
+    package_manager: TODO_WORKER_PM
+    dockerfile: TODO_WORKER_DOCKERFILE
+    build_context: TODO_WORKER_CONTEXT
+    container_name: TODO_WORKER_CONTAINER
+    commands:
+      install: TODO_WORKER_INSTALL
+      lint: TODO_WORKER_LINT
+      typecheck: TODO_WORKER_TYPECHECK
+      test: TODO_WORKER_TEST
+      build: TODO_WORKER_BUILD
+      start: TODO_WORKER_START
+
+database:
+  migration_tool: TODO_DB_MIGRATION_TOOL
+  migration_command: TODO_DB_MIGRATION_COMMAND
+  migration_required_before_deploy: false
+
+detection:
+  existing_workflows:
+    - ci.yml
+    - release.yml
+    - deploy-aws.yml
+    - ops-check.yml
+  existing_cicd_config: true
+  docker_compose_files:
+    - python-agent-service/docker-compose.yml
+    - python-agent-service/docker-compose.local.yml
+    - python-agent-service/docker-compose.vm.yml
+    - python-agent-service/docker-compose.postgres.yml
+  env_examples:
+    - .cicd/env/dev.yaml.example
+    - .cicd/env/staging.yaml.example
+    - .cicd/env/prod.yaml.example
+
+generated_files:
+  workflows:
+    - .github/workflows/ci.yml
+    - .github/workflows/release.yml
+    - .github/workflows/deploy-aws.yml
+    - .github/workflows/ops-check.yml
+  config:
+    - .cicd/project.yaml
+    - .cicd/env/dev.yaml.example
+    - .cicd/env/staging.yaml.example
+    - .cicd/env/prod.yaml.example
+    - .cicd/secrets/README.md
+    - .cicd/runbooks/rollback.md
