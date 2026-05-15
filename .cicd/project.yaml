@@ -50,7 +50,7 @@ services:
       install: python -m pip install -r requirements.txt
       lint: TODO_BACKEND_LINT
       typecheck: TODO_PYTHON_TYPECHECK
-      test: pytest
+      test: python -m pytest
       build: python -m compileall app
       start: python -m uvicorn app.main:app --host 0.0.0.0 --port 9090
   worker:

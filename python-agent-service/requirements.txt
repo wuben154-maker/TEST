@@ -107,3 +107,7 @@ e2b>=1.0.0
 
 # QR decode (email-security / quishing tooling)
 pyzbar>=0.1.9
+
+# CI / tests (.github workflows run install + test from .cicd/project.yaml)
+pytest>=7.0.0
+pytest-asyncio>=0.24.0
