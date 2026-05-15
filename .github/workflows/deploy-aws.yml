@@ -403,11 +403,14 @@ jobs:
                           cw_region = cloudwatch_cfg.get("region") or region
                           cw_group = cloudwatch_cfg.get("log_group") or f"/ecs/{project_name}-{env_name}"
                           cw_prefix = cloudwatch_cfg.get("stream_prefix") or container
+                          # Older Docker daemons reject awslogs-stream-prefix; awslogs-stream is widely supported.
+                          host_label = host.split("@", 1)[1].replace(".", "-")
+                          cw_stream = f"{cw_prefix}-{host_label}"
                           log_opts = (
                               f"--log-driver awslogs "
                               f"--log-opt awslogs-region={cw_region} "
                               f"--log-opt awslogs-group={cw_group} "
-                              f"--log-opt awslogs-stream-prefix={cw_prefix} "
+                              f"--log-opt awslogs-stream={cw_stream} "
                           )
 
                       script = (
