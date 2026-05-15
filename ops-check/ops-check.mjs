@@ -38,6 +38,16 @@ import {
   validateAdvisorOutput,
 } from "./lib/route-advisor.mjs"
 
+/** Env for AWS CLI: trim credential vars (GitHub Secrets may include trailing newlines). */
+function awsCliEnv() {
+  const e = { ...process.env }
+  for (const k of ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_SESSION_TOKEN"]) {
+    const v = e[k]
+    if (typeof v === "string") e[k] = v.trim()
+  }
+  return e
+}
+
 // ── 1. CLI and mode parsing ─────────────────────────────────────────────────
 
 function printHelp() {
@@ -592,7 +602,7 @@ async function fetchCloudWatchLogs({ since, until, cursor, limit, source, shared
     try {
       out = execFileSync("aws", args, {
         encoding: "utf8",
-        env: process.env,
+        env: awsCliEnv(),
         stdio: ["ignore", "pipe", "pipe"],
         maxBuffer: 20 * 1024 * 1024,
       })
