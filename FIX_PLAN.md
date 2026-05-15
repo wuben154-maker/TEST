@@ -31,7 +31,7 @@
 | AWS region（以 GH Variable `AWS_REGION` 为准；须与 `.cicd/env/dev.yaml` 的 `aws.region` 一致） | `us-east-2` |
 | ECR 仓库全名（推送/拉取） | `928974129003.dkr.ecr.us-east-2.amazonaws.com/secmanus/test`（勿再用 `us-east-1`） |
 | ECR repo 短名（GH Variable `ECR_REPOSITORY_BACKEND`） | `secmanus/test` |
-| CloudWatch Logs 区域（可与 ECR 分区不同） | `us-east-1`（`dev.yaml` → `logging.cloudwatch.region`；ops-check 读日志同区） |
+| CloudWatch Logs 区域（可与 ECR 分区不同） | `us-east-2`（`dev.yaml` → `logging.cloudwatch.region`；ops-check 读日志同区） |
 | 后端容器内监听端口 | **`9090`** (Dockerfile `EXPOSE 9090`，`PORT` 不设置时即 9090) |
 | 后端宿主机暴露端口 | **`8000`** (复用 EC2 安全组现已开放的 8000) |
 | `/health` URL（公网） | `http://18.216.190.63:8000/health` |
@@ -157,14 +157,14 @@ T-X.Y  [角色]  标题
 #### T-0.3 [Orchestrator] 校验 AWS region（已由用户预先确认）
 
 - **前置**：T-0.2
-- **结论**：用户已在 plan 制定阶段书面确认 **`region = us-east-1`**（EC2 `18.216.190.63`、ECR `secmanus/test`、CloudWatch、IAM 均在 us-east-1）。**不需要再次询问用户**。
+- **结论**：用户已在 plan 制定阶段书面确认 **`region = us-east-2`**（EC2 `18.216.190.63`、ECR `secmanus/test`、CloudWatch、IAM 均在 us-east-2**不需要再次询问用户**。
 - **轻量校验（可选）**：
   ```powershell
   gh variable list --repo wuben154-maker/TEST | Select-String AWS_REGION
-  # 期望: AWS_REGION  us-east-1
+  # 期望: AWS_REGION  us-east-2
   ```
-  若不是 us-east-1，停手并告知用户——这是与所有后续步骤冲突的根本变量，不能私自改。
-- **输出**：`<REGION> = us-east-1`，本手册剩余部分按此值执行。
+  若不是 us-east-2，停手并告知用户——这是与所有后续步骤冲突的根本变量，不能私自改。
+- **输出**：`<REGION> = us-east-2`，本手册剩余部分按此值执行。
 
 ---
 
@@ -240,7 +240,7 @@ T-X.Y  [角色]  标题
 
 #### T-1.B [Worker-B] 改 `.cicd/env/dev.yaml`
 
-- **前置**：T-0.2、T-0.3 已确认 `<REGION>=us-east-1`
+- **前置**：T-0.2、T-0.3 已确认 `<REGION>=us-east-2`
 - **改动目标**：把整个 `dev.yaml` 替换为如下完整版本（**完整覆盖**，方便对照）：
 
   ```yaml
@@ -248,7 +248,7 @@ T-X.Y  [角色]  标题
 
   aws:
     account_id: "928974129003"
-    region: us-east-1
+    region: us-east-2
     oidc_role_arn_secret: AWS_RELEASE_ROLE_ARN
 
   deployment:
@@ -287,7 +287,7 @@ T-X.Y  [角色]  标题
   logging:
     cloudwatch:
       enabled: true
-      region: us-east-1
+      region: us-east-2
       log_group: /ecs/TEST-dev
       stream_prefix: python-agent-service
       retention_days: 30
@@ -297,7 +297,7 @@ T-X.Y  [角色]  标题
   - `health.backend_url` 8080 → **8000**（与 EC2 安全组、`docker run -p 8000:9090` 一致）
   - `ec2.ports.backend_host_port: 8000`（与 backend.container_port=9090 配合产生 `-p 8000:9090`）
   - `logging.cloudwatch.log_group: /ecs/TEST-dev` 写**死值**（不依赖推导）
-  - `logging.cloudwatch.region: us-east-1` 写死
+  - `logging.cloudwatch.region: us-east-2` 写死
   - `deployment.service_scope: backend-only`（前端不参与）
   - `health.retries: 12`（容器冷启动 ~120s）
 
@@ -377,7 +377,7 @@ T-X.Y  [角色]  标题
     - id: app-cloudwatch
       type: cloudwatch
       service: python-agent-service
-      region: us-east-1
+      region: us-east-2
       logGroupNames:
         - /ecs/TEST-dev
       filterPattern: ""
@@ -440,7 +440,7 @@ T-X.Y  [角色]  标题
   > 关键改动：
   > - `fixAgent.enabled: ture → true`
   > - 加 `fixAgent.simulateRunner: false`、`configPath: ops-check/fix-agent.yaml`
-  > - `logSources[0].region` 写死 `us-east-1`，`logGroupNames` 写死 `/ecs/TEST-dev`，**不再用 `${from-cicd-env}` 占位符**
+  > - `logSources[0].region` 写死 `us-east-2`，`logGroupNames` 写死 `/ecs/TEST-dev`，**不再用 `${from-cicd-env}` 占位符**
   > - `classification.minOccurrencesForHigh: 1`（让任何一条错误都能升级到 high，触发 fix agent）
   > - `autofix.verificationCommands: ["echo skip-verification"]`（避免 verification 失败阻塞）
   > - `routingAdvisor.enabled: true`（启用 LLM 路由）
@@ -489,10 +489,10 @@ T-X.Y  [角色]  标题
   ```powershell
   $env:AWS_ACCESS_KEY_ID = "<访谈用户索取，或临时从 1Password / AWS console>"
   $env:AWS_SECRET_ACCESS_KEY = "<同上>"
-  $env:AWS_DEFAULT_REGION = "us-east-1"
-  aws logs create-log-group --log-group-name "/ecs/TEST-dev" --region us-east-1
-  aws logs put-retention-policy --log-group-name "/ecs/TEST-dev" --retention-in-days 30 --region us-east-1
-  aws logs describe-log-groups --log-group-name-prefix "/ecs/TEST-dev" --region us-east-1
+  $env:AWS_DEFAULT_REGION = "us-east-2"
+  aws logs create-log-group --log-group-name "/ecs/TEST-dev" --region us-east-2
+  aws logs put-retention-policy --log-group-name "/ecs/TEST-dev" --retention-in-days 30 --region us-east-2
+  aws logs describe-log-groups --log-group-name-prefix "/ecs/TEST-dev" --region us-east-2
   ```
 - **方式 B（用户在 AWS Console 操作）**：让用户进 CloudWatch → Logs → Log groups → Create log group → 名字 `/ecs/TEST-dev` → 保留 30 天 → 创建。
 - **验证**：`describe-log-groups` 输出里能看到 `/ecs/TEST-dev`。
@@ -508,12 +508,12 @@ T-X.Y  [角色]  标题
   ssh -i "D:\飞书\secmanus.pem" ubuntu@18.216.190.63 << 'EOF'
   set -e
   echo "--- caller identity ---"
-  aws sts get-caller-identity --region us-east-1
+  aws sts get-caller-identity --region us-east-2
   echo "--- log group visibility ---"
-  aws logs describe-log-groups --log-group-name-prefix "/ecs/TEST-dev" --region us-east-1 \
+  aws logs describe-log-groups --log-group-name-prefix "/ecs/TEST-dev" --region us-east-2 \
     --query "logGroups[].logGroupName" --output text
   echo "--- ecr token check ---"
-  aws ecr get-authorization-token --region us-east-1 \
+  aws ecr get-authorization-token --region us-east-2 \
     --query "authorizationData[0].expiresAt" --output text
   EOF
   ```
@@ -686,13 +686,12 @@ ssh -i "D:\飞书\secmanus.pem" ubuntu@18.216.190.63 \
 aws logs describe-log-streams `
   --log-group-name "/ecs/TEST-dev" `
   --order-by LastEventTime --descending --limit 3 `
-  --region us-east-1
-
+  --region us-east-2
 # 取最新的 logStreamName 后：
 aws logs get-log-events `
   --log-group-name "/ecs/TEST-dev" `
   --log-stream-name "<STREAM_NAME>" `
-  --limit 50 --region us-east-1
+  --limit 50 --region us-east-2
 ```
 
 - **验证**：能看到容器 stdout/stderr 内容（uvicorn 启动日志、缺 API key 警告等）。
@@ -797,7 +796,7 @@ gh run view <RUN_ID> --log-failed --repo wuben154-maker/TEST
 ssh -i "D:\飞书\secmanus.pem" ubuntu@18.216.190.63 "docker ps; docker logs python-agent-service --tail 100"
 
 # 从本机查 CloudWatch（需先 export AWS_* 或用 aws sso login）
-aws logs tail /ecs/TEST-dev --follow --region us-east-1
+aws logs tail /ecs/TEST-dev --follow --region us-east-2
 
 # 强制再跑一次 ops-check
 gh workflow run ops-check.yml --repo wuben154-maker/TEST --ref main -f dry_run=false
@@ -814,7 +813,7 @@ gh workflow run ops-check.yml --repo wuben154-maker/TEST --ref main -f dry_run=f
 
 > ```
 > 接管 D:\secmanus 项目。严格按 D:\secmanus\FIX_PLAN.md 执行。规则：
-> 1. 先完整读 FIX_PLAN.md §0 §1 再动手。所有"用户预先确认"的字段（region=us-east-1、EC2 已挂 IAM Instance Profile、OPENAI_API_KEY=ModelScope token）不要再向用户确认，直接信任。
+> 1. 先完整读 FIX_PLAN.md §0 §1 再动手。所有"用户预先确认"的字段（region=us-east-2、EC2 已挂 IAM Instance Profile、OPENAI_API_KEY=ModelScope token）不要再向用户确认，直接信任。
 > 2. 按 §2 的 Batch 0 → Batch 6 顺序执行，每完成一个 Batch 必须把它的「验证」命令输出贴出来再继续。
 > 3. Batch 1 必须在同一条消息里并行 fork 出 Worker-A / Worker-B / Worker-C 三个子 agent（Task 工具，subagent_type=generalPurpose），各自只改自己负责的文件，不读不写对方文件；都返回后你再统一 review。
 > 4. Batch 2 T-2.2 只做"读验证"——不要在 EC2 上写 ~/.aws/credentials、不要尝试改 Instance Profile 绑定。
@@ -822,7 +821,7 @@ gh workflow run ops-check.yml --repo wuben154-maker/TEST --ref main -f dry_run=f
 > 6. 任何一步失败先按该任务的「失败回退」处理，再向用户报告，不要私自跳过。
 > 7. 禁止：修改 .github/workflows/*.yml 的逻辑；改 fix-agent.yaml 的 baseUrl（必须保持 ModelScope）；commit/push 真实 token；force-push；启用前端 Dockerfile；删除 EC2 上 postgres-data volume。
 > 8. ops-check 上线后只要看到 ci/release/deploy/ops-check 四个 workflow 都 success 且 ops-check 至少创建了一条 Issue 或 PR，就视为完成，把 §2 T-6.1 的清单贴给用户。
-> 9. 关键参数：repo=wuben154-maker/TEST；region=us-east-1；EC2=18.216.190.63；pem=D:\飞书\secmanus.pem；后端宿主端口=8000；容器内端口=9090；CloudWatch group=/ecs/TEST-dev；ModelScope endpoint=https://api-inference.modelscope.cn/v1。
+> 9. 关键参数：repo=wuben154-maker/TEST；region=us-east-2；EC2=18.216.190.63；pem=D:\飞书\secmanus.pem；后端宿主端口=8000；容器内端口=9090；CloudWatch group=/ecs/TEST-dev；ModelScope endpoint=https://api-inference.modelscope.cn/v1。
 > ```
 
 ---
