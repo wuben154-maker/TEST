@@ -28,8 +28,10 @@
 | EC2 SSH user | `ubuntu` |
 | 本机 pem 路径 | `D:\飞书\secmanus.pem` |
 | GH Secret 中的 SSH 私钥名 | `AWS_EC2_SSH_PRIVATE_KEY` |
-| AWS region（以 GH Variable `AWS_REGION` 为准） | `us-east-1` |
-| ECR repo | `secmanus/test` (GH Variable `ECR_REPOSITORY_BACKEND`) |
+| AWS region（以 GH Variable `AWS_REGION` 为准；须与 `.cicd/env/dev.yaml` 的 `aws.region` 一致） | `us-east-2` |
+| ECR 仓库全名（推送/拉取） | `928974129003.dkr.ecr.us-east-2.amazonaws.com/secmanus/test`（勿再用 `us-east-1`） |
+| ECR repo 短名（GH Variable `ECR_REPOSITORY_BACKEND`） | `secmanus/test` |
+| CloudWatch Logs 区域（可与 ECR 分区不同） | `us-east-1`（`dev.yaml` → `logging.cloudwatch.region`；ops-check 读日志同区） |
 | 后端容器内监听端口 | **`9090`** (Dockerfile `EXPOSE 9090`，`PORT` 不设置时即 9090) |
 | 后端宿主机暴露端口 | **`8000`** (复用 EC2 安全组现已开放的 8000) |
 | `/health` URL（公网） | `http://18.216.190.63:8000/health` |
@@ -42,7 +44,7 @@
 
 > **`OPENAI_API_KEY` 身份已确认**：用户书面确认是 ModelScope 推理 token，端点 `https://api-inference.modelscope.cn/v1`。ops-check 的 classification LLM (`lib/llm-client.mjs`)、route advisor (`lib/route-advisor.mjs`)、fix-agent (`ops-check/fix-agent.yaml`) 三处均直连此端点。**不要尝试切到 `api.openai.com`**。
 
-**Variables**：`AWS_REGION=us-east-1`、`ECR_REPOSITORY_BACKEND=secmanus/test`、`ENABLE_OPS_CHECK_SELF_HOSTED=true` ← **本方案要把它改成 `false`**
+**Variables**：`AWS_REGION=us-east-2`、`ECR_REPOSITORY_BACKEND=secmanus/test`、`ENABLE_OPS_CHECK_SELF_HOSTED=true` ← **本方案要把它改成 `false`**
 
 ### 0.4 执行边界（红线，违反即任务失败）
 

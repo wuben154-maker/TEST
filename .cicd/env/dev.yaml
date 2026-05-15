@@ -2,7 +2,9 @@ environment: dev
 
 aws:
   account_id: "928974129003"
-  region: us-east-1
+  # Primary AWS region for OIDC/ECR (images: 928974129003.dkr.ecr.us-east-2.amazonaws.com/secmanus/test).
+  # App log shipping uses logging.cloudwatch.region (us-east-1) below.
+  region: us-east-2
   oidc_role_arn_secret: AWS_RELEASE_ROLE_ARN
 
 deployment:
