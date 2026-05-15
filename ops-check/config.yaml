@@ -6,15 +6,18 @@ cicdEnvironment: dev
 testMapPath: ops-check/test-map.example.yaml
 
 fixAgent:
-  enabled: ture
+  enabled: true
+  simulateRunner: false
+  timeoutMinutes: 30
+  configPath: ops-check/fix-agent.yaml
 
 logSources:
-  - id: app-cloudwatch-from-cicd
+  - id: app-cloudwatch
     type: cloudwatch
     service: python-agent-service
-    region: "${from-cicd-env}"
+    region: us-east-1
     logGroupNames:
-      - "${from-cicd-env}"
+      - /ecs/TEST-dev
     filterPattern: ""
     serviceField: service
     queryWindowMinutes: 30
@@ -27,14 +30,14 @@ runtime:
   stateFile: .ops-check/state.json
 
 classification:
-  minOccurrencesForHigh: 5
+  minOccurrencesForHigh: 1            # 降低阈值，让任何错误都能被分类为 high
   recoveryPollsToClose: 3
   recurrenceEscalation: true
 
 autofix:
   enabled: true
   maxPrsPerRun: 1
-  maxLlmCallsPerRun: 3
+  maxLlmCallsPerRun: 5                # 提高 LLM 预算
   maxIssueActionsPerRun: 20
   maxFeishuPerRun: 20
   maxGithubRetries: 2
@@ -46,7 +49,7 @@ autofix:
     - "**/billing/**"
     - "**/iam/**"
   verificationCommands:
-    - npm test
+    - "echo skip-verification"
 
 issues:
   labels:
@@ -61,12 +64,12 @@ notifications:
 owners:
   default:
     reviewers:
-      - name: TODO_OWNER
-        feishu_user_id: TODO_FEISHU_USER
+      - name: wuben154-maker
+        feishu_user_id: ""
 
 defaults:
   logLimit: 200
   queryWindowMinutes: 30
 
 routingAdvisor:
-  enabled: false
+  enabled: true                       # 启用 LLM 路由

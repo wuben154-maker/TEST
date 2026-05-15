@@ -8,24 +8,21 @@ aws:
 deployment:
   target: ec2-ssh
   mode: single-node
-  service_scope: all
+  service_scope: backend-only
 
 release:
   require_manual_approval: false
   allow_rollback: true
 
 health:
-  # Backend URL 填完整 endpoint（deploy-aws 在配置了 *_url 时直接使用，不再拼接 path）
-  backend_url: http://18.216.190.63:8080/health
+  backend_url: http://18.216.190.63:8000/health
   backend_path: /health
-  # 单后端镜像场景：未部署前端容器时可不设；若 release 产出 frontend 镜像请补齐后再 deploy scope all
-  frontend_url: TODO_IF_FRONTEND_DEPLOYED
+  frontend_url: TODO_NOT_USED_THIS_PHASE
   frontend_path: /
   timeout_seconds: 10
-  retries: 6
+  retries: 12
 
 ecr:
-  # 仅推送后端镜像（仓库根 `python-agent-service/` Dockerfile）；前端无镜像则勿在 release 中选 frontend
   backend_repository: secmanus/test
 
 ec2:
@@ -35,7 +32,7 @@ ec2:
   single_node:
     host: 18.216.190.63
   ports:
-    backend_host_port: 8080
+    backend_host_port: 8000
 
 runtime_secrets:
   env_source: github_environment_or_aws_secrets_manager
@@ -44,9 +41,7 @@ runtime_secrets:
 logging:
   cloudwatch:
     enabled: true
-    region: ""
-    log_group: ""
-    stream_prefix: ""
+    region: us-east-1
+    log_group: /ecs/TEST-dev
+    stream_prefix: python-agent-service
     retention_days: 30
-
-# ECS / VPC：本环境使用 ec2-ssh，不使用 ECS/Fargate。

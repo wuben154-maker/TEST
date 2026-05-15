@@ -25,6 +25,7 @@ describe('scrubVirtualPathsForDisplay', () => {
     expect(out).not.toContain('D:');
     expect(out).not.toContain('uploads\\u_');
   });
+});
 
 describe('scrubTaskPlanPathsForDisplay', () => {
   it('normalizes titles, workspaceTitle, description, result, error', () => {
